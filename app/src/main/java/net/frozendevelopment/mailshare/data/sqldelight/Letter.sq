@@ -1,0 +1,5 @@
+allLetters:
+SELECT id FROM letter;
+
+letterById:
+SELECT * FROM letter WHERE id = ?;

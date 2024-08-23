@@ -1,0 +1,7 @@
+CREATE TABLE letter (
+    id TEXT PRIMARY KEY NOT NULL,
+    sender TEXT,
+    recipient TEXT,
+    body TEXT,
+    date INTEGER
+);
