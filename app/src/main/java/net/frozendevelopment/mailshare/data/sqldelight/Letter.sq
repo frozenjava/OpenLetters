@@ -3,3 +3,52 @@ SELECT id FROM letter;
 
 letterById:
 SELECT * FROM letter WHERE id = ?;
+
+lettersByCategory:
+SELECT letterId FROM letterToCategory WHERE categoryId = ?;
+
+lettersInThread:
+SELECT letterId FROM letterToThread WHERE threadId = ?;
+
+upsertLetter:
+INSERT INTO letter (id, sender, recipient, body, created, lastModified) VALUES (
+    :id,
+    :sender,
+    :recipient,
+    :body,
+    :created,
+    :lastModified
+);
+
+tagLetterWithCategory:
+INSERT INTO letterToCategory (letterId, categoryId) VALUES (
+    :letterId,
+    :categoryId
+);
+
+addLetterToThread:
+INSERT INTO letterToThread (letterId, threadId) VALUES (
+    :letterId,
+    :threadId
+);
+
+letterDetail:
+SELECT
+    letter.id,
+    letter.sender,
+    letter.recipient,
+    letter.body,
+    letter.created,
+    letter.lastModified,
+    document.id AS documentId,
+    category.id AS categoryId,
+    category.label AS categoryLabel,
+    thread.id AS threadId,
+    thread.title AS threadTitle
+FROM letter
+LEFT JOIN document ON letter.id = document.letterId
+LEFT JOIN letterToCategory ON letter.id = letterToCategory.letterId
+LEFT JOIN category ON letterToCategory.categoryId = category.id
+LEFT JOIN letterToThread ON letter.id = letterToThread.letterId
+LEFT JOIN thread ON letterToThread.threadId = thread.id
+WHERE letter.id = :letterId;

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "net.frozendevelopment.mailshare"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -81,6 +81,7 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
+    implementation(libs.koin.workmanager)
     implementation(libs.koin.compose.navigation)
     compileOnly(libs.koin.annotations)
     ksp(libs.koin.ksp)
@@ -89,6 +90,11 @@ dependencies {
 
     implementation(libs.sqldelight)
     implementation(libs.sqldelight.coroutines)
+    implementation(libs.sqldelight.primitive.adapters)
+    implementation(libs.requery.sqlite)
+
+    implementation(libs.mlkit.textrecognition)
+    implementation(libs.mlkit.documentscanner)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

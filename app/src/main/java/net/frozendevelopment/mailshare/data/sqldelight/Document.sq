@@ -1,0 +1,8 @@
+insertDocument:
+INSERT INTO document (id, letterId) VALUES(:id, :letterId);
+
+documentsForLetter:
+SELECT * FROM document WHERE letterId = ?;
+
+selectAll:
+SELECT id FROM document;

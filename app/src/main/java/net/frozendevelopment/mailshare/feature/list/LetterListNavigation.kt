@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import net.frozendevelopment.mailshare.feature.scan.openScanForm
-import net.frozendevelopment.mailshare.feature.scan.openScanner
 import org.koin.androidx.compose.koinViewModel
 
 const val LETTER_LIST_ROUTE  = "/letters"

@@ -1,0 +1,5 @@
+getAppMigration:
+SELECT id FROM appMigration WHERE id = ?;
+
+insertAppMigration:
+INSERT INTO appMigration (id) VALUES (:id);

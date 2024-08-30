@@ -1,0 +1,2 @@
+allThreads:
+SELECT * FROM thread;

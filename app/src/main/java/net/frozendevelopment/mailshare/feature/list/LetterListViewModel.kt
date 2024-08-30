@@ -14,4 +14,8 @@ class LetterListViewModel(
     private val queries: LetterQueries
 ) : StatefulViewModel<LetterListState>(LetterListState()) {
 
+    init {
+        println(queries.allLetters().executeAsList())
+    }
+
 }
