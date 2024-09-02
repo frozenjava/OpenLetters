@@ -41,7 +41,7 @@ fun ImageViewer(
             modifier = modifier,
             bitmap = imageBitmap,
             contentDescription = null,
-            contentScale = ContentScale.FillHeight
+            contentScale = ContentScale.Fit
         )
     } else {
         // TODO: Display broken image icon

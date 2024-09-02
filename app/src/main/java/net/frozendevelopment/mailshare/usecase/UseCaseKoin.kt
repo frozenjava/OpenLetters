@@ -1,6 +1,7 @@
 package net.frozendevelopment.mailshare.usecase
 
 import android.app.Application
+import net.frozendevelopment.mailshare.data.sqldelight.LetterQueries
 import net.frozendevelopment.mailshare.data.sqldelight.MailShareDB
 import net.frozendevelopment.mailshare.util.TextExtractorType
 import org.koin.core.annotation.Factory
@@ -18,6 +19,13 @@ class UseCaseKoin {
             textExtractor,
             database
         )
+    }
+
+    @Factory
+    fun metaLetterUseCase(
+        letterQueries: LetterQueries
+    ): MetaLetterUseCase {
+        return MetaLetterUseCase(queries = letterQueries)
     }
 
 }

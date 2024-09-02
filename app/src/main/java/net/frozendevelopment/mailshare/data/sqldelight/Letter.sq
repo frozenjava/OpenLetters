@@ -1,5 +1,7 @@
+import net.frozendevelopment.mailshare.data.sqldelight.models.LetterId;
+
 allLetters:
-SELECT id FROM letter;
+SELECT id AS LetterId FROM letter;
 
 letterById:
 SELECT * FROM letter WHERE id = ?;
@@ -31,6 +33,22 @@ INSERT INTO letterToThread (letterId, threadId) VALUES (
     :letterId,
     :threadId
 );
+
+letterInfo:
+SELECT
+    letter.id,
+    letter.sender,
+    letter.recipient,
+    letter.body,
+    letter.created,
+    letter.lastModified,
+    GROUP_CONCAT(category.id) AS categoryIds,
+    GROUP_CONCAT(category.label) AS categoryLabels
+FROM letter
+LEFT JOIN letterToCategory ON letter.id = letterToCategory.letterId
+LEFT JOIN category ON letterToCategory.categoryId = category.id
+WHERE letter.id = :letterId
+GROUP BY letter.id;
 
 letterDetail:
 SELECT

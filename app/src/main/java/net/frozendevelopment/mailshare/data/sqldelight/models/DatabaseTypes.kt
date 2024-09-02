@@ -21,6 +21,10 @@ value class LetterId(val value: String) {
             return LetterId(UUID.randomUUID().toString())
         }
     }
+
+    override fun toString(): String {
+        return value
+    }
 }
 
 @JvmInline
@@ -39,6 +43,10 @@ value class DocumentId(val value: String) {
         fun random(): DocumentId {
             return DocumentId(UUID.randomUUID().toString())
         }
+    }
+
+    override fun toString(): String {
+        return value
     }
 }
 
@@ -59,6 +67,10 @@ value class CategoryId(val value: String) {
             return CategoryId(UUID.randomUUID().toString())
         }
     }
+
+    override fun toString(): String {
+        return value
+    }
 }
 
 @JvmInline
@@ -77,5 +89,9 @@ value class ThreadId(val value: String) {
         fun random(): ThreadId {
             return ThreadId(UUID.randomUUID().toString())
         }
+    }
+
+    override fun toString(): String {
+        return value
     }
 }
