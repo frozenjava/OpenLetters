@@ -1,7 +1,7 @@
 import net.frozendevelopment.mailshare.data.sqldelight.models.LetterId;
 
 allLetters:
-SELECT id AS LetterId FROM letter;
+SELECT id AS LetterId FROM letter ORDER BY created DESC;
 
 letterById:
 SELECT * FROM letter WHERE id = ?;

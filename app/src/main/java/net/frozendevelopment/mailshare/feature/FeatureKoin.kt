@@ -14,7 +14,10 @@ import org.koin.core.annotation.Module
 @Module
 class FeatureKoin {
     @KoinViewModel
-    fun letterListViewModel(letterQueries: LetterQueries) = LetterListViewModel(letterQueries)
+    fun letterListViewModel(
+        letterQueries: LetterQueries,
+        categoryQueries: CategoryQueries,
+    ) = LetterListViewModel(letterQueries, categoryQueries)
 
     @KoinViewModel
     fun scanViewModel(

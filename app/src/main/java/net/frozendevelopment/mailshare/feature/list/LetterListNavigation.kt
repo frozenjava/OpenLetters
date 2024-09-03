@@ -2,6 +2,7 @@ package net.frozendevelopment.mailshare.feature.list
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,11 +19,17 @@ fun NavGraphBuilder.letters(navController: NavController) {
         val viewModel: LetterListViewModel = koinViewModel()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
+        LaunchedEffect(viewModel) {
+            viewModel.load()
+        }
+
         Surface {
             LetterListView(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 onScanClicked = navController::openScanForm,
+                toggleCategory = viewModel::toggleCategory,
+                setSearchTerms = viewModel::setSearchTerms
             )
         }
     }

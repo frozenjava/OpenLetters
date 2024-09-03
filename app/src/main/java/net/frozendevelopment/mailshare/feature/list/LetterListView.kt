@@ -1,16 +1,20 @@
 package net.frozendevelopment.mailshare.feature.list
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
 import net.frozendevelopment.mailshare.feature.list.ui.EmptyListView
 import net.frozendevelopment.mailshare.feature.list.ui.LetterCell
 import net.frozendevelopment.mailshare.feature.list.ui.LetterList
@@ -21,15 +25,23 @@ fun LetterListView(
     modifier: Modifier = Modifier,
     state: LetterListState,
     onScanClicked: () -> Unit,
+    toggleCategory: (CategoryId?) -> Unit,
+    setSearchTerms: (String) -> Unit,
 ) {
-    if (state.letters.isEmpty()) {
+    if (state.isLoading) {
+        Box(contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else if (state.showEmptyListView) {
         EmptyListView(modifier = modifier, onScanClicked = onScanClicked)
     } else {
         LetterList(
             modifier = Modifier.fillMaxSize(),
-            letters = state.letters,
+            state = state,
             onCellClicked = {},
-            onScanClicked = onScanClicked
+            onScanClicked = onScanClicked,
+            selectCategory = toggleCategory,
+            setSearchTerms = setSearchTerms,
         )
     }
 }
@@ -41,7 +53,12 @@ fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            LetterListView(state = state, onScanClicked = {})
+            LetterListView(
+                state = state,
+                onScanClicked = {},
+                toggleCategory = {},
+                setSearchTerms = {}
+            )
         }
     }
 }
