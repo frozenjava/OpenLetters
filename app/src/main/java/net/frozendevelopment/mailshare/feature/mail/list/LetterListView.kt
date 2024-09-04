@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.list
+package net.frozendevelopment.mailshare.feature.mail.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,15 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
-import net.frozendevelopment.mailshare.feature.list.ui.EmptyListView
-import net.frozendevelopment.mailshare.feature.list.ui.LetterCell
-import net.frozendevelopment.mailshare.feature.list.ui.LetterList
+import net.frozendevelopment.mailshare.feature.mail.list.ui.EmptyListView
+import net.frozendevelopment.mailshare.feature.mail.list.ui.LetterCell
+import net.frozendevelopment.mailshare.feature.mail.list.ui.LetterList
 import net.frozendevelopment.mailshare.ui.theme.MailShareTheme
 
 @Composable
 fun LetterListView(
     modifier: Modifier = Modifier,
     state: LetterListState,
+    onNavDrawerClicked: () -> Unit,
     onScanClicked: () -> Unit,
     toggleCategory: (CategoryId?) -> Unit,
     setSearchTerms: (String) -> Unit,
@@ -39,6 +40,7 @@ fun LetterListView(
             modifier = Modifier.fillMaxSize(),
             state = state,
             onCellClicked = {},
+            onNavDrawerClicked = onNavDrawerClicked,
             onScanClicked = onScanClicked,
             selectCategory = toggleCategory,
             setSearchTerms = setSearchTerms,
@@ -55,9 +57,10 @@ fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
         ) {
             LetterListView(
                 state = state,
+                onNavDrawerClicked = {},
                 onScanClicked = {},
                 toggleCategory = {},
-                setSearchTerms = {}
+                setSearchTerms = {},
             )
         }
     }

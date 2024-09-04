@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.list.ui
+package net.frozendevelopment.mailshare.feature.mail.list.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

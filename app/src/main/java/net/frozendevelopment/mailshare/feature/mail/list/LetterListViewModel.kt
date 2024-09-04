@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.list
+package net.frozendevelopment.mailshare.feature.mail.list
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope

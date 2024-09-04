@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.list.ui
+package net.frozendevelopment.mailshare.feature.mail.list.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +16,7 @@ import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
 fun FilterBar(
     modifier: Modifier = Modifier,
     searchTerms: String,
+    onNavDrawerClicked: () -> Unit,
     selectedCategoryId: CategoryId?,
     categories: List<Category>,
     onToggleCategory: (CategoryId?) -> Unit,
@@ -30,7 +31,8 @@ fun FilterBar(
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp),
             searchTerms = searchTerms,
-            onSearchChanged = onSearchChanged
+            onSearchChanged = onSearchChanged,
+            onNavDrawerClicked = onNavDrawerClicked,
         )
 
         CategorySelector(

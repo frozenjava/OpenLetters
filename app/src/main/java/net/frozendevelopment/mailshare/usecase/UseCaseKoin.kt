@@ -1,6 +1,7 @@
 package net.frozendevelopment.mailshare.usecase
 
 import android.app.Application
+import net.frozendevelopment.mailshare.data.sqldelight.CategoryQueries
 import net.frozendevelopment.mailshare.data.sqldelight.LetterQueries
 import net.frozendevelopment.mailshare.data.sqldelight.MailShareDB
 import net.frozendevelopment.mailshare.util.TextExtractorType
@@ -27,5 +28,10 @@ class UseCaseKoin {
     ): MetaLetterUseCase {
         return MetaLetterUseCase(queries = letterQueries)
     }
+
+    @Factory
+    fun upsertCategoryUseCase(
+        categoryQueries: CategoryQueries
+    ) = UpsertCategoryUseCase(categoryQueries)
 
 }

@@ -7,7 +7,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
-composeBom = "2024.06.00"
+composeBom = "2024.08.00"
 navigationCommonKtx = "2.7.7"
 ksp = "2.0.10-1.0.24"
 koin = "4.0.0-RC1"
@@ -18,6 +18,7 @@ camera = "1.4.0-rc01"
 accompanist = "0.35.1-alpha"
 mlkit = "16.0.1"
 workmanager = "2.9.1"
+colorpicker = "1.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,10 +44,6 @@ androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", nam
 androidx-workmanager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager"}
 androidx-workmanager-testing = { group = "androidx.work", name = "work-testing", version.ref = "workmanager"}
 
-androidx-camera = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
-androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
-androidx-camera-mlkit = { group = "androidx.camera", name = "camera-mlkit-vision", version.ref = "camera" }
-
 mlkit-textrecognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkit"}
 mlkit-documentscanner = { group = "com.google.android.gms", name = "play-services-mlkit-document-scanner", version = "16.0.0-beta1"}
 
@@ -63,7 +60,7 @@ sqldelight-coroutines = { group = "app.cash.sqldelight", name = "coroutines-exte
 sqldelight-primitive-adapters = { group = "app.cash.sqldelight", name = "primitive-adapters", version.ref = "sqldelight" }
 requery-sqlite = { group = "com.github.requery", name = "sqlite-android", version = "3.45.0" }
 
-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+colorpicker = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -61,14 +62,9 @@ fun CategoryPill(
     else
         Color(color).copy(alpha = .5f)
 
-    Row(
-        modifier = Modifier
+    CategoryPill(
+        modifier = modifier
             .scale(scale.value)
-            .background(
-                color = buttonColor,
-                shape = ButtonDefaults.shape
-            )
-            .clip(ButtonDefaults.shape)
             .clickable {
                 onToggle()
                 coroutineScope.launch {
@@ -84,10 +80,8 @@ fun CategoryPill(
                         )
                     )
                 }
-            }
-            .padding(ButtonDefaults.ContentPadding),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+            },
+        color = buttonColor,
     ) {
         if (isSelected) {
             Icon(
@@ -102,6 +96,70 @@ fun CategoryPill(
             color = getContrastColor(backgroundColor = buttonColor),
             style = MaterialTheme.typography.labelLarge,
         )
+    }
+
+//    Row(
+//        modifier = modifier
+//            .scale(scale.value)
+//            .background(
+//                color = buttonColor,
+//                shape = ButtonDefaults.shape
+//            )
+//            .clip(ButtonDefaults.shape)
+//            .clickable {
+//                onToggle()
+//                coroutineScope.launch {
+//                    scale.animateTo(
+//                        0.90f,
+//                        animationSpec = tween(100)
+//                    )
+//                    scale.animateTo(
+//                        1f,
+//                        animationSpec = spring(
+//                            dampingRatio = Spring.DampingRatioHighBouncy,
+//                            stiffness = Spring.StiffnessLow
+//                        )
+//                    )
+//                }
+//            }
+//            .padding(ButtonDefaults.ContentPadding),
+//        verticalAlignment = Alignment.CenterVertically,
+//        horizontalArrangement = Arrangement.SpaceAround
+//    ) {
+//        if (isSelected) {
+//            Icon(
+//                modifier = Modifier.size(16.dp),
+//                imageVector = Icons.Default.Check,
+//                contentDescription = "Selected",
+//                tint = getContrastColor(backgroundColor = buttonColor),
+//            )
+//        }
+//        Text(
+//            text = label,
+//            color = getContrastColor(backgroundColor = buttonColor),
+//            style = MaterialTheme.typography.labelLarge,
+//        )
+//    }
+}
+
+@Composable
+fun CategoryPill(
+    modifier: Modifier = Modifier,
+    color: Color,
+    content: @Composable RowScope.() -> Unit
+) {
+    Row(
+        modifier = modifier
+            .background(
+                color = color,
+                shape = ButtonDefaults.shape
+            )
+            .clip(ButtonDefaults.shape)
+            .padding(ButtonDefaults.ContentPadding),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        content()
     }
 }
 

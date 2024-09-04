@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.scan.ui
+package net.frozendevelopment.mailshare.feature.mail.scan.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons

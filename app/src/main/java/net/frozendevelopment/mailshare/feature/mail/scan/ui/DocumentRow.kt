@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.scan.ui
+package net.frozendevelopment.mailshare.feature.mail.scan.ui
 
 import android.net.Uri
 import androidx.compose.foundation.background

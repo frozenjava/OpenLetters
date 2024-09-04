@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.scan
+package net.frozendevelopment.mailshare.feature.mail.scan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.mailshare.data.sqldelight.migrations.Category
-import net.frozendevelopment.mailshare.feature.scan.ui.CategoryPicker
-import net.frozendevelopment.mailshare.feature.scan.ui.DocumentRow
-import net.frozendevelopment.mailshare.feature.scan.ui.ScanAppBar
-import net.frozendevelopment.mailshare.feature.scan.ui.ScannableTextField
+import net.frozendevelopment.mailshare.feature.mail.scan.ui.CategoryPicker
+import net.frozendevelopment.mailshare.feature.mail.scan.ui.DocumentRow
+import net.frozendevelopment.mailshare.feature.mail.scan.ui.ScanAppBar
+import net.frozendevelopment.mailshare.feature.mail.scan.ui.ScannableTextField
 import net.frozendevelopment.mailshare.ui.theme.MailShareTheme
 
 @Composable

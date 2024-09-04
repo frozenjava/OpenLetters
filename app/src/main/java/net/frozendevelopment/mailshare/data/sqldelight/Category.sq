@@ -1,10 +1,10 @@
 allCategories:
 SELECT * FROM category;
 
-upsertCategory:
+upsert:
 INSERT INTO category (id, label, color, created, lastModified) VALUES (
     :id, :label, :color, :created, :lastModified
 );
 
-deleteCategory:
+delete:
 DELETE FROM category WHERE id = ?;

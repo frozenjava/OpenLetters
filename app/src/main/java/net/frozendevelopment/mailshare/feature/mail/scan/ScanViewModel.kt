@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.scan
+package net.frozendevelopment.mailshare.feature.mail.scan
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable

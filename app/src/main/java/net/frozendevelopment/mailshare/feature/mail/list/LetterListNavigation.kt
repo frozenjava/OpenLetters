@@ -1,21 +1,28 @@
-package net.frozendevelopment.mailshare.feature.list
+package net.frozendevelopment.mailshare.feature.mail.list
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import net.frozendevelopment.mailshare.feature.scan.openScanForm
+import kotlinx.coroutines.launch
+import net.frozendevelopment.mailshare.feature.mail.scan.openScanForm
 import org.koin.androidx.compose.koinViewModel
 
 const val LETTER_LIST_ROUTE  = "/letters"
 
-fun NavGraphBuilder.letters(navController: NavController) {
+fun NavGraphBuilder.letters(
+    navController: NavController,
+    drawerState: DrawerState,
+) {
     composable(LETTER_LIST_ROUTE) {
+        val coroutineScope = rememberCoroutineScope()
         val viewModel: LetterListViewModel = koinViewModel()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
@@ -27,9 +34,16 @@ fun NavGraphBuilder.letters(navController: NavController) {
             LetterListView(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
+                onNavDrawerClicked = {
+                    coroutineScope.launch {
+                        drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
+                },
                 onScanClicked = navController::openScanForm,
                 toggleCategory = viewModel::toggleCategory,
-                setSearchTerms = viewModel::setSearchTerms
+                setSearchTerms = viewModel::setSearchTerms,
             )
         }
     }

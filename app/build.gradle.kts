@@ -74,9 +74,6 @@ dependencies {
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
-    implementation(libs.androidx.camera)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.androidx.camera.mlkit)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
@@ -86,8 +83,6 @@ dependencies {
     compileOnly(libs.koin.annotations)
     ksp(libs.koin.ksp)
 
-    implementation(libs.accompanist.permissions)
-
     implementation(libs.sqldelight)
     implementation(libs.sqldelight.coroutines)
     implementation(libs.sqldelight.primitive.adapters)
@@ -95,6 +90,8 @@ dependencies {
 
     implementation(libs.mlkit.textrecognition)
     implementation(libs.mlkit.documentscanner)
+
+    implementation(libs.colorpicker)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

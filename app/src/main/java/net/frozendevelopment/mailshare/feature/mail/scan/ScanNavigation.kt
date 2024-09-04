@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.scan
+package net.frozendevelopment.mailshare.feature.mail.scan
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK

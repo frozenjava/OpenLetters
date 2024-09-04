@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.list.ui
+package net.frozendevelopment.mailshare.feature.mail.list.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -37,6 +37,7 @@ import net.frozendevelopment.mailshare.ui.theme.MailShareTheme
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
+    onNavDrawerClicked: () -> Unit,
     searchTerms: String,
     onSearchChanged: (String) -> Unit,
 ) {
@@ -48,7 +49,7 @@ fun SearchBar(
                 shape = MaterialTheme.shapes.medium
             ),
     ) {
-        IconButton(onClick = {}) {
+        IconButton(onClick = onNavDrawerClicked) {
             Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
         }
 
@@ -105,7 +106,11 @@ fun SearchBar(
 private fun SearchBarPreview(darkTheme: Boolean, searchTerms: String) {
     MailShareTheme(darkTheme = darkTheme) {
         Surface {
-            SearchBar(searchTerms = searchTerms) { }
+            SearchBar(
+                searchTerms = searchTerms,
+                onNavDrawerClicked = {},
+                onSearchChanged = {}
+            )
         }
     }
 }

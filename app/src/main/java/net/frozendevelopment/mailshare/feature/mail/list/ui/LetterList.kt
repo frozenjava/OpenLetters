@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare.feature.list.ui
+package net.frozendevelopment.mailshare.feature.mail.list.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,13 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
 import net.frozendevelopment.mailshare.data.sqldelight.models.LetterId
-import net.frozendevelopment.mailshare.feature.list.LetterListState
+import net.frozendevelopment.mailshare.feature.mail.list.LetterListState
 
 @Composable
 fun LetterList(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     state: LetterListState,
+    onNavDrawerClicked: () -> Unit,
     onCellClicked: (LetterId) -> Unit,
     onScanClicked: () -> Unit,
     selectCategory: (CategoryId?) -> Unit,
@@ -76,6 +77,7 @@ fun LetterList(
             categories = state.categories,
             onToggleCategory = selectCategory,
             onSearchChanged = setSearchTerms,
+            onNavDrawerClicked = onNavDrawerClicked
         )
 
         FloatingActionButton(
