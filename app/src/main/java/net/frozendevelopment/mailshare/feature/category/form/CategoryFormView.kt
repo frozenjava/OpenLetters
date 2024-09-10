@@ -36,17 +36,16 @@ import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import net.frozendevelopment.mailshare.extensions.contrastColor
 import net.frozendevelopment.mailshare.ui.components.CategoryPill
 import net.frozendevelopment.mailshare.ui.theme.MailShareTheme
-
-const val CATEGORY_FORM_ROUTE = "/categories/form"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryFormView(
     state: CategoryFormState,
     onLabelChanged: (String) -> Unit,
-    onColorChanged: (Long) -> Unit,
+    onColorChanged: (Color) -> Unit,
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
 ) {
@@ -58,7 +57,7 @@ fun CategoryFormView(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         CenterAlignedTopAppBar(
-            title = { Text(text = "New Category") },
+            title = { Text(text = state.title) },
             navigationIcon = {
                 IconButton(onClick = onBackClicked) {
                     Icon(
@@ -81,24 +80,24 @@ fun CategoryFormView(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
-            color = Color(state.color),
+            color = state.color,
         ) {
             BasicTextField(
-                modifier = Modifier.padding(vertical = 32.dp),
+                modifier = Modifier.padding(vertical = 24.dp),
                 value = state.label,
                 onValueChange = onLabelChanged,
                 singleLine = true,
                 interactionSource = interactionSource,
-                cursorBrush = SolidColor(getContrastColor(backgroundColor = Color(state.color))),
+                cursorBrush = SolidColor(state.color.contrastColor),
                 textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = getContrastColor(backgroundColor = Color(state.color)),
+                    color = state.color.contrastColor,
                     textAlign = TextAlign.Center,
                 )
             ) { innerTextField ->
                 if (state.label.isBlank() && !isFocused) {
                     Text(
                         text = "Tap to type your label",
-                        color = getContrastColor(backgroundColor = Color(state.color)),
+                        color = state.color.contrastColor,
                         style = MaterialTheme.typography.titleLarge,
                     )
                 } else {
@@ -122,15 +121,11 @@ fun CategoryFormView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            onColorChanged = { onColorChanged(it.hexCode.toLong(16)) },
+            onColorChanged = { onColorChanged(it.color) },
             controller = controller,
-            initialColor = Color(state.color),
+            initialColor = state.color,
         )
     }
-}
-
-private fun getContrastColor(backgroundColor: Color): Color {
-    return if (backgroundColor.luminance() > 0.5) Color.Black else Color.White
 }
 
 @Composable
@@ -157,8 +152,9 @@ private fun DarkPreview() {
     CategoryFormPreview(
         darkTheme = true,
         state = CategoryFormState(
+            mode = CategoryFormMode.Create,
             label = "",
-            color = 0xFF0F0FF0,
+            color = Color(0xFF0F0FF0),
         )
     )
 }
@@ -169,8 +165,9 @@ private fun LightPreview() {
     CategoryFormPreview(
         darkTheme = false,
         state = CategoryFormState(
+            mode = CategoryFormMode.Create,
             label = "",
-            color = 0xFF0F0FF0,
+            color = Color(0xFF0F0FF0),
         )
     )
 }

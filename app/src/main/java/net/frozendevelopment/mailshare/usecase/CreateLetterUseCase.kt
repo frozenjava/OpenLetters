@@ -1,15 +1,18 @@
 package net.frozendevelopment.mailshare.usecase
 
+import android.content.Context
 import android.net.Uri
 import net.frozendevelopment.mailshare.data.sqldelight.MailShareDB
 import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
 import net.frozendevelopment.mailshare.data.sqldelight.models.DocumentId
 import net.frozendevelopment.mailshare.data.sqldelight.models.LetterId
 import net.frozendevelopment.mailshare.data.sqldelight.models.ThreadId
+import net.frozendevelopment.mailshare.util.DocumentManagerType
 import net.frozendevelopment.mailshare.util.TextExtractorType
 import java.time.Instant
 
 class CreateLetterUseCase(
+    private val documentManager: DocumentManagerType,
     private val textExtractor: TextExtractorType,
     private val database: MailShareDB,
     private val now: () -> Long = { Instant.now().epochSecond },
@@ -42,6 +45,7 @@ class CreateLetterUseCase(
             for (document in documents) {
                 val docId = DocumentId.random()
                 database.documentQueries.insertDocument(id = docId, letterId = letterId)
+                documentManager.persist(document, docId)
             }
 
             for (category in categories) {

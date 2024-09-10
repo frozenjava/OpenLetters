@@ -10,4 +10,9 @@ class UtilKoin {
     fun textExtractor(application: Application): TextExtractorType {
         return TextExtractor(application)
     }
+
+    @Factory
+    fun documentManager(application: Application): DocumentManagerType {
+        return DocumentManager(application)
+    }
 }

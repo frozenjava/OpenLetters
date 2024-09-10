@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import net.frozendevelopment.mailshare.data.sqldelight.migrations.Category
+import net.frozendevelopment.mailshare.extensions.contrastColor
 
 @Composable
 fun CategoryPill(
@@ -51,16 +52,16 @@ fun CategoryPill(
 fun CategoryPill(
     modifier: Modifier = Modifier,
     label: String,
-    color: Long,
+    color: Color,
     isSelected: Boolean,
     onToggle: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
     val buttonColor = if (isSelected)
-        Color(color).copy(alpha = 1f)
+        color.copy(alpha = 1f)
     else
-        Color(color).copy(alpha = .5f)
+        color.copy(alpha = .5f)
 
     CategoryPill(
         modifier = modifier
@@ -88,12 +89,12 @@ fun CategoryPill(
                 modifier = Modifier.size(16.dp),
                 imageVector = Icons.Default.Check,
                 contentDescription = "Selected",
-                tint = getContrastColor(backgroundColor = buttonColor),
+                tint = buttonColor.contrastColor,
             )
         }
         Text(
             text = label,
-            color = getContrastColor(backgroundColor = buttonColor),
+            color = buttonColor.contrastColor,
             style = MaterialTheme.typography.labelLarge,
         )
     }
@@ -163,16 +164,12 @@ fun CategoryPill(
     }
 }
 
-private fun getContrastColor(backgroundColor: Color): Color {
-    return if (backgroundColor.luminance() > 0.5) Color.Black else Color.White
-}
-
 @Preview
 @Composable
 private fun CategoryPillPreview() {
     CategoryPill(
         label = "Some Label",
-        color = 111111,
+        color = Color(111111),
         isSelected = false,
         onToggle = {}
     )
@@ -183,7 +180,7 @@ private fun CategoryPillPreview() {
 private fun SelectedCategoryPillPreview() {
     CategoryPill(
         label = "Some Label",
-        color = 111111,
+        color = Color(111111),
         isSelected = true,
         onToggle = {}
     )

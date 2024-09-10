@@ -1,2 +1,5 @@
 allThreads:
 SELECT * FROM thread;
+
+threadsByIds:
+SELECT * FROM thread WHERE id IN :threadIds ORDER BY lastModified DESC;

@@ -1,14 +1,3 @@
-import net.frozendevelopment.mailshare.data.sqldelight.models.LetterId;
-
-allLetters:
-SELECT id AS LetterId FROM letter ORDER BY created DESC;
-
-letterById:
-SELECT * FROM letter WHERE id = ?;
-
-lettersByCategory:
-SELECT letterId FROM letterToCategory WHERE categoryId = ?;
-
 lettersInThread:
 SELECT letterId FROM letterToThread WHERE threadId = ?;
 
@@ -42,8 +31,7 @@ SELECT
     letter.body,
     letter.created,
     letter.lastModified,
-    GROUP_CONCAT(category.id) AS categoryIds,
-    GROUP_CONCAT(category.label) AS categoryLabels
+    GROUP_CONCAT(category.color) AS categoryColors
 FROM letter
 LEFT JOIN letterToCategory ON letter.id = letterToCategory.letterId
 LEFT JOIN category ON letterToCategory.categoryId = category.id
@@ -58,15 +46,51 @@ SELECT
     letter.body,
     letter.created,
     letter.lastModified,
-    document.id AS documentId,
-    category.id AS categoryId,
-    category.label AS categoryLabel,
-    thread.id AS threadId,
-    thread.title AS threadTitle
+    GROUP_CONCAT(document.id) AS documentIds,
+    GROUP_CONCAT(letterToCategory.categoryId) AS categoryIds,
+    GROUP_CONCAT(letterToThread.threadId) AS threadIds
 FROM letter
 LEFT JOIN document ON letter.id = document.letterId
 LEFT JOIN letterToCategory ON letter.id = letterToCategory.letterId
-LEFT JOIN category ON letterToCategory.categoryId = category.id
 LEFT JOIN letterToThread ON letter.id = letterToThread.letterId
-LEFT JOIN thread ON letterToThread.threadId = thread.id
-WHERE letter.id = :letterId;
+WHERE letter.id = :letterId
+GROUP BY letter.id;
+
+hasLetters:
+SELECT CASE
+    WHEN COUNT(*) > 0 THEN 1
+    ELSE 0
+END AS hasLetters
+FROM letter;
+
+letterList:
+SELECT id
+FROM (
+    WITH FilteredLetters AS (
+        SELECT DISTINCT l.id, l.created
+        FROM letter l
+        LEFT JOIN letterToCategory ltc ON l.id = ltc.letterId
+        WHERE (ltc.categoryId = :categoryId OR :categoryId IS NULL)
+    )
+    SELECT fl.id
+    FROM FilteredLetters fl
+    ORDER BY fl.created DESC
+    LIMIT :limit
+);
+
+search:
+SELECT id
+FROM (
+    WITH FilteredLetters AS (
+        SELECT DISTINCT l.id
+        FROM letter l
+        LEFT JOIN letterToCategory ltc ON l.id = ltc.letterId
+        WHERE (ltc.categoryId = :categoryId OR :categoryId IS NULL)
+    )
+    SELECT fl.id
+    FROM FilteredLetters fl
+    JOIN letterFTS l ON fl.id = l.id
+    WHERE letterFTS MATCH :query
+    ORDER BY bm25(letterFTS)
+    LIMIT :limit
+);

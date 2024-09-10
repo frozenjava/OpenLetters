@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.parcelize)
+}
+
+ksp {
+    arg("KOIN_CONFIG_CHECK","true")
 }
 
 android {
@@ -55,6 +61,7 @@ sqldelight {
             packageName.set("net.frozendevelopment.mailshare.data.sqldelight")
             srcDirs("src/main/java")
             deriveSchemaFromMigrations = true
+            dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.0.2")
         }
     }
 }
@@ -92,6 +99,8 @@ dependencies {
     implementation(libs.mlkit.documentscanner)
 
     implementation(libs.colorpicker)
+
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

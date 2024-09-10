@@ -37,7 +37,7 @@ fun CategorySelector(
         item {
             CategoryPill(
                 label = "All",
-                color = Color.Black.value.toLong(),
+                color = Color.Black,
                 isSelected = selectedCategoryId == null,
                 onToggle = { toggleCategory(null) }
             )

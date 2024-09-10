@@ -1,10 +1,22 @@
 allCategories:
-SELECT * FROM category;
+SELECT * FROM category ORDER BY priority ASC, label ASC;
+
+categoriesByIds:
+SELECT * FROM category WHERE id IN :categoryIds ORDER BY priority ASC, label ASC;
 
 upsert:
-INSERT INTO category (id, label, color, created, lastModified) VALUES (
-    :id, :label, :color, :created, :lastModified
-);
+INSERT INTO category (id, label, color, priority, created, lastModified)
+VALUES (?, ?, ?, ?, ?, ?)
+ON CONFLICT(id)
+DO UPDATE SET
+    label = excluded.label,
+    color = excluded.color,
+    priority = excluded.priority,
+    created = excluded.created,
+    lastModified = excluded.lastModified;
 
 delete:
 DELETE FROM category WHERE id = ?;
+
+get:
+SELECT * FROM category WHERE id = ?;

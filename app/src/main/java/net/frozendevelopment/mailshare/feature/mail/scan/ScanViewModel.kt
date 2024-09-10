@@ -20,6 +20,7 @@ import net.frozendevelopment.mailshare.data.sqldelight.migrations.Category
 import net.frozendevelopment.mailshare.usecase.CreateLetterUseCase
 import net.frozendevelopment.mailshare.util.StatefulViewModel
 import net.frozendevelopment.mailshare.util.TextExtractorType
+import java.io.File
 
 @Immutable
 data class ScanState(
@@ -168,5 +169,17 @@ class ScanViewModel(
 
         update { copy(isBusy = false) }
         return true
+    }
+
+    private fun cleanUpCache() {
+        for (documents in state.documents) {
+            val path = documents.path ?: continue
+            File(path).takeIf { it.exists() }?.delete()
+        }
+    }
+
+    override fun onCleared() {
+        cleanUpCache()
+        super.onCleared()
     }
 }

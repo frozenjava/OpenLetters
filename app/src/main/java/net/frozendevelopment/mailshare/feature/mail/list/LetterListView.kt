@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
+import net.frozendevelopment.mailshare.data.sqldelight.models.LetterId
 import net.frozendevelopment.mailshare.feature.mail.list.ui.EmptyListView
 import net.frozendevelopment.mailshare.feature.mail.list.ui.LetterCell
 import net.frozendevelopment.mailshare.feature.mail.list.ui.LetterList
@@ -28,18 +29,22 @@ fun LetterListView(
     onScanClicked: () -> Unit,
     toggleCategory: (CategoryId?) -> Unit,
     setSearchTerms: (String) -> Unit,
+    openLetter: (LetterId) -> Unit,
 ) {
     if (state.isLoading) {
         Box(contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else if (state.showEmptyListView) {
-        EmptyListView(modifier = modifier, onScanClicked = onScanClicked)
+        EmptyListView(
+            modifier = modifier,
+            onScanClicked = onScanClicked,
+        )
     } else {
         LetterList(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            onCellClicked = {},
+            onCellClicked = openLetter,
             onNavDrawerClicked = onNavDrawerClicked,
             onScanClicked = onScanClicked,
             selectCategory = toggleCategory,
@@ -61,6 +66,7 @@ fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
                 onScanClicked = {},
                 toggleCategory = {},
                 setSearchTerms = {},
+                openLetter = {},
             )
         }
     }

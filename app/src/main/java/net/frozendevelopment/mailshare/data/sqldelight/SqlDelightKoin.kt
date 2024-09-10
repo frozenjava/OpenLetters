@@ -1,7 +1,10 @@
 package net.frozendevelopment.mailshare.data.sqldelight
 
 import android.content.Context
+import android.util.Log
+import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import app.cash.sqldelight.logs.LogSqliteDriver
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import net.frozendevelopment.mailshare.data.sqldelight.migrations.Category
 import net.frozendevelopment.mailshare.data.sqldelight.migrations.Document
@@ -11,11 +14,13 @@ import net.frozendevelopment.mailshare.data.sqldelight.migrations.LetterToCatego
 import net.frozendevelopment.mailshare.data.sqldelight.migrations.LetterToThread
 import net.frozendevelopment.mailshare.`data`.sqldelight.migrations.Thread
 import net.frozendevelopment.mailshare.data.sqldelight.models.CategoryId
+import net.frozendevelopment.mailshare.data.sqldelight.models.ColorAdapter
 import net.frozendevelopment.mailshare.data.sqldelight.models.DocumentId
 import net.frozendevelopment.mailshare.data.sqldelight.models.ThreadId
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
+import kotlin.math.log
 
 @Module
 class SqlDelightKoin {
@@ -29,8 +34,12 @@ class SqlDelightKoin {
             factory = RequerySQLiteOpenHelperFactory()
         )
 
+        val logDriver: SqlDriver = LogSqliteDriver(sqlDriver = driver) { log ->
+            Log.d("SQLDELIGHT", log)
+        }
+
         return MailShareDB(
-            driver = driver,
+            driver = logDriver,
             letterAdapter = Letter.Adapter(
                 idAdapter = LetterId.adapter,
             ),
@@ -40,6 +49,7 @@ class SqlDelightKoin {
             ),
             categoryAdapter = Category.Adapter(
                 idAdapter = CategoryId.adapter,
+                colorAdapter = ColorAdapter,
             ),
             threadAdapter = Thread.Adapter(
                 idAdapter = ThreadId.adapter

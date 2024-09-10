@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import net.frozendevelopment.mailshare.ui.components.ImageViewer
+import net.frozendevelopment.mailshare.ui.components.LazyImageView
 
 @Composable
 fun DocumentRow(
@@ -26,7 +26,7 @@ fun DocumentRow(
     ) {
         itemsIndexed(items = documents) { index, document ->
             Box(Modifier.background(MaterialTheme.colorScheme.surfaceVariant)) {
-                ImageViewer(uri = document)
+                LazyImageView(uri = document)
                 IconButton(onClick = { onDeleteDocumentClicked(index) }) {
                     Icon(
                         modifier = Modifier.align(Alignment.TopEnd),

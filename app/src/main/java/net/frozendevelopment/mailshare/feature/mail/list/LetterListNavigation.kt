@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
+import net.frozendevelopment.mailshare.feature.mail.detail.LetterDetailDestination
 import net.frozendevelopment.mailshare.feature.mail.scan.openScanForm
 import org.koin.androidx.compose.koinViewModel
 
@@ -27,7 +28,10 @@ fun NavGraphBuilder.letters(
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
         LaunchedEffect(viewModel) {
-            viewModel.load()
+            viewModel.load(
+                categoryFilter = state.selectedCategoryId,
+                searchTerms = state.searchTerms,
+            )
         }
 
         Surface {
@@ -44,6 +48,7 @@ fun NavGraphBuilder.letters(
                 onScanClicked = navController::openScanForm,
                 toggleCategory = viewModel::toggleCategory,
                 setSearchTerms = viewModel::setSearchTerms,
+                openLetter = { navController.navigate(LetterDetailDestination(it)) },
             )
         }
     }
