@@ -38,10 +38,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import androidx.compose.ui.zIndex
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.feature.category.manage.ui.CategoryRow
 
-const val MANAGE_CATEGORY_ROUTE = "/categories"
+@Serializable
+object ManageCategoryDestination
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

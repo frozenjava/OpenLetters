@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.feature.letter.scan.ui.CategoryPicker
 import net.frozendevelopment.openletters.feature.letter.scan.ui.DocumentRow
@@ -24,8 +25,11 @@ import net.frozendevelopment.openletters.feature.letter.scan.ui.ScanAppBar
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScannableTextField
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 
+@Serializable
+object ScanLetterDestination
+
 @Composable
-fun ScanFormView(
+fun ScanLetterView(
     modifier: Modifier = Modifier,
     state: ScanState,
     setSender: (String) -> Unit,
@@ -117,7 +121,7 @@ fun ScanFormView(
 private fun ScanFormViewPreview() {
     OpenLettersTheme {
         Surface {
-            ScanFormView(
+            ScanLetterView(
                 state = ScanState(),
                 toggleCategory = {},
                 setSender = {},

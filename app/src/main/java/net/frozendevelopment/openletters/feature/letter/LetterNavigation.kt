@@ -1,4 +1,4 @@
-package net.frozendevelopment.openletters.feature.letter.scan
+package net.frozendevelopment.openletters.feature.letter
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
@@ -6,9 +6,12 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -16,22 +19,82 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailView
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailViewModel
+import net.frozendevelopment.openletters.feature.letter.detail.LetterIdNavType
+import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
+import net.frozendevelopment.openletters.feature.letter.list.LetterListView
+import net.frozendevelopment.openletters.feature.letter.list.LetterListViewModel
+import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
+import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterView
+import net.frozendevelopment.openletters.feature.letter.scan.ScanViewModel
 import org.koin.androidx.compose.koinViewModel
+import kotlin.reflect.typeOf
 
-const val SCAN_FORM_ROUTE = "/letters/import"
+fun NavGraphBuilder.letters(
+    navController: NavController,
+    drawerState: DrawerState,
+) {
+    composable<LetterListDestination> {
+        val coroutineScope = rememberCoroutineScope()
+        val viewModel: LetterListViewModel = koinViewModel()
+        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-fun NavController.openScanForm(options: NavOptions = NavOptions.Builder().build()) {
-    navigate(SCAN_FORM_ROUTE, options)
-}
+        LaunchedEffect(viewModel) {
+            viewModel.load(
+                categoryFilter = state.selectedCategoryId,
+                searchTerms = state.searchTerms,
+            )
+        }
 
-fun NavGraphBuilder.scan(navController: NavController) {
-    composable(SCAN_FORM_ROUTE) {
+        Surface {
+            LetterListView(
+                modifier = Modifier.fillMaxSize(),
+                state = state,
+                onNavDrawerClicked = {
+                    coroutineScope.launch {
+                        drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
+                },
+                onScanClicked = { navController.navigate(ScanLetterDestination) },
+                toggleCategory = viewModel::toggleCategory,
+                setSearchTerms = viewModel::setSearchTerms,
+                openLetter = { navController.navigate(LetterDetailDestination(it)) },
+            )
+        }
+    }
+    composable<LetterDetailDestination>(
+        typeMap = mapOf(typeOf<LetterId>() to LetterIdNavType),
+    ) { backStackEntry ->
+        val destination = backStackEntry.toRoute<LetterDetailDestination>()
+        val viewModel: LetterDetailViewModel = koinViewModel()
+        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+        LaunchedEffect(viewModel) {
+            withContext(Dispatchers.IO) {
+                viewModel.load(destination.letterId)
+            }
+        }
+
+        Surface {
+            LetterDetailView(
+                state = state,
+                onBackClicked = navController::popBackStack
+            )
+        }
+
+    }
+    composable<ScanLetterDestination> {
         Surface {
             val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
@@ -59,7 +122,7 @@ fun NavGraphBuilder.scan(navController: NavController) {
                 }
             }
 
-            ScanFormView(
+            ScanLetterView(
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding(),

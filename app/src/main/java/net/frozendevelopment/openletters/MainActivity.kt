@@ -25,11 +25,9 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.feature.category.categories
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
-import net.frozendevelopment.openletters.feature.category.manage.MANAGE_CATEGORY_ROUTE
-import net.frozendevelopment.openletters.feature.letter.detail.letterDetail
-import net.frozendevelopment.openletters.feature.letter.list.LETTER_LIST_ROUTE
-import net.frozendevelopment.openletters.feature.letter.list.letters
-import net.frozendevelopment.openletters.feature.letter.scan.scan
+import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryDestination
+import net.frozendevelopment.openletters.feature.letter.letters
+import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
 import net.frozendevelopment.openletters.ui.components.MailNavDrawer
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 
@@ -46,7 +44,7 @@ class MainActivity : ComponentActivity() {
                 MailNavDrawer(
                     drawerState = drawerState,
                     goToMail = {
-                        navHostController.navigate(LETTER_LIST_ROUTE) {
+                        navHostController.navigate(LetterListDestination) {
                             popUpTo(navHostController.graph.id) {
                                 inclusive = true
                             }
@@ -55,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     },
                     goToThreads = {},
                     goToManageCategories = {
-                        navHostController.navigate(MANAGE_CATEGORY_ROUTE) {
+                        navHostController.navigate(ManageCategoryDestination) {
                             popUpTo(navHostController.graph.id) {
                                 inclusive = true
                             }
@@ -79,14 +77,12 @@ class MainActivity : ComponentActivity() {
                         ) {
                             NavHost(
                                 navController = navHostController,
-                                startDestination = LETTER_LIST_ROUTE,
+                                startDestination = LetterListDestination,
                                 enterTransition = { EnterTransition.None },
                                 exitTransition = { ExitTransition.None },
                             ) {
-                                letters(navHostController, drawerState)
-                                scan(navHostController)
-                                letterDetail(navHostController)
                                 categories(navHostController, drawerState)
+                                letters(navHostController, drawerState)
                             }
                         }
                     }

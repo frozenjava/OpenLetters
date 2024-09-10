@@ -16,7 +16,7 @@ import net.frozendevelopment.openletters.feature.category.form.CategoryFormMode
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormModeType
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormView
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormViewModel
-import net.frozendevelopment.openletters.feature.category.manage.MANAGE_CATEGORY_ROUTE
+import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryDestination
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryView
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -35,20 +35,22 @@ fun NavGraphBuilder.categories(
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
         val coroutineScope = rememberCoroutineScope()
 
-        CategoryFormView(
-            state = state,
-            onLabelChanged = viewModel::setLabel,
-            onColorChanged = viewModel::setColor,
-            onBackClicked = navController::popBackStack,
-            onSaveClicked = {
-                coroutineScope.launch {
-                    viewModel.save()
-                    navController.popBackStack()
-                }
-            },
-        )
+        Surface {
+            CategoryFormView(
+                state = state,
+                onLabelChanged = viewModel::setLabel,
+                onColorChanged = viewModel::setColor,
+                onBackClicked = navController::popBackStack,
+                onSaveClicked = {
+                    coroutineScope.launch {
+                        viewModel.save()
+                        navController.popBackStack()
+                    }
+                },
+            )
+        }
     }
-    composable(MANAGE_CATEGORY_ROUTE) {
+    composable<ManageCategoryDestination> {
         val viewModel: ManageCategoryViewModel = koinViewModel()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
         val coroutineScope = rememberCoroutineScope()

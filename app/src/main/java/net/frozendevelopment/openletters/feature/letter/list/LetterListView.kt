@@ -9,11 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.letter.list.ui.EmptyListView
 import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+
+@Serializable
+object LetterListDestination
 
 @Composable
 fun LetterListView(
