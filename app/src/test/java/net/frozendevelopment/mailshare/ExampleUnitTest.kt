@@ -1,4 +1,4 @@
-package net.frozendevelopment.mailshare
+package net.frozendevelopment.openletters
 
 import org.junit.Test
 

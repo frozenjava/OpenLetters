@@ -13,11 +13,11 @@ ksp {
 }
 
 android {
-    namespace = "net.frozendevelopment.mailshare"
+    namespace = "net.frozendevelopment.openletters"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "net.frozendevelopment.mailshare"
+        applicationId = "net.frozendevelopment.openletters"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -57,8 +57,8 @@ android {
 
 sqldelight {
     databases {
-        create("MailShareDB") {
-            packageName.set("net.frozendevelopment.mailshare.data.sqldelight")
+        create("OpenLettersDB") {
+            packageName.set("net.frozendevelopment.openletters.data.sqldelight")
             srcDirs("src/main/java")
             deriveSchemaFromMigrations = true
             dialect("app.cash.sqldelight:sqlite-3-38-dialect:2.0.2")
