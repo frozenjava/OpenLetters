@@ -2,6 +2,7 @@ package net.frozendevelopment.openletters.feature.letter.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -9,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
+import net.frozendevelopment.openletters.data.mock.mockLetter
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.letter.list.ui.EmptyListView
@@ -40,7 +43,7 @@ fun LetterListView(
         )
     } else {
         LetterList(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             state = state,
             onCellClicked = openLetter,
             onNavDrawerClicked = onNavDrawerClicked,
@@ -52,13 +55,15 @@ fun LetterListView(
 }
 
 @Composable
-fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
+private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
     OpenLettersTheme(darkTheme = darkTheme) {
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             LetterListView(
+                modifier = Modifier.padding(vertical = 8.dp),
                 state = state,
                 onNavDrawerClicked = {},
                 onScanClicked = {},
@@ -72,12 +77,36 @@ fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
 
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
-fun LetterListEmptyPreviewLight() {
-    LetterListPreview(darkTheme = false, state = LetterListState())
+private fun EmptyPreviewLight() {
+    LetterListPreview(
+        darkTheme = false,
+        state = LetterListState(showEmptyListView = true, isLoading = false)
+    )
 }
 
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
-fun LetterListEmptyPreviewDark() {
-    LetterListPreview(darkTheme = true, state = LetterListState())
+private fun EmptyPreviewDark() {
+    LetterListPreview(
+        darkTheme = true,
+        state = LetterListState(showEmptyListView = true, isLoading = false)
+    )
+}
+
+@Composable
+@Preview(showBackground = true, showSystemUi = true)
+private fun LoadingPreviewLight() {
+    LetterListPreview(
+        darkTheme = false,
+        state = LetterListState(isLoading = true)
+    )
+}
+
+@Composable
+@Preview(showBackground = true, showSystemUi = true)
+fun LoadingPreviewDark() {
+    LetterListPreview(
+        darkTheme = true,
+        state = LetterListState(isLoading = true)
+    )
 }

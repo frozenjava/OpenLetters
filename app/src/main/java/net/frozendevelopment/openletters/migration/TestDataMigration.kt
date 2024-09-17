@@ -4,6 +4,8 @@ import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.OpenLettersDB
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class TestDataMigration(
     private val letterQueries: LetterQueries,
@@ -31,8 +33,8 @@ class TestDataMigration(
                     sender = address,
                     recipient = address,
                     body = message,
-                    created = Instant.now().epochSecond,
-                    lastModified = Instant.now().epochSecond,
+                    created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+                    lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
                 )
             }
         }

@@ -1,16 +1,18 @@
-import net.frozendevelopment.openletters.data.sqldelight.models.ThreadId;
-import net.frozendevelopment.openletters.data.sqldelight.models.LetterId;
-import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId;
-import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId;
 import androidx.compose.ui.graphics.Color;
+import java.time.LocalDateTime;
+import kotlin.Boolean;
+import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId;
+import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId;
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId;
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId;
 
 CREATE TABLE letter (
     id TEXT AS LetterId PRIMARY KEY NOT NULL ON CONFLICT REPLACE,
     sender TEXT,
     recipient TEXT,
     body TEXT,
-    created INTEGER NOT NULL,
-    lastModified INTEGER NOT NULL
+    created INTEGER AS LocalDateTime NOT NULL,
+    lastModified INTEGER AS LocalDateTime NOT NULL
 );
 
 CREATE TABLE document (
@@ -24,8 +26,8 @@ CREATE TABLE category (
     label TEXT NOT NULL,
     color INTEGER AS Color NOT NULL DEFAULT 3318440,
     priority INTEGER NOT NULL DEFAULT 0,
-    created INTEGER NOT NULL,
-    lastModified INTEGER NOT NULL
+    created INTEGER AS LocalDateTime NOT NULL,
+    lastModified INTEGER AS LocalDateTime NOT NULL
 );
 
 CREATE TABLE letterToCategory (
@@ -36,17 +38,56 @@ CREATE TABLE letterToCategory (
     FOREIGN KEY (categoryId) REFERENCES category(id) ON DELETE CASCADE
 );
 
-CREATE TABLE thread (
-    id TEXT AS ThreadId PRIMARY KEY NOT NULL ON CONFLICT REPLACE ,
+CREATE TABLE reminder (
+    id TEXT AS ReminderId PRIMARY KEY,
     title TEXT NOT NULL,
-    created INTEGER NOT NULL,
-    lastModified INTEGER NOT NULL
+    description TEXT,
+    scheduledFor INTEGER AS LocalDateTime NOT NULL,
+    created INTEGER AS LocalDateTime NOT NULL,
+    lastModified INTEGER AS LocalDateTime NOT NULL,
+    notificationId INTEGER NOT NULL,
+    acknowledged INTEGER AS Boolean NOT NULL DEFAULT 0
 );
 
-CREATE TABLE letterToThread(
+CREATE TABLE letterToReminder (
     letterId TEXT AS LetterId NOT NULL,
-    threadId TEXT AS ThreadId NOT NULL,
-    PRIMARY KEY (letterId, threadId) ON CONFLICT IGNORE,
+    reminderId TEXT AS ReminderId NOT NULL,
+    PRIMARY KEY (letterId, reminderId) ON CONFLICT IGNORE,
     FOREIGN KEY (letterId) REFERENCES letter(id) ON DELETE CASCADE,
-    FOREIGN KEY (threadId) REFERENCES thread(id) ON DELETE CASCADE
+    FOREIGN KEY (reminderId) REFERENCES reminder(id) ON DELETE CASCADE
 );
+
+CREATE TABLE appMigration (
+    id TEXT PRIMARY KEY NOT NULL
+);
+
+CREATE VIRTUAL TABLE letterFTS USING fts5(
+    id TEXT,
+    sender TEXT,
+    recipient TEXT,
+    body TEXT,
+    created TEXT
+);
+
+CREATE TRIGGER launch_after_letter_insert
+AFTER INSERT ON letter
+BEGIN
+    INSERT INTO letterFTS (id, sender, recipient, body, created)
+    VALUES (
+        new.id,
+        new.sender,
+        new.recipient,
+        new.body,
+        datetime(new.created, 'unixepoch', 'localtime')
+    );
+END;
+
+CREATE TRIGGER launch_after_letter_update
+AFTER UPDATE ON letter
+BEGIN
+    UPDATE letterFTS SET
+        sender = new.sender,
+        recipient = new.recipient,
+        body = new.body
+    WHERE id = new.id;
+END;

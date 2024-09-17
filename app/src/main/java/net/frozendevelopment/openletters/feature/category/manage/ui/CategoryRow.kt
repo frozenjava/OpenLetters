@@ -33,6 +33,8 @@ import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.extensions.contrastColor
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Composable
 fun CategoryRow(
@@ -107,8 +109,8 @@ private fun ManagePillPreview() {
                     id = CategoryId.random(),
                     label = "Some Label",
                     color = Color(0xFF0F0FF0),
-                    created = 0,
-                    lastModified = 0,
+                    created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+                    lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
                     priority = 0,
                 ),
                 onEditClicked = {},

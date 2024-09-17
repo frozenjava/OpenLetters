@@ -20,9 +20,10 @@ class SearchLettersUseCase(
             ).executeAsList()
         } else {
             try {
+                val sanitizedQuery: String = query.replace(Regex("[-:()|\"\\[\\]{}*?+~\\\\/]"), "*")
                 letterQueries.search(
                     categoryId = category,
-                    query = "$query*",
+                    query = "$sanitizedQuery*",
                     limit = limit
                 ).executeAsList()
             } catch (e: SQLiteException) {

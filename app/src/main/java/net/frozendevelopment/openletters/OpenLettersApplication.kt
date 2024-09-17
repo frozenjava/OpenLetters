@@ -1,6 +1,8 @@
 package net.frozendevelopment.openletters
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import net.frozendevelopment.openletters.data.sqldelight.SqlDelightKoin
@@ -35,6 +37,7 @@ class OpenLettersApplication: Application(), KoinComponent {
         }
 
         initializeWorkManager()
+        initializeNotificationChannel()
     }
 
     private fun initializeWorkManager() {
@@ -44,5 +47,16 @@ class OpenLettersApplication: Application(), KoinComponent {
             .build()
 
         workManager.enqueue(appMigrationRequest)
+    }
+
+    private fun initializeNotificationChannel() {
+        val notificationChannel = NotificationChannel(
+            REMINDERS_CHANNEL_ID,
+            REMINDERS_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
+        )
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notificationChannel)
     }
 }

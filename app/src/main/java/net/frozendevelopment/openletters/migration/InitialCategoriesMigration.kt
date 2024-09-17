@@ -4,10 +4,12 @@ import androidx.compose.ui.graphics.Color
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class InitialCategoriesMigration(
     private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
-    private val now: () -> Long = { Instant.now().epochSecond }
+    private val now: () -> LocalDateTime = { LocalDateTime.now() },
 ) : AppMigration {
     override val migrationKey: String
         get() = "initial-categories"

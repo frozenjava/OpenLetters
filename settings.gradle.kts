@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Mail Share"
+rootProject.name = "Open Letters"
 include(":app")
  

@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Letter
-import net.frozendevelopment.openletters.data.sqldelight.migrations.Thread
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
@@ -39,7 +38,6 @@ class LetterDetailViewModel(
                     letter = letter.letter,
                     documents = letter.documents,
                     categories = letter.categories,
-                    threads = letter.threads
                 )
             }
         }

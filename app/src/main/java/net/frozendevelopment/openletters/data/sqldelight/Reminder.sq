@@ -1,0 +1,59 @@
+all:
+SELECT id FROM reminder ORDER BY scheduledFor DESC, title ASC;
+
+urgentReminders:
+SELECT id FROM reminder WHERE
+--     (scheduledFor BETWEEN (strftime('%s','now', 'utc') - 86400) AND (strftime('%s','now', 'utc')) + 86400) AND acknowledged = 0 OR
+    scheduledFor <= strftime('%s','now', 'utc') AND acknowledged = 0
+ORDER BY scheduledFor ASC, created ASC;
+
+upcomingReminders:
+SELECT id FROM reminder WHERE
+    (scheduledFor > (strftime('%s','now', 'utc'))) AND acknowledged = 0
+ORDER BY scheduledFor ASC, created ASC;
+
+pastReminders:
+SELECT id FROM reminder WHERE acknowledged != 0 ORDER BY scheduledFor DESC, created DESC;
+
+create:
+INSERT INTO reminder (id, title, description, scheduledFor, created, lastModified, notificationId) VALUES (
+    :id,
+    :title,
+    :description,
+    :scheduledFor,
+    :created,
+    :lastModified,
+    :notificationId
+);
+
+tagLetter:
+INSERT INTO letterToReminder (letterId, reminderId) VALUES (
+    :letterId, :reminderId
+);
+
+largestNotificationId:
+   SELECT MAX(notificationId) FROM reminder LIMIT 1;
+
+detail:
+SELECT
+    *,
+    GROUP_CONCAT(letterToReminder.letterId) AS letterIds
+FROM reminder
+LEFT JOIN letterToReminder ON reminderId = reminder.id
+WHERE id = :reminderId
+GROUP BY reminder.id;
+
+reminderInfo:
+SELECT
+    id,
+    title,
+    description,
+    scheduledFor,
+    created
+FROM reminder WHERE id = :reminderId;
+
+acknowledgeReminder:
+UPDATE reminder SET acknowledged = 1 WHERE id = :reminderId;
+
+notificationId:
+SELECT notificationId FROM reminder WHERE id = :reminderId;

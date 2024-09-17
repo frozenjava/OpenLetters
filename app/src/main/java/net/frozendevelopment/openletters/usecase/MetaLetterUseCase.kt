@@ -4,14 +4,15 @@ import androidx.compose.ui.graphics.Color
 import net.frozendevelopment.openletters.data.sqldelight.LetterInfo
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import java.time.LocalDateTime
 
 data class MetaLetter(
     val id: LetterId,
     val sender: String?,
     val recipient: String?,
     val body: String?,
-    val created: Long,
-    val lastModified: Long,
+    val created: LocalDateTime,
+    val lastModified: LocalDateTime,
     val categoryColors: List<Color>,
 )
 

@@ -1,6 +1,7 @@
-package net.frozendevelopment.openletters.feature.letter.scan.ui
+package net.frozendevelopment.openletters.ui.components
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -19,15 +20,16 @@ import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScanAppBar(
-    canLeaveSafely: Boolean,
+fun FormAppBar(
     isSavable: Boolean,
     onBackClicked: () -> Unit,
     onSaveClicked: () -> Unit,
+    title: @Composable () -> Unit,
+    actions: (@Composable RowScope.() -> Unit)? = null,
 ) {
     var showLeaveConfirmation: Boolean by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = !canLeaveSafely) {
+    BackHandler(enabled = isSavable) {
         showLeaveConfirmation = true
     }
 
@@ -50,10 +52,10 @@ fun ScanAppBar(
     }
 
     CenterAlignedTopAppBar(
-        title = { Text(text = "Import Letter") },
+        title = title,
         navigationIcon = {
             IconButton(onClick = {
-                if (canLeaveSafely) {
+                if (!isSavable) {
                     onBackClicked()
                 } else {
                     showLeaveConfirmation = true
@@ -72,6 +74,8 @@ fun ScanAppBar(
             ) {
                 Text("Save")
             }
+
+            actions?.invoke(this)
         }
     )
 }

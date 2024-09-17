@@ -23,9 +23,10 @@ import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 fun MailNavDrawer(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     goToMail: () -> Unit,
-    goToThreads: () -> Unit,
     goToManageCategories: () -> Unit,
     goToCreateCategory: () -> Unit,
+    goToReminders: () -> Unit,
+    goToCreateReminder: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
@@ -36,9 +37,10 @@ fun MailNavDrawer(
             ModalDrawerSheet {
                 DrawerContent(
                     goToMail = goToMail,
-                    goToThreads = goToThreads,
                     goToManageCategories = goToManageCategories,
-                    goToCreateCategory = goToCreateCategory
+                    goToCreateCategory = goToCreateCategory,
+                    goToReminders = goToReminders,
+                    goToCreateReminder = goToCreateReminder
                 )
             }
         },
@@ -48,9 +50,10 @@ fun MailNavDrawer(
 @Composable
 private fun DrawerContent(
     goToMail: () -> Unit,
-    goToThreads: () -> Unit,
     goToManageCategories: () -> Unit,
     goToCreateCategory: () -> Unit,
+    goToReminders: () -> Unit,
+    goToCreateReminder: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(16.dp),
@@ -65,12 +68,6 @@ private fun DrawerContent(
             label = { Text("Mail Box") },
             selected = false,
             onClick = goToMail
-        )
-
-        NavigationDrawerItem(
-            label = { Text("Threads") },
-            selected = false,
-            onClick = goToThreads
         )
 
         HorizontalDivider()
@@ -94,6 +91,25 @@ private fun DrawerContent(
 
         HorizontalDivider()
 
+        Text(
+            text = "Reminders",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        NavigationDrawerItem(
+            label = { Text("Manage Reminders") },
+            selected = false,
+            onClick = goToReminders
+        )
+
+        NavigationDrawerItem(
+            label = { Text("Create Reminder") },
+            selected = false,
+            onClick = goToCreateReminder
+        )
+
+        HorizontalDivider()
+
         NavigationDrawerItem(
             label = { Text("Settings") },
             selected = false,
@@ -109,9 +125,10 @@ fun MailNavDrawerPreview() {
         Surface {
             DrawerContent(
                 goToMail = {},
-                goToThreads = {},
                 goToManageCategories = {},
                 goToCreateCategory = {},
+                goToReminders = {},
+                goToCreateReminder = {},
             )
         }
     }

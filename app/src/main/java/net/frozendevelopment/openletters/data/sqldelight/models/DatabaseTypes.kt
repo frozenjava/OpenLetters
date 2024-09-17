@@ -5,14 +5,13 @@ import app.cash.sqldelight.ColumnAdapter
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationStrategy
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
-import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @JvmInline
@@ -128,37 +127,57 @@ value class CategoryId(val value: String): Parcelable {
 
 @JvmInline
 @Parcelize
-@Serializable(with = ThreadId.Serializer::class)
-value class ThreadId(val value: String): Parcelable {
+@Serializable(with = ReminderId.Serializer::class)
+value class ReminderId(val value: String): Parcelable {
     companion object {
-        val adapter = object: ColumnAdapter<ThreadId, String> {
-            override fun decode(databaseValue: String): ThreadId {
-                return ThreadId(databaseValue)
+        val adapter = object: ColumnAdapter<ReminderId, String> {
+            override fun decode(databaseValue: String): ReminderId {
+                return ReminderId(databaseValue)
             }
 
-            override fun encode(value: ThreadId): String {
+            override fun encode(value: ReminderId): String {
                 return value.value
             }
         }
 
-        fun random(): ThreadId {
-            return ThreadId(UUID.randomUUID().toString())
+        fun random(): ReminderId {
+            return ReminderId(UUID.randomUUID().toString())
         }
     }
 
-    object Serializer: KSerializer<ThreadId> {
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ThreadId", PrimitiveKind.STRING)
+    object Serializer: KSerializer<ReminderId> {
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("ReminderId", PrimitiveKind.STRING)
 
-        override fun deserialize(decoder: Decoder): ThreadId {
-            return ThreadId(decoder.decodeString())
+        override fun deserialize(decoder: Decoder): ReminderId {
+            return ReminderId(decoder.decodeString())
         }
 
-        override fun serialize(encoder: Encoder, value: ThreadId) {
+        override fun serialize(encoder: Encoder, value: ReminderId) {
             encoder.encodeString(value.value)
         }
     }
 
     override fun toString(): String {
         return value
+    }
+}
+
+object LocalDateTimeAdapter: ColumnAdapter<LocalDateTime, Long> {
+    override fun decode(databaseValue: Long): LocalDateTime {
+        return LocalDateTime.ofEpochSecond(databaseValue, 0, ZoneOffset.UTC)
+    }
+
+    override fun encode(value: LocalDateTime): Long {
+        return value.toEpochSecond(ZoneOffset.UTC)
+    }
+}
+
+object BooleanAdapter: ColumnAdapter<Boolean, Int> {
+    override fun decode(databaseValue: Int): Boolean {
+        return databaseValue != 0
+    }
+
+    override fun encode(value: Boolean): Int {
+        return if (value) 1 else 0
     }
 }

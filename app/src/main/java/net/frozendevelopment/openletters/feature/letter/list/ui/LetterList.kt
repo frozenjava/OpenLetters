@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.letter.list.LetterListState
+import net.frozendevelopment.openletters.ui.components.LetterCell
 
 @Composable
 fun LetterList(
@@ -73,28 +74,14 @@ fun LetterList(
         }
 
         if (state.letters.isEmpty()) {
-            Column(
+            BadFilters(
                 modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelLarge,
-                    text = """
-                        There are no letters to display.
-                        Please check your filters.
-                    """.trimIndent()
-                )
-
-                TextButton(onClick = {
+                onClearClick = {
                     selectCategory(null)
                     setSearchTerms("")
                     focusManager.clearFocus()
-                }) {
-                    Text(text = "Clear Filters")
                 }
-            }
-
+            )
         }
 
         FilterBar(
@@ -126,6 +113,30 @@ fun LetterList(
             onClick = onScanClicked
         ) {
             Icon(imageVector = Icons.Outlined.DocumentScanner, contentDescription = "Import Mail")
+        }
+    }
+}
+
+@Composable
+private fun BadFilters(
+    modifier: Modifier = Modifier,
+    onClearClick: () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.labelLarge,
+            text = """
+                        There are no letters to display.
+                        Please check your filters.
+                    """.trimIndent()
+        )
+
+        TextButton(onClick = onClearClick) {
+            Text(text = "Clear Filters")
         }
     }
 }

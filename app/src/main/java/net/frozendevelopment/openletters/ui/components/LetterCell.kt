@@ -1,4 +1,4 @@
-package net.frozendevelopment.openletters.feature.letter.list.ui
+package net.frozendevelopment.openletters.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,11 +34,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.extensions.dateString
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import net.frozendevelopment.openletters.usecase.MetaLetter
 import net.frozendevelopment.openletters.usecase.MetaLetterUseCase
 import org.koin.compose.koinInject
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -67,11 +71,6 @@ fun LetterCell(
     categoryColors: List<Color> = emptyList(),
     onClick: (LetterId) -> Unit,
 ) {
-    val date = Date(letter.created * 1000) // Convert seconds to milliseconds
-    val dateFormat = SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault())
-    val formattedDate = dateFormat.format(date)
-    var addressRowWidth by remember { mutableStateOf(0.dp) }
-
     Card(
         modifier = modifier,
         onClick = { onClick(letter.id) },
@@ -82,15 +81,11 @@ fun LetterCell(
             horizontalAlignment = Alignment.Start
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onGloballyPositioned {
-                        addressRowWidth = it.size.width.dp
-                    },
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    modifier = Modifier.widthIn(max = addressRowWidth / 5),
+                    modifier = Modifier.fillMaxWidth(.5f),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("From: ")
@@ -105,10 +100,10 @@ fun LetterCell(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    modifier = Modifier.widthIn(max = addressRowWidth / 5),
+                    modifier = Modifier.fillMaxWidth(),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("To: ")
@@ -130,8 +125,6 @@ fun LetterCell(
                 overflow = TextOverflow.Ellipsis,
             )
 
-
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -144,7 +137,7 @@ fun LetterCell(
                         }
 
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                            append(formattedDate)
+                            append(letter.created.dateString)
                         }
                     },
                     fontSize = MaterialTheme.typography.labelMedium.fontSize,
@@ -202,8 +195,8 @@ private fun LetterCellLightPreview() {
             body = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             """.trimIndent(),
-            created = 0,
-            lastModified = 0,
+            created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+            lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
             categoryColors = listOf(Color.Cyan, Color.Gray, Color.Yellow),
         )
     )
@@ -229,8 +222,8 @@ private fun LetterCellDarkPreview() {
             body = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             """.trimIndent(),
-            created = 0,
-            lastModified = 0,
+            created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+            lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
             categoryColors = listOf(Color.Cyan, Color.Gray, Color.Yellow),
         )
     )
@@ -248,8 +241,8 @@ private fun PoorlyFormattedAddressLightPreview() {
             body = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             """.trimIndent(),
-            created = 0,
-            lastModified = 0,
+            created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+            lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
             categoryColors = listOf(Color.Cyan, Color.Gray, Color.Yellow),
         )
     )
@@ -267,8 +260,8 @@ private fun PoorlyFormattedAddressDarkPreview() {
             body = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             """.trimIndent(),
-            created = 0,
-            lastModified = 0,
+            created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+            lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
             categoryColors = listOf(Color.Cyan, Color.Gray, Color.Yellow),
         )
     )

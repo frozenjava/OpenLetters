@@ -82,6 +82,7 @@ fun LetterDetail(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
+                modifier = Modifier.fillMaxWidth(.5f),
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("From: ")

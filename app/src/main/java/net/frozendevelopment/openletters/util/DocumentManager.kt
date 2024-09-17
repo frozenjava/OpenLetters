@@ -45,7 +45,8 @@ class DocumentManager(
 
     @Throws(IllegalStateException::class)
     override fun persist(cacheUri: Uri, documentId: DocumentId): Uri {
-        if (cacheUri.path.isNullOrBlank() || !File(cacheUri.path).exists()) {
+        val cachePath = cacheUri.path
+        if (cachePath.isNullOrBlank() || !File(cachePath).exists()) {
             throw IllegalStateException("Cache file does not exist")
         }
 

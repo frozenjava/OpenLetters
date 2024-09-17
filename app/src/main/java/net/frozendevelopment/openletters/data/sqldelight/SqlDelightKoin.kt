@@ -11,12 +11,13 @@ import net.frozendevelopment.openletters.data.sqldelight.migrations.Document
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.`data`.sqldelight.migrations.Letter
 import net.frozendevelopment.openletters.data.sqldelight.migrations.LetterToCategory
-import net.frozendevelopment.openletters.data.sqldelight.migrations.LetterToThread
-import net.frozendevelopment.openletters.data.sqldelight.migrations.Thread
+import net.frozendevelopment.openletters.data.sqldelight.migrations.LetterToReminder
+import net.frozendevelopment.openletters.data.sqldelight.migrations.Reminder
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.ColorAdapter
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
-import net.frozendevelopment.openletters.data.sqldelight.models.ThreadId
+import net.frozendevelopment.openletters.data.sqldelight.models.LocalDateTimeAdapter
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
@@ -41,6 +42,8 @@ class SqlDelightKoin {
             driver = logDriver,
             letterAdapter = Letter.Adapter(
                 idAdapter = LetterId.adapter,
+                createdAdapter = LocalDateTimeAdapter,
+                lastModifiedAdapter = LocalDateTimeAdapter
             ),
             documentAdapter = Document.Adapter(
                 idAdapter = DocumentId.adapter,
@@ -49,29 +52,34 @@ class SqlDelightKoin {
             categoryAdapter = Category.Adapter(
                 idAdapter = CategoryId.adapter,
                 colorAdapter = ColorAdapter,
-            ),
-            threadAdapter = Thread.Adapter(
-                idAdapter = ThreadId.adapter
-            ),
-            letterToThreadAdapter = LetterToThread.Adapter(
-                letterIdAdapter = LetterId.adapter,
-                threadIdAdapter = ThreadId.adapter
+                createdAdapter = LocalDateTimeAdapter,
+                lastModifiedAdapter = LocalDateTimeAdapter
             ),
             letterToCategoryAdapter = LetterToCategory.Adapter(
                 letterIdAdapter = LetterId.adapter,
                 categoryIdAdapter = CategoryId.adapter
-            )
+            ),
+            reminderAdapter = Reminder.Adapter(
+                idAdapter = ReminderId.adapter,
+                createdAdapter = LocalDateTimeAdapter,
+                lastModifiedAdapter = LocalDateTimeAdapter,
+                scheduledForAdapter = LocalDateTimeAdapter
+            ),
+            letterToReminderAdapter = LetterToReminder.Adapter(
+                letterIdAdapter = LetterId.adapter,
+                reminderIdAdapter = ReminderId.adapter
+            ),
         )
     }
+
+    @Factory
+    fun reminderQueries(openLettersDB: OpenLettersDB) = openLettersDB.reminderQueries
 
     @Factory
     fun letterQueries(openLettersDB: OpenLettersDB) = openLettersDB.letterQueries
 
     @Factory
     fun categoryQueries(openLettersDB: OpenLettersDB) = openLettersDB.categoryQueries
-
-    @Factory
-    fun threadQueries(openLettersDB: OpenLettersDB) = openLettersDB.threadQueries
 
     @Factory
     fun documentQueries(openLettersDB: OpenLettersDB) = openLettersDB.documentQueries

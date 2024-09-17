@@ -22,18 +22,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.feature.category.categories
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryDestination
 import net.frozendevelopment.openletters.feature.letter.letters
 import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
+import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
+import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
+import net.frozendevelopment.openletters.feature.reminder.reminders
 import net.frozendevelopment.openletters.ui.components.MailNavDrawer
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             OpenLettersTheme {
@@ -51,7 +59,6 @@ class MainActivity : ComponentActivity() {
                         }
                         coroutineScope.launch { drawerState.close() }
                     },
-                    goToThreads = {},
                     goToManageCategories = {
                         navHostController.navigate(ManageCategoryDestination) {
                             popUpTo(navHostController.graph.id) {
@@ -64,6 +71,18 @@ class MainActivity : ComponentActivity() {
                         navHostController.navigate(CategoryFormDestination())
                         coroutineScope.launch { drawerState.close() }
                     },
+                    goToReminders = {
+                        navHostController.navigate(ReminderListDestination) {
+                            popUpTo(navHostController.graph.id) {
+                                inclusive = true
+                            }
+                        }
+                        coroutineScope.launch { drawerState.close() }
+                    },
+                    goToCreateReminder = {
+                        navHostController.navigate(ReminderFormDestination)
+                        coroutineScope.launch { drawerState.close() }
+                    }
                 ) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
                         Box(modifier = Modifier
@@ -83,6 +102,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 categories(navHostController, drawerState)
                                 letters(navHostController, drawerState)
+                                reminders(navHostController, drawerState)
                             }
                         }
                     }
