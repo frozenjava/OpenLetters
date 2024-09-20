@@ -110,7 +110,8 @@ fun ScanLetterView(
             DocumentRow(
                 modifier = Modifier.fillMaxWidth(),
                 documents = state.documents,
-                onDeleteDocumentClicked = onDeleteDocumentClicked
+                onAddButtonClicks = openLetterScanner,
+                onDeleteDocumentClicked = onDeleteDocumentClicked,
             )
         }
     }

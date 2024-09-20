@@ -8,8 +8,9 @@ import android.content.Intent
 class ReminderReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val scheduleNotificationService = context?.let { ReminderNotification(it) }
-        val title: String? = intent?.getStringExtra(ReminderNotification.TITLE_KEY)
+        val title: String = intent?.getStringExtra(ReminderNotification.TITLE_KEY) ?: "Open Letters Reminder"
         val reminderId: String = intent?.getStringExtra(ReminderNotification.REMINDER_ID_KEY) ?: return
-        scheduleNotificationService?.send(title, reminderId)
+        val description: String? = intent.getStringExtra(ReminderNotification.CONTENT_KEY)
+        scheduleNotificationService?.send(title, description, reminderId)
     }
 }

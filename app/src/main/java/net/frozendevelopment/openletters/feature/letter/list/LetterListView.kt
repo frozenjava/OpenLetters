@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.mock.mockLetter
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.feature.letter.list.ui.EmptyListView
 import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
@@ -31,6 +32,8 @@ fun LetterListView(
     toggleCategory: (CategoryId?) -> Unit,
     setSearchTerms: (String) -> Unit,
     openLetter: (LetterId) -> Unit,
+    onReminderClicked: (ReminderId) -> Unit,
+    viewAllRemindersClicked: () -> Unit,
 ) {
     if (state.isLoading) {
         Box(contentAlignment = Alignment.Center) {
@@ -50,6 +53,8 @@ fun LetterListView(
             onScanClicked = onScanClicked,
             selectCategory = toggleCategory,
             setSearchTerms = setSearchTerms,
+            onReminderClicked = onReminderClicked,
+            viewAllRemindersClicked = viewAllRemindersClicked,
         )
     }
 }
@@ -70,6 +75,8 @@ private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
                 toggleCategory = {},
                 setSearchTerms = {},
                 openLetter = {},
+                onReminderClicked = {},
+                viewAllRemindersClicked = {},
             )
         }
     }

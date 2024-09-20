@@ -28,10 +28,16 @@ import org.koin.core.annotation.Module
 class FeatureKoin {
     @KoinViewModel
     fun letterListViewModel(
+        reminderQueries: ReminderQueries,
         letterQueries: LetterQueries,
         searchUseCase: SearchLettersUseCase,
         categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
-    ) = LetterListViewModel(letterQueries, searchUseCase, categoryQueries)
+    ) = LetterListViewModel(
+        reminderQueries = reminderQueries,
+        letterQueries = letterQueries,
+        searchUseCase = searchUseCase,
+        categoryQueries = categoryQueries
+    )
 
     @KoinViewModel
     fun scanViewModel(

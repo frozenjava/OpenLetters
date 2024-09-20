@@ -8,9 +8,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
+import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
@@ -22,10 +24,18 @@ data class LetterListState(
     val selectedCategoryId: CategoryId? = null,
     val letters: List<LetterId> = emptyList(),
     val categories: List<Category> = emptyList(),
-    val searchTerms: String = ""
-)
+    val searchTerms: String = "",
+    val urgentReminders: List<ReminderId> = emptyList(),
+    val upcomingReminders: List<ReminderId> = emptyList(),
+) {
+    val listHash: String
+        get() = letters.hashCode().toString() +
+                urgentReminders.hashCode().toString() +
+                upcomingReminders.hashCode().toString()
+}
 
 class LetterListViewModel(
+    private val reminderQueries: ReminderQueries,
     private val letterQueries: LetterQueries,
     private val searchUseCase: SearchLettersUseCase,
     private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
@@ -54,11 +64,23 @@ class LetterListViewModel(
             category = categoryFilter
         )
 
+        val urgentReminders = if (searchTerms.isBlank() && categoryFilter == null)
+            reminderQueries.urgentReminders().executeAsList()
+        else
+            emptyList()
+
+        val upcomingReminders = if (searchTerms.isBlank() && categoryFilter == null)
+            reminderQueries.upcomingReminders().executeAsList()
+        else
+            emptyList()
+
         update {
             copy(
                 isLoading = false,
                 letters = letters,
-                categories = categories
+                categories = categories,
+                urgentReminders = urgentReminders,
+                upcomingReminders = upcomingReminders
             )
         }
     }

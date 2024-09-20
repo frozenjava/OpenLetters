@@ -53,7 +53,7 @@ fun LetterCell(
     onClick: (LetterId) -> Unit,
     letterUseCase: MetaLetterUseCase = koinInject(),
 ) {
-    // TODO: If the letter isn't found show an error
+    // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
     val letter = letterUseCase.load(id) ?: return
 
     LetterCell(
@@ -73,7 +73,7 @@ fun LetterCell(
 ) {
     Card(
         modifier = modifier,
-        onClick = { onClick(letter.id) },
+        onClick = { onClick(letter.id) }
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

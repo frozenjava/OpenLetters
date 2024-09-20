@@ -25,14 +25,9 @@ data class ScanState(
     val isBusy: Boolean = false,
     val sender: String? = null,
     val recipient: String? = null,
-    val scanTarget: ScanTarget = ScanTarget.LETTER,
     val documents: List<Uri> = emptyList(),
     val categories: Map<Category, Boolean> = emptyMap(),
 ) {
-    enum class ScanTarget {
-        SENDER, RECIPIENT, LETTER
-    }
-
     val canLeaveSafely: Boolean
         get() = !isBusy && sender.isNullOrBlank() && recipient.isNullOrBlank() && documents.isEmpty()
 
@@ -85,7 +80,7 @@ class ScanViewModel(
             }
 
             // update the state to show the processing indicator and the scanned documents
-            update { copy(documents = pages.map { it.imageUri }) }
+            update { copy(documents = documents + pages.map { it.imageUri }) }
         }
     }
 

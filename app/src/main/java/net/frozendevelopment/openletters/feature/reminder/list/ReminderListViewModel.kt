@@ -10,7 +10,10 @@ data class ReminderListState(
     val urgentReminders: List<ReminderId> = emptyList(),
     val upcomingReminders: List<ReminderId> = emptyList(),
     val pastReminders: List<ReminderId> = emptyList(),
-)
+) {
+    val isEmpty: Boolean
+        get() = urgentReminders.isEmpty() && upcomingReminders.isEmpty() && pastReminders.isEmpty()
+}
 
 class ReminderListViewModel(
     private val reminderQueries: ReminderQueries

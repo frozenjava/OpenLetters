@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun ReminderCell(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     id: ReminderId,
     onClick: (ReminderId) -> Unit,
     reminderQueries: ReminderQueries = koinInject()

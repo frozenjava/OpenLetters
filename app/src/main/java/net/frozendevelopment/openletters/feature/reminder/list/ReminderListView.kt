@@ -17,10 +17,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
+import net.frozendevelopment.openletters.feature.reminder.list.ui.EmptyReminderListCell
 import net.frozendevelopment.openletters.ui.components.ReminderCell
 
 @Serializable
@@ -35,7 +37,10 @@ fun ReminderListView(
     onReminderClicked: (ReminderId) -> Unit,
     createReminderClicked: () -> Unit,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         CenterAlignedTopAppBar(
             title = { Text(text = "Reminders") },
             navigationIcon = {
@@ -55,6 +60,13 @@ fun ReminderListView(
                 }
             }
         )
+
+        if (state.isEmpty) {
+            EmptyReminderListCell(
+                modifier = Modifier.fillMaxWidth(.95f),
+                onClicked = createReminderClicked
+            )
+        }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

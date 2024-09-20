@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,18 @@ fun CategorySelector(
     categories: List<Category>,
     toggleCategory: (CategoryId?) -> Unit,
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(selectedCategoryId) {
+        val scrollIndex = if (selectedCategoryId == null) {
+            0
+        } else {
+            categories.indexOfFirst { it.id == selectedCategoryId } + 1
+        }
+
+        listState.animateScrollToItem(
+            index = scrollIndex,
+            scrollOffset = -(listState.layoutInfo.viewportSize.width / 3)
+        )
+    }
 
     LazyRow(
         modifier = modifier,
@@ -50,13 +62,7 @@ fun CategorySelector(
             CategoryPill(
                 category = category,
                 isSelected = category.id == selectedCategoryId,
-                onToggle = {
-                    toggleCategory(category.id)
-
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(categories.indexOf(category))
-                    }
-                }
+                onToggle = { toggleCategory(category.id) }
             )
         }
     }

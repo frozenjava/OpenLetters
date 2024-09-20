@@ -15,7 +15,10 @@ import net.frozendevelopment.openletters.util.StatefulViewModel
 data class ManageCategoryState(
     val selectedCategory: CategoryId? = null,
     val categories: List<Category> = emptyList(),
-)
+) {
+    val isEmpty: Boolean
+        get() = categories.isEmpty()
+}
 
 class ManageCategoryViewModel(
     private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,

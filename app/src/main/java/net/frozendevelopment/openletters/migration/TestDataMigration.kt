@@ -24,7 +24,7 @@ class TestDataMigration(
         )
 
         // create a list of messages that sound like something you'd find in a letter
-        val message = "We've been trying to reach you about your car"
+        val message = "We've been trying to reach you about your cars extended warranty"
 
         letterQueries.transaction {
             for (address in addresses) {
@@ -33,8 +33,8 @@ class TestDataMigration(
                     sender = address,
                     recipient = address,
                     body = message,
-                    created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                    lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+                    created = LocalDateTime.now(),
+                    lastModified = LocalDateTime.now(),
                 )
             }
         }

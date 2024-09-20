@@ -66,6 +66,7 @@ fun CategoryPill(
     CategoryPill(
         modifier = modifier
             .scale(scale.value)
+            .clip(ButtonDefaults.shape)
             .clickable {
                 onToggle()
                 coroutineScope.launch {

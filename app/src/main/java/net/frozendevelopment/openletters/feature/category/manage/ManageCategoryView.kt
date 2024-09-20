@@ -41,6 +41,7 @@ import androidx.compose.ui.zIndex
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.feature.category.manage.ui.CategoryRow
+import net.frozendevelopment.openletters.feature.category.manage.ui.EmptyCategoryListCell
 
 @Serializable
 object ManageCategoryDestination
@@ -61,6 +62,7 @@ fun ManageCategoryView(
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CenterAlignedTopAppBar(
             title = { Text(text = "Categories") },
@@ -82,6 +84,13 @@ fun ManageCategoryView(
             }
         )
 
+        if (state.isEmpty) {
+            EmptyCategoryListCell(
+                modifier = Modifier.fillMaxWidth(.95f),
+                onClicked = { editCategoryClicked(null) }
+            )
+        }
+
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 128.dp),
@@ -90,14 +99,16 @@ fun ManageCategoryView(
                 .fillMaxSize()
 
         ) {
-            item {
-                Text(
-                    text = "Hold and drag to reorder",
-                    style = MaterialTheme.typography.labelLarge,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                )
+            if (!state.isEmpty) {
+                item {
+                    Text(
+                        text = "Hold and drag to reorder",
+                        style = MaterialTheme.typography.labelLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    )
+                }
             }
 
             itemsIndexed(

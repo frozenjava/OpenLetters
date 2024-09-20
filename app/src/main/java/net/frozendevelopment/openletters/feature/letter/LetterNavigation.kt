@@ -36,6 +36,8 @@ import net.frozendevelopment.openletters.feature.letter.list.LetterListViewModel
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterView
 import net.frozendevelopment.openletters.feature.letter.scan.ScanViewModel
+import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import org.koin.androidx.compose.koinViewModel
 import kotlin.reflect.typeOf
 
@@ -70,6 +72,8 @@ fun NavGraphBuilder.letters(
                 toggleCategory = viewModel::toggleCategory,
                 setSearchTerms = viewModel::setSearchTerms,
                 openLetter = { navController.navigate(LetterDetailDestination(it)) },
+                onReminderClicked = { navController.navigate(ReminderDetailDestination(it)) },
+                viewAllRemindersClicked = { navController.navigate(ReminderListDestination) },
             )
         }
     }
