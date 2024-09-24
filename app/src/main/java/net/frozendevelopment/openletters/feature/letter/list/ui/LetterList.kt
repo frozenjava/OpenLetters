@@ -58,7 +58,7 @@ fun LetterList(
     onScanClicked: () -> Unit,
     selectCategory: (CategoryId?) -> Unit,
     setSearchTerms: (String) -> Unit,
-    onReminderClicked: (ReminderId) -> Unit,
+    onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
     viewAllRemindersClicked: () -> Unit,
     listState: LazyListState = rememberLazyListState(),
     letterUseCase: MetaLetterUseCase = koinInject(),

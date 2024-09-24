@@ -55,10 +55,6 @@ fun NavGraphBuilder.categories(
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
         val coroutineScope = rememberCoroutineScope()
 
-        LaunchedEffect(viewModel) {
-            viewModel.load()
-        }
-
         Surface {
             ManageCategoryView(
                 state = state,

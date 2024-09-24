@@ -18,7 +18,7 @@ data class ReminderListState(
 class ReminderListViewModel(
     private val reminderQueries: ReminderQueries
 ) : StatefulViewModel<ReminderListState>(ReminderListState()) {
-    suspend fun load() {
+    override fun load() {
         update { copy(
             urgentReminders = reminderQueries.urgentReminders().executeAsList(),
             upcomingReminders = reminderQueries.upcomingReminders().executeAsList(),

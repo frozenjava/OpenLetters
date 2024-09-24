@@ -39,7 +39,7 @@ import net.frozendevelopment.openletters.ui.components.LetterCell
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderDetailView(
+fun ReminderDetailScreen(
     modifier: Modifier = Modifier,
     state: ReminderDetailState,
     onLetterClicked: (LetterId) -> Unit,
@@ -68,17 +68,11 @@ fun ReminderDetailView(
             }
         )
 
-        when(state) {
-            is ReminderDetailState.Detail -> {
-                ReminderDetail(
-                    modifier = Modifier.fillMaxSize(),
-                    state = state,
-                    onLetterClicked = onLetterClicked,
-                )
-            }
-            ReminderDetailState.Loading -> Loading()
-            ReminderDetailState.NotFound -> ReminderNotFound()
-        }
+        ReminderDetailView(
+            modifier = Modifier.weight(1f),
+            state = state,
+            onLetterClicked = onLetterClicked,
+        )
     }
 
     if (showAcknowledgedDialog) {
@@ -108,7 +102,25 @@ fun ReminderDetailView(
             }
         )
     }
+}
 
+@Composable
+fun ReminderDetailView(
+    modifier: Modifier = Modifier,
+    state: ReminderDetailState,
+    onLetterClicked: (LetterId) -> Unit,
+) {
+    when(state) {
+        is ReminderDetailState.Detail -> {
+            ReminderDetail(
+                modifier = modifier,
+                state = state,
+                onLetterClicked = onLetterClicked,
+            )
+        }
+        ReminderDetailState.Loading -> Loading()
+        ReminderDetailState.NotFound -> ReminderNotFound()
+    }
 }
 
 @Composable

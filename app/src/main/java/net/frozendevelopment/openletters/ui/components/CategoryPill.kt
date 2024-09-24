@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,12 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import net.frozendevelopment.openletters.data.sqldelight.ReminderInfo
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.extensions.contrastColor
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun CategoryPill(
@@ -59,9 +64,9 @@ fun CategoryPill(
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
     val buttonColor = if (isSelected)
-        color.copy(alpha = 1f)
+        color
     else
-        color.copy(alpha = .5f)
+        lerp(color, Color.Gray, .5f)
 
     CategoryPill(
         modifier = modifier

@@ -53,7 +53,11 @@ class LetterListViewModel(
         }
     }
 
-    suspend fun load(
+    override fun load() {
+        load(categoryFilter = state.selectedCategoryId, searchTerms = state.searchTerms)
+    }
+
+    fun load(
         categoryFilter: CategoryId? = null,
         searchTerms: String = "",
     ) {

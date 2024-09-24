@@ -14,10 +14,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.coroutines.launch
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailScreen
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailView
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailViewModel
+import net.frozendevelopment.openletters.feature.reminder.form.NullableReminderIdNavType
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormView
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormViewModel
@@ -26,6 +29,7 @@ import net.frozendevelopment.openletters.feature.reminder.list.ReminderListView
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.reminders(
     navController: NavController,
@@ -35,10 +39,6 @@ fun NavGraphBuilder.reminders(
         val coroutineScope = rememberCoroutineScope()
         val viewModel = koinViewModel<ReminderListViewModel>()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-
-        LaunchedEffect(viewModel) {
-            viewModel.load()
-        }
 
         Surface {
             ReminderListView(
@@ -51,8 +51,14 @@ fun NavGraphBuilder.reminders(
                         }
                     }
                 },
-                onReminderClicked = { navController.navigate(ReminderDetailDestination(it)) },
-                createReminderClicked = { navController.navigate(ReminderFormDestination) }
+                onReminderClicked = { id, edit ->
+                    if (edit) {
+                        navController.navigate(ReminderFormDestination(id))
+                    } else {
+                        navController.navigate(ReminderDetailDestination(id))
+                    }
+                },
+                createReminderClicked = { navController.navigate(ReminderFormDestination()) }
             )
         }
     }
@@ -64,12 +70,8 @@ fun NavGraphBuilder.reminders(
         val viewModel = koinViewModel<ReminderDetailViewModel> { parametersOf(destination.reminderId) }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        LaunchedEffect(viewModel) {
-            viewModel.load()
-        }
-
         Surface {
-            ReminderDetailView(
+            ReminderDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 state = state,
                 onBackClicked = navController::navigateUp,
@@ -78,14 +80,13 @@ fun NavGraphBuilder.reminders(
             )
         }
     }
-    composable<ReminderFormDestination> {
+    composable<ReminderFormDestination>(
+        typeMap = ReminderFormDestination.typeMap,
+    ) { backStackEntry ->
+        val destination = backStackEntry.toRoute<ReminderFormDestination>()
         val coroutineScope = rememberCoroutineScope()
-        val viewModel = koinViewModel<ReminderFormViewModel>()
+        val viewModel = koinViewModel<ReminderFormViewModel> { parametersOf(destination.reminderId) }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-
-        LaunchedEffect(viewModel) {
-            viewModel.load()
-        }
 
         Surface {
             ReminderFormView(

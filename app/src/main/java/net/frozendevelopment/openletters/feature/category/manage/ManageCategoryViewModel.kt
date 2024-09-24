@@ -21,10 +21,10 @@ data class ManageCategoryState(
 }
 
 class ManageCategoryViewModel(
-    private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
+    private val categoryQueries: CategoryQueries,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): StatefulViewModel<ManageCategoryState>(ManageCategoryState()) {
-    suspend fun load() {
+    override fun load() {
         val categories = categoryQueries.allCategories().executeAsList()
         update { copy(categories = categories) }
     }

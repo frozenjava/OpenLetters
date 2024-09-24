@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.koin.workmanager)
     implementation(libs.koin.compose.navigation)
     implementation(libs.androidx.adaptive.android)
+    implementation(libs.androidx.core.animation)
     compileOnly(libs.koin.annotations)
     ksp(libs.koin.ksp)
 

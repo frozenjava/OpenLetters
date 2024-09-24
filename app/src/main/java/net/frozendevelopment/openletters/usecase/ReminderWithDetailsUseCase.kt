@@ -21,7 +21,7 @@ class ReminderWithDetailsUseCase(
     private val reminderQueries: ReminderQueries,
 ) {
     operator fun invoke(reminderId: ReminderId): ReminderWithDetails? {
-        val reminder = reminderQueries.detail(reminderId).executeAsOneOrNull() ?: return null
+        val reminder = reminderQueries.reminderDetail(reminderId).executeAsOneOrNull() ?: return null
 
         val letterIds = reminder.letterIds?.split(",")
             ?.map { LetterId(it.trim()) }

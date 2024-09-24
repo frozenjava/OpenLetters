@@ -18,7 +18,7 @@ import net.frozendevelopment.openletters.ui.components.ReminderCell
 fun LazyListScope.reminderRow(
     reminders: List<ReminderId>,
     onViewAllClicked: () -> Unit,
-    onReminderClicked: (ReminderId) -> Unit,
+    onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
 ) {
     item {
         Text(
@@ -41,7 +41,7 @@ fun LazyListScope.reminderRow(
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(),
                     id = it,
-                    onClick = onReminderClicked
+                    onClick = { onReminderClicked(it, false) }
                 )
             }
 

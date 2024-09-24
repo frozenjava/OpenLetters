@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.dateString
 import net.frozendevelopment.openletters.usecase.CreateReminderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
@@ -111,13 +113,37 @@ data class ReminderFormState(
 }
 
 class ReminderFormViewModel(
+    private val reminderToEdit: ReminderId?,
     private val searchLetters: SearchLettersUseCase,
     private val createReminder: CreateReminderUseCase,
-) : StatefulViewModel<ReminderFormState>(ReminderFormState()) {
+    private val reminderQueries: ReminderQueries,
+) : StatefulViewModel<ReminderFormState>(
+    ReminderFormState()
+) {
+    private val reminderId: ReminderId by lazy {
+        reminderToEdit ?: ReminderId.random()
+    }
 
-    fun load() {
-        viewModelScope.launch {
-            update { copy(letters = searchLetters("")) }
+    private val isEditing: Boolean = reminderToEdit != null
+
+    override fun load() {
+        update { copy(letters = searchLetters("")) }
+
+        if (isEditing) {
+            val reminder = reminderQueries
+                .reminderDetail(reminderId)
+                .executeAsOneOrNull() ?: return
+
+            update {
+                copy(
+                    title = reminder.title,
+                    description = reminder.description ?: "",
+                    selectedDate = reminder.scheduledFor,
+                    selectedLetters = reminder.letterIds
+                        ?.split(",")
+                        ?.map { LetterId(it) } ?: emptyList(),
+                )
+            }
         }
     }
 

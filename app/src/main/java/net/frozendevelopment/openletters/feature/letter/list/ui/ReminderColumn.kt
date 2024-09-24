@@ -20,7 +20,7 @@ fun ReminderColumn(
     modifier: Modifier = Modifier,
     urgentReminders: List<ReminderId>,
     upComingReminders: List<ReminderId>,
-    onReminderClicked: (ReminderId) -> Unit,
+    onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
     onViewAllClicked: () -> Unit,
 ) {
     LazyColumn(
@@ -44,7 +44,7 @@ fun ReminderColumn(
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(.95f),
                     id = it,
-                    onClick = onReminderClicked
+                    onClick = { onReminderClicked(it, false) }
                 )
             }
         }
@@ -64,7 +64,7 @@ fun ReminderColumn(
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(.95f),
                     id = it,
-                    onClick = onReminderClicked
+                    onClick = { onReminderClicked(it, false) }
                 )
             }
         }

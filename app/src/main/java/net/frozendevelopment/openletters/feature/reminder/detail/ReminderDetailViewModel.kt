@@ -32,7 +32,7 @@ class ReminderDetailViewModel(
     private val reminderWithDetails: ReminderWithDetailsUseCase,
     private val acknowledgeReminder: AcknowledgeReminderUseCase,
 ) : StatefulViewModel<ReminderDetailState>(ReminderDetailState.Loading) {
-    suspend fun load() {
+    override fun load() {
         val reminder = reminderWithDetails(reminderId)
         if (reminder == null) {
             update {

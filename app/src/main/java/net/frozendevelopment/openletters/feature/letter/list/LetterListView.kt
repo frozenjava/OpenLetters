@@ -32,7 +32,7 @@ fun LetterListView(
     toggleCategory: (CategoryId?) -> Unit,
     setSearchTerms: (String) -> Unit,
     openLetter: (LetterId) -> Unit,
-    onReminderClicked: (ReminderId) -> Unit,
+    onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
     viewAllRemindersClicked: () -> Unit,
 ) {
     if (state.isLoading) {
@@ -75,7 +75,7 @@ private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
                 toggleCategory = {},
                 setSearchTerms = {},
                 openLetter = {},
-                onReminderClicked = {},
+                onReminderClicked = { _, _ -> },
                 viewAllRemindersClicked = {},
             )
         }

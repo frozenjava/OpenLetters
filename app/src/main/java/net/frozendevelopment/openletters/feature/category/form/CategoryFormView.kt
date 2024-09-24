@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -76,6 +77,11 @@ fun CategoryFormView(
                 }
             }
         )
+
+        if (state.isBusy) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            return@Column
+        }
 
         CategoryPill(
             modifier = Modifier

@@ -50,13 +50,6 @@ fun NavGraphBuilder.letters(
         val viewModel: LetterListViewModel = koinViewModel()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        LaunchedEffect(viewModel) {
-            viewModel.load(
-                categoryFilter = state.selectedCategoryId,
-                searchTerms = state.searchTerms,
-            )
-        }
-
         Surface {
             LetterListView(
                 modifier = Modifier.fillMaxSize(),
@@ -72,7 +65,13 @@ fun NavGraphBuilder.letters(
                 toggleCategory = viewModel::toggleCategory,
                 setSearchTerms = viewModel::setSearchTerms,
                 openLetter = { navController.navigate(LetterDetailDestination(it)) },
-                onReminderClicked = { navController.navigate(ReminderDetailDestination(it)) },
+                onReminderClicked = { id, edit ->
+                    if (edit) {
+                        navController.navigate(ReminderDetailDestination(id))
+                    } else {
+                        navController.navigate(ReminderDetailDestination(id))
+                    }
+                },
                 viewAllRemindersClicked = { navController.navigate(ReminderListDestination) },
             )
         }

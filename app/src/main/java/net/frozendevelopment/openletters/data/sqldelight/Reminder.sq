@@ -34,7 +34,7 @@ INSERT INTO letterToReminder (letterId, reminderId) VALUES (
 largestNotificationId:
    SELECT MAX(notificationId) FROM reminder LIMIT 1;
 
-detail:
+reminderDetail:
 SELECT
     *,
     GROUP_CONCAT(letterToReminder.letterId) AS letterIds
@@ -49,6 +49,7 @@ SELECT
     title,
     description,
     scheduledFor,
+    acknowledged,
     created
 FROM reminder WHERE id = :reminderId;
 

@@ -12,6 +12,7 @@ import net.frozendevelopment.openletters.util.StatefulViewModel
 @Immutable
 data class CategoryFormState(
     private val mode: CategoryFormMode,
+    val isBusy: Boolean = true,
     val label: String = "",
     val color: Color = Color(0xFF0F0FF0),
 ) {
@@ -27,7 +28,7 @@ data class CategoryFormState(
 class CategoryFormViewModel(
     private val mode: CategoryFormMode,
     private val upsertCategoryUseCase: UpsertCategoryUseCase,
-    private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
+    private val categoryQueries: CategoryQueries,
 ) : StatefulViewModel<CategoryFormState>(CategoryFormState(mode)) {
 
     private val categoryId: CategoryId
@@ -36,19 +37,20 @@ class CategoryFormViewModel(
             is CategoryFormMode.Edit -> mode.id
         }
 
-    init {
+    override fun load() {
         if (mode is CategoryFormMode.Edit) {
             val category = categoryQueries.get(mode.id).executeAsOneOrNull()
             if (category != null) {
-                viewModelScope.launch {
-                    update {
-                        copy(
-                            label = category.label,
-                            color = category.color
-                        )
-                    }
+                update {
+                    copy(
+                        label = category.label,
+                        color = category.color,
+                        isBusy = false,
+                    )
                 }
             }
+        } else {
+            update { copy(isBusy = false) }
         }
     }
 
