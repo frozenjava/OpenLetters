@@ -15,7 +15,7 @@ ORDER BY scheduledFor ASC, created ASC;
 pastReminders:
 SELECT id FROM reminder WHERE acknowledged != 0 ORDER BY scheduledFor DESC, created DESC;
 
-create:
+upsert:
 INSERT INTO reminder (id, title, description, scheduledFor, created, lastModified, notificationId) VALUES (
     :id,
     :title,
@@ -24,7 +24,15 @@ INSERT INTO reminder (id, title, description, scheduledFor, created, lastModifie
     :created,
     :lastModified,
     :notificationId
-);
+) ON CONFLICT (id) DO UPDATE SET
+    title = :title,
+    description = :description,
+    scheduledFor = :scheduledFor,
+    created = :created,
+    lastModified = :lastModified;
+
+delete:
+DELETE FROM reminder WHERE id = :reminderId;
 
 tagLetter:
 INSERT INTO letterToReminder (letterId, reminderId) VALUES (

@@ -58,7 +58,8 @@ fun NavGraphBuilder.reminders(
                         navController.navigate(ReminderDetailDestination(id))
                     }
                 },
-                createReminderClicked = { navController.navigate(ReminderFormDestination()) }
+                createReminderClicked = { navController.navigate(ReminderFormDestination()) },
+                onDeleteReminderClicked = viewModel::delete
             )
         }
     }

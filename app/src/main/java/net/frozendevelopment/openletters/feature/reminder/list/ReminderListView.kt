@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.feature.reminder.list.ui.EmptyReminderListCell
+import net.frozendevelopment.openletters.ui.components.ActionReminderCell
 import net.frozendevelopment.openletters.ui.components.ReminderCell
 import net.frozendevelopment.openletters.ui.components.ReminderPeekMenu
 
@@ -40,6 +41,7 @@ fun ReminderListView(
     state: ReminderListState,
     openNavigationDrawer: () -> Unit,
     onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
+    onDeleteReminderClicked: (ReminderId) -> Unit,
     createReminderClicked: () -> Unit,
 ) {
     var showReminderPeek by remember { mutableStateOf<ReminderId?>(null) }
@@ -104,13 +106,15 @@ fun ReminderListView(
                     items = state.urgentReminders,
                     key = { reminder -> reminder.value }
                 ) { reminder ->
-                    ReminderCell(
+                    ActionReminderCell(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateItem(),
                         id = reminder,
                         onClick = { onReminderClicked(it, false) },
                         onLongClick = { showReminderPeek = it },
+                        onDeleteClick = onDeleteReminderClicked,
+                        onEditClick = { onReminderClicked(it, true) },
                     )
                 }
             }
@@ -127,13 +131,15 @@ fun ReminderListView(
                     items = state.upcomingReminders,
                     key = { reminder -> reminder.value }
                 ) { reminder ->
-                    ReminderCell(
+                    ActionReminderCell(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateItem(),
                         id = reminder,
                         onClick = { onReminderClicked(it, false) },
                         onLongClick = { showReminderPeek = it },
+                        onDeleteClick = onDeleteReminderClicked,
+                        onEditClick = { onReminderClicked(it, true) },
                     )
                 }
             }
@@ -150,13 +156,15 @@ fun ReminderListView(
                     items = state.pastReminders,
                     key = { reminder -> reminder.value }
                 ) { reminder ->
-                    ReminderCell(
+                    ActionReminderCell(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateItem(),
                         id = reminder,
                         onClick = { onReminderClicked(it, false) },
                         onLongClick = { showReminderPeek = it },
+                        onDeleteClick = onDeleteReminderClicked,
+                        onEditClick = { onReminderClicked(it, true) },
                     )
                 }
             }

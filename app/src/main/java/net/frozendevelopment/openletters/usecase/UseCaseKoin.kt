@@ -1,7 +1,6 @@
 package net.frozendevelopment.openletters.usecase
 
 import android.content.Context
-import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.OpenLettersDB
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
@@ -57,7 +56,7 @@ class UseCaseKoin {
     fun createReminderUseCase(
         reminderQueries: ReminderQueries,
         reminderNotification: ReminderNotification
-    ) = CreateReminderUseCase(reminderQueries, reminderNotification)
+    ) = UpsertReminderUseCase(reminderQueries, reminderNotification)
 
     @Factory
     fun reminderWithDetailsUseCase(

@@ -7,7 +7,7 @@ import net.frozendevelopment.openletters.feature.reminder.notification.ReminderN
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class CreateReminderUseCase(
+class UpsertReminderUseCase(
     private val reminderQueries: ReminderQueries,
     private val reminderNotification: ReminderNotification,
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
@@ -24,10 +24,17 @@ class CreateReminderUseCase(
             .largestNotificationId()
             .executeAsOneOrNull()?.MAX ?: 0) + 1
 
+        // if a reminder with the id already exists, then cancel the current scheduled notification
+        // just in case the reminder date/time has changed. it will get rescheduled
+        val existingReminder = reminderQueries.reminderDetail(reminderId).executeAsOneOrNull()
+        if (existingReminder != null) {
+            reminderNotification.cancel(existingReminder.notificationId.toInt())
+        }
+
         reminderQueries.transaction {
             val currentTime = now()
 
-            reminderQueries.create(
+            reminderQueries.upsert(
                 id = reminderId,
                 title = title,
                 description = description,

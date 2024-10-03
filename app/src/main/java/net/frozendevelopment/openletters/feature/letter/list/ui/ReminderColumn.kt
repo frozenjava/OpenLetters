@@ -44,7 +44,7 @@ fun ReminderColumn(
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(.95f),
                     id = it,
-                    onClick = { onReminderClicked(it, false) }
+                    onClick = { onReminderClicked(it, false) },
                 )
             }
         }
@@ -64,7 +64,7 @@ fun ReminderColumn(
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(.95f),
                     id = it,
-                    onClick = { onReminderClicked(it, false) }
+                    onClick = { onReminderClicked(it, false) },
                 )
             }
         }

@@ -14,7 +14,7 @@ import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.dateString
-import net.frozendevelopment.openletters.usecase.CreateReminderUseCase
+import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 import java.time.Instant
@@ -113,9 +113,9 @@ data class ReminderFormState(
 }
 
 class ReminderFormViewModel(
-    private val reminderToEdit: ReminderId?,
+    reminderToEdit: ReminderId?,
     private val searchLetters: SearchLettersUseCase,
-    private val createReminder: CreateReminderUseCase,
+    private val createReminder: UpsertReminderUseCase,
     private val reminderQueries: ReminderQueries,
 ) : StatefulViewModel<ReminderFormState>(
     ReminderFormState()
@@ -210,6 +210,7 @@ class ReminderFormViewModel(
         if (!state.isSavable) return false
 
         createReminder(
+            reminderId = reminderId,
             title = state.title,
             description = state.description.ifBlank { null },
             scheduledFor = state.selectedDate,

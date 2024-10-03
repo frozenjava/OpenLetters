@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Letters</string>
+    <string name="edit">Edit</string>
+    <string name="view">View</string>
+    <string name="delete">Delete</string>
+    <string name="acknowledge">Acknowledge</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="cancel">Cancel</string>
+    <string name="acknowledge_reminder">Acknowledge Reminder</string>
+    <string name="acknowledge_reminder_confirmation">By acknowledging this reminder now you will not get a notification at the scheduled time. Are you sure you want to acknowledge this reminder?</string>
+    <string name="delete_confirmation">Deleting this item is permanent and can not be undone. Are you sure you want to delete it?</string>
 </resources>

@@ -41,7 +41,7 @@ fun LazyListScope.reminderRow(
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(),
                     id = it,
-                    onClick = { onReminderClicked(it, false) }
+                    onClick = { onReminderClicked(it, false) },
                 )
             }
 

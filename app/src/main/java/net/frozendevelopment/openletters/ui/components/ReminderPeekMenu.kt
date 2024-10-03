@@ -13,15 +13,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailState
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailView
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailViewModel
-import net.frozendevelopment.openletters.usecase.AcknowledgeReminderUseCase
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -39,24 +41,41 @@ fun ReminderPeekMenu(
     ),
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+    val haptic = LocalHapticFeedback.current
     var showAcknowledgedDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmation: Boolean by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text(stringResource(R.string.are_you_sure)) },
+            text = { Text(stringResource(R.string.delete_confirmation)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDeleteClick()
+                    onDismissRequest()
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmation = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     if (showAcknowledgedDialog) {
         AlertDialog(
             onDismissRequest = { showAcknowledgedDialog = false },
-            title = { Text("Acknowledge Reminder") },
-            text = {
-                Text(
-                    """
-                    Are you sure you want to acknowledge this reminder?
-                    If so you will not get a notification at the scheduled time.
-                    """.trimIndent()
-                )
-            },
+            title = { Text(stringResource(R.string.acknowledge_reminder)) },
+            text = { Text(stringResource(R.string.acknowledge_reminder_confirmation)) },
             confirmButton = {
                 TextButton(onClick = {
                     showAcknowledgedDialog = false
                     onAcknowledgeClick()
+                    onDismissRequest()
                 }) {
                     Text("Acknowledge")
                 }
@@ -90,8 +109,8 @@ fun ReminderPeekMenu(
                 }
 
                 TextButton(onClick = {
-                    onDeleteClick()
-                    onDismissRequest()
+                    showDeleteConfirmation = true
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }) {
                     Text("Delete")
                 }
@@ -99,7 +118,7 @@ fun ReminderPeekMenu(
                 if (!(state as ReminderDetailState.Detail).isAcknowledged) {
                     TextButton(onClick = {
                         showAcknowledgedDialog = true
-                        onDismissRequest()
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     }) {
                         Text("Acknowledge")
                     }

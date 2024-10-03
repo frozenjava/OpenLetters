@@ -15,7 +15,7 @@ import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormViewM
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListViewModel
 import net.frozendevelopment.openletters.usecase.AcknowledgeReminderUseCase
 import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
-import net.frozendevelopment.openletters.usecase.CreateReminderUseCase
+import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.ReminderWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
@@ -73,12 +73,12 @@ class FeatureKoin {
     fun reminderFormViewModel(
         @InjectedParam reminderToEdit: ReminderId,
         searchLettersUseCase: SearchLettersUseCase,
-        createReminderUseCase: CreateReminderUseCase,
+        upsertReminderUseCase: UpsertReminderUseCase,
         reminderQueries: ReminderQueries,
     ) = ReminderFormViewModel(
         reminderToEdit = reminderToEdit,
         searchLetters = searchLettersUseCase,
-        createReminder = createReminderUseCase,
+        createReminder = upsertReminderUseCase,
         reminderQueries = reminderQueries,
     )
 

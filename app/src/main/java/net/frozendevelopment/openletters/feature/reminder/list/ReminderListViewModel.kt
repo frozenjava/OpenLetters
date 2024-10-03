@@ -25,4 +25,9 @@ class ReminderListViewModel(
             pastReminders = reminderQueries.pastReminders().executeAsList(),
         )}
     }
+
+    fun delete(id: ReminderId) {
+        reminderQueries.delete(id)
+        load()
+    }
 }

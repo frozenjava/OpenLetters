@@ -7,18 +7,30 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,11 +38,13 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.ReminderInfo
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
@@ -41,6 +55,95 @@ import org.koin.compose.koinInject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+
+@Composable
+fun ActionReminderCell(
+    modifier: Modifier = Modifier,
+    id: ReminderId,
+    onClick: (id: ReminderId) -> Unit,
+    onLongClick: ((id: ReminderId) -> Unit)? = null,
+    onEditClick: (id: ReminderId) -> Unit,
+    onDeleteClick: (ReminderId) -> Unit,
+    reminderQueries: ReminderQueries = koinInject()
+) {
+    val reminder = reminderQueries.reminderInfo(id).executeAsOneOrNull() ?: return
+    val haptic = LocalHapticFeedback.current
+
+    var showDeleteConfirmation: Boolean by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text(stringResource(R.string.are_you_sure)) },
+            text = { Text(stringResource(R.string.delete_confirmation)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteConfirmation = false
+                    onDeleteClick(id)
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmation = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    SwipeCell(
+        leftMenu = reminder.takeIf { !it.acknowledged }?.let {
+            {
+                IconButton(
+                    modifier = it,
+                    onClick = { onEditClick(id) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit"
+                    )
+                }
+            }
+        },
+        rightMenu = {
+            IconButton(
+                modifier = it,
+                    onClick = {
+                    showDeleteConfirmation = true
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete"
+                )
+            }
+        }
+    ) {
+        ReminderCell(
+            modifier = modifier
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        awaitFirstDown().also {
+                            it.consume()
+                        }
+                    }
+                },
+            title = reminder.title,
+            description = reminder.description,
+            scheduledFor = reminder.scheduledFor,
+            created = reminder.created,
+            onClick = { onClick(id) },
+            onLongClick = onLongClick?.let {{
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                it(id)
+            }},
+            containerColor = reminder.cardColor,
+            contentColor = reminder.cardColor.contrastColor
+        )
+    }
+}
 
 @Composable
 fun ReminderCell(
@@ -77,7 +180,7 @@ fun ReminderCell(
 }
 
 @Composable
-fun ReminderCell(
+private fun ReminderCell(
     modifier: Modifier,
     title: String,
     description: String?,
