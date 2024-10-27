@@ -1,5 +1,6 @@
 package net.frozendevelopment.openletters.ui.components
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -65,6 +66,10 @@ fun SwipeCell(
                         }
                     },
                     onHorizontalDrag = { change, dragAmount ->
+                        if (offsetX.value == 0f && change.pressure < 0.4f) {
+                            return@detectHorizontalDragGestures
+                        }
+
                         coroutineScope.launch {
                             val newOffset = (offsetX.value + dragAmount).coerceIn(-maxOffsetRight.toPx(), maxOffsetLeft.toPx())
                             offsetX.snapTo(newOffset)

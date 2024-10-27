@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.ui.components.BrokenImageView
 import net.frozendevelopment.openletters.ui.components.LazyImageView
+import net.frozendevelopment.openletters.ui.components.PagerIndicator
 
 @Composable
 fun DocumentPager(
@@ -64,26 +65,11 @@ fun DocumentPager(
             }
         }
 
-        Row(
-            Modifier
-                .wrapContentHeight()
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(bottom = 4.dp)
-                .background(Color.Black.copy(alpha = 0.85f), shape = RoundedCornerShape(16.dp)),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(pagerState.pageCount) { iteration ->
-                val color = if (pagerState.currentPage == iteration) Color.White else Color.Gray
-                Box(
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
-                )
-            }
-        }
+        PagerIndicator(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            currentPage = pagerState.currentPage,
+            pageCount = pagerState.pageCount
+        )
     }
 }
 

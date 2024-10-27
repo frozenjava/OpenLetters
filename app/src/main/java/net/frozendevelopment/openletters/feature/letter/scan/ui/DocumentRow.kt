@@ -27,14 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.ui.components.LazyImageView
 
 @Composable
 fun DocumentRow(
     modifier: Modifier = Modifier,
-    documents: List<Uri>,
+    documents: Map<DocumentId, Uri>,
     onAddButtonClicks: () -> Unit,
-    onDeleteDocumentClicked: (Int) -> Unit
+    onDeleteDocumentClicked: (DocumentId) -> Unit
 ) {
     val pagerState = rememberPagerState { documents.size + 1 }
 
@@ -43,7 +44,7 @@ fun DocumentRow(
             modifier = modifier,
             state = pagerState,
         ) { page ->
-            if (page > documents.lastIndex) {
+            if (page > documents.size - 1) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
@@ -53,12 +54,14 @@ fun DocumentRow(
                     }
                 }
             } else {
+                val documentId = documents.keys.elementAt(page)
+                val uri = documents.getValue(documentId)
                 ImageView(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .fillMaxSize(),
-                    uri = documents[page],
-                    onDeleteClicked = { onDeleteDocumentClicked(page) }
+                    uri = uri,
+                    onDeleteClicked = { onDeleteDocumentClicked(documentId) }
                 )
             }
         }

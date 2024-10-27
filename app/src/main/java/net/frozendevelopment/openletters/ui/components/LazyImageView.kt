@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrokenImage
@@ -28,14 +29,19 @@ private fun loadImage(
     context: Context,
     uri: Uri,
 ): ImageBitmap? {
-    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-        ImageDecoder
-            .decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
-            .asImageBitmap()
-    } else {
-        val path = uri.path ?: return null
-        val file = File(path)
-        BitmapFactory.decodeFile(file.absolutePath)?.asImageBitmap()
+    try {
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            ImageDecoder
+                .decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
+                .asImageBitmap()
+        } else {
+            val path = uri.path ?: return null
+            val file = File(path)
+            BitmapFactory.decodeFile(file.absolutePath)?.asImageBitmap()
+        }
+    } catch (e: Exception) {
+        Log.e("LazyImageView", "loadImage: $uri:", e)
+        return null
     }
 }
 

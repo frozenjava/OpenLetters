@@ -11,7 +11,7 @@ import net.frozendevelopment.openletters.util.DocumentManagerType
 
 data class LetterWithDetails(
     val letter: Letter,
-    val documents: Map<DocumentId, Uri?>,
+    val documents: Map<DocumentId, Uri>,
     val categories: List<Category>,
 )
 
@@ -30,7 +30,9 @@ class LetterWithDetailsUseCase(
 
         val documents = database.documentQueries.documentsForLetter(id).executeAsList()
             .map { it.id }
-            .associateWith { documentManager.get(it) }
+            .associateWith {
+                documentManager.get(it) ?: Uri.EMPTY
+            }
 
         return LetterWithDetails(
             letter = Letter(

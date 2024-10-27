@@ -12,10 +12,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -33,8 +43,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.dateString
+import net.frozendevelopment.openletters.ui.ActionCard
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import net.frozendevelopment.openletters.usecase.MetaLetter
 import net.frozendevelopment.openletters.usecase.MetaLetterUseCase
@@ -47,10 +60,85 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
+fun ActionLetterCell(
+    modifier: Modifier = Modifier,
+    id: LetterId,
+    onClick: (LetterId) -> Unit,
+    onLongClick: ((id: LetterId) -> Unit)? = null,
+    onEditClick: (LetterId) -> Unit,
+    onDeleteClick: (LetterId) -> Unit,
+    letterUseCase: MetaLetterUseCase = koinInject(),
+) {
+    // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
+    val letter = letterUseCase.load(id) ?: return
+    val haptic = LocalHapticFeedback.current
+
+    var showDeleteConfirmation: Boolean by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text(stringResource(R.string.are_you_sure)) },
+            text = { Text(stringResource(R.string.delete_confirmation)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteConfirmation = false
+                    onDeleteClick(id)
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmation = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    SwipeCell(
+        leftMenu = {
+            IconButton(
+                modifier = it,
+                onClick = { onEditClick(id) }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = stringResource(R.string.edit)
+                )
+            }
+        },
+        rightMenu = {
+            IconButton(
+                modifier = it,
+                onClick = {
+                    showDeleteConfirmation = true
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = stringResource(R.string.delete)
+                )
+            }
+        },
+    ) {
+        LetterCell(
+            modifier = modifier,
+            letter = letter,
+            categoryColors = letter.categoryColors,
+            onClick = onClick,
+            onLongClick = onLongClick?.let {{ it(id) }},
+        )
+    }
+}
+
+@Composable
 fun LetterCell(
     modifier: Modifier = Modifier,
     id: LetterId,
     onClick: (LetterId) -> Unit,
+    onLongClick: ((id: LetterId) -> Unit)? = null,
     letterUseCase: MetaLetterUseCase = koinInject(),
 ) {
     // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
@@ -61,6 +149,7 @@ fun LetterCell(
         letter = letter,
         categoryColors = letter.categoryColors,
         onClick = onClick,
+        onLongClick = onLongClick?.let {{ it(id) }},
     )
 }
 
@@ -70,10 +159,12 @@ fun LetterCell(
     letter: MetaLetter,
     categoryColors: List<Color> = emptyList(),
     onClick: (LetterId) -> Unit,
+    onLongClick: (() -> Unit)? = null,
 ) {
-    Card(
+    ActionCard(
         modifier = modifier,
-        onClick = { onClick(letter.id) }
+        onClick = { onClick(letter.id) },
+        onLongClick = onLongClick,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

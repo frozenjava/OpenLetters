@@ -114,6 +114,7 @@ data class ReminderFormState(
 
 class ReminderFormViewModel(
     reminderToEdit: ReminderId?,
+    private val preselectedLetters: List<LetterId>,
     private val searchLetters: SearchLettersUseCase,
     private val createReminder: UpsertReminderUseCase,
     private val reminderQueries: ReminderQueries,
@@ -127,7 +128,10 @@ class ReminderFormViewModel(
     private val isEditing: Boolean = reminderToEdit != null
 
     override fun load() {
-        update { copy(letters = searchLetters("")) }
+        update { copy(
+            letters = searchLetters(""),
+            selectedLetters = preselectedLetters
+        )}
 
         if (isEditing) {
             val reminder = reminderQueries

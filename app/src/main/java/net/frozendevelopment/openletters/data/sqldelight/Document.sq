@@ -4,5 +4,8 @@ INSERT INTO document (id, letterId) VALUES(:id, :letterId);
 documentsForLetter:
 SELECT * FROM document WHERE letterId = ?;
 
+deleteDocument:
+DELETE FROM document WHERE id = :documentId;
+
 selectAll:
 SELECT id FROM document;

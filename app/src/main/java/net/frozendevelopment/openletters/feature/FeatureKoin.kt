@@ -3,18 +3,22 @@ package net.frozendevelopment.openletters.feature
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormMode
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormViewModel
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryViewModel
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailViewModel
 import net.frozendevelopment.openletters.feature.letter.list.LetterListViewModel
+import net.frozendevelopment.openletters.feature.letter.peek.LetterPeekViewModel
 import net.frozendevelopment.openletters.feature.letter.scan.ScanViewModel
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailViewModel
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormViewModel
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListViewModel
 import net.frozendevelopment.openletters.usecase.AcknowledgeReminderUseCase
 import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
+import net.frozendevelopment.openletters.usecase.DeleteLetterUseCase
+import net.frozendevelopment.openletters.usecase.DeleteReminderUseCase
 import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.ReminderWithDetailsUseCase
@@ -33,45 +37,71 @@ class FeatureKoin {
         letterQueries: LetterQueries,
         searchUseCase: SearchLettersUseCase,
         categoryQueries: CategoryQueries,
+        deleteLetterUseCase: DeleteLetterUseCase,
     ) = LetterListViewModel(
         reminderQueries = reminderQueries,
         letterQueries = letterQueries,
         searchUseCase = searchUseCase,
-        categoryQueries = categoryQueries
+        categoryQueries = categoryQueries,
+        deleteLetter = deleteLetterUseCase,
     )
 
     @KoinViewModel
     fun scanViewModel(
+        @InjectedParam letterToEdit: LetterId?,
         textExtractor: TextExtractorType,
         createLetter: CreateLetterUseCase,
         categoryQueries: CategoryQueries,
-    ) = ScanViewModel(textExtractor, createLetter, categoryQueries)
+        letterWithDetailsUseCase: LetterWithDetailsUseCase,
+    ) = ScanViewModel(
+        letterToEdit = letterToEdit,
+        textExtractor = textExtractor,
+        createLetter = createLetter,
+        categoryQueries = categoryQueries,
+        letterWithDetails = letterWithDetailsUseCase,
+    )
 
     @KoinViewModel
     fun categoryFormViewModel(
         @InjectedParam mode: CategoryFormMode,
         upsertCategoryUseCase: UpsertCategoryUseCase,
         categoryQueries: CategoryQueries,
-    ) = CategoryFormViewModel(mode, upsertCategoryUseCase, categoryQueries)
+    ) = CategoryFormViewModel(
+        mode = mode,
+        upsertCategoryUseCase = upsertCategoryUseCase,
+        categoryQueries = categoryQueries,
+    )
 
     @KoinViewModel
     fun manageCategoryViewModel(
-        categoryQueries: CategoryQueries
+        categoryQueries: CategoryQueries,
     ) = ManageCategoryViewModel(categoryQueries)
 
     @KoinViewModel
     fun letterDetailViewModel(
-        letterWithDetailsUseCase: LetterWithDetailsUseCase
-    ) = LetterDetailViewModel(letterWithDetailsUseCase)
+        @InjectedParam letterId: LetterId,
+        letterWithDetailsUseCase: LetterWithDetailsUseCase,
+    ) = LetterDetailViewModel(letterId, letterWithDetailsUseCase)
+
+    @KoinViewModel
+    fun letterPeekViewModel(
+        @InjectedParam letterId: LetterId,
+        letterWithDetails: LetterWithDetailsUseCase,
+    ) = LetterPeekViewModel(letterId, letterWithDetails)
 
     @KoinViewModel
     fun reminderListViewModel(
-        reminderQueries: ReminderQueries
-    ) = ReminderListViewModel(reminderQueries)
+        reminderQueries: ReminderQueries,
+        deleteReminder: DeleteReminderUseCase,
+    ) = ReminderListViewModel(
+        reminderQueries = reminderQueries,
+        deleteReminder = deleteReminder
+    )
 
     @KoinViewModel
     fun reminderFormViewModel(
         @InjectedParam reminderToEdit: ReminderId,
+        @InjectedParam preselectedLetters: List<LetterId>,
         searchLettersUseCase: SearchLettersUseCase,
         upsertReminderUseCase: UpsertReminderUseCase,
         reminderQueries: ReminderQueries,
@@ -80,13 +110,14 @@ class FeatureKoin {
         searchLetters = searchLettersUseCase,
         createReminder = upsertReminderUseCase,
         reminderQueries = reminderQueries,
+        preselectedLetters = preselectedLetters,
     )
 
     @KoinViewModel
     fun reminderDetailViewModel(
         @InjectedParam reminderId: ReminderId,
         reminderWithDetailsUseCase: ReminderWithDetailsUseCase,
-        acknowledgeReminderUseCase: AcknowledgeReminderUseCase
+        acknowledgeReminderUseCase: AcknowledgeReminderUseCase,
     ) = ReminderDetailViewModel(
         reminderId = reminderId,
         reminderWithDetails = reminderWithDetailsUseCase,

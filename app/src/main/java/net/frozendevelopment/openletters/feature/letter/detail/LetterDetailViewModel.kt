@@ -24,11 +24,12 @@ sealed interface LetterDetailState {
 
 
 class LetterDetailViewModel(
+    private val letterId: LetterId,
     private val letterWithDetails: LetterWithDetailsUseCase,
 ) : StatefulViewModel<LetterDetailState>(LetterDetailState.Loading) {
 
-    suspend fun load(id: LetterId) {
-        val letter = letterWithDetails(id)
+    override fun load() {
+        val letter = letterWithDetails(letterId)
 
         if (letter == null) {
             update { LetterDetailState.NotFound }

@@ -21,11 +21,10 @@ fun ReminderColumn(
     urgentReminders: List<ReminderId>,
     upComingReminders: List<ReminderId>,
     onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
-    onViewAllClicked: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(bottom = 192.dp, top = 128.dp),
+        contentPadding = PaddingValues(bottom = 192.dp, top = 128.dp, start = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -66,15 +65,6 @@ fun ReminderColumn(
                     id = it,
                     onClick = { onReminderClicked(it, false) },
                 )
-            }
-        }
-
-        item {
-            FilledTonalButton(
-                modifier = Modifier.fillMaxWidth(.95f),
-                onClick = onViewAllClicked
-            ) {
-                Text("View All")
             }
         }
     }

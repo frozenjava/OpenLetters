@@ -7,12 +7,14 @@ import app.cash.sqldelight.coroutines.mapToOne
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
+import net.frozendevelopment.openletters.usecase.DeleteLetterUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
@@ -38,7 +40,8 @@ class LetterListViewModel(
     private val reminderQueries: ReminderQueries,
     private val letterQueries: LetterQueries,
     private val searchUseCase: SearchLettersUseCase,
-    private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
+    private val categoryQueries: CategoryQueries,
+    private val deleteLetter: DeleteLetterUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : StatefulViewModel<LetterListState>(LetterListState()) {
 
@@ -87,6 +90,11 @@ class LetterListViewModel(
                 upcomingReminders = upcomingReminders
             )
         }
+    }
+
+    fun delete(id: LetterId) = viewModelScope.launch {
+        deleteLetter(id)
+        load()
     }
 
     fun toggleCategory(category: CategoryId?) = viewModelScope.launch {

@@ -24,7 +24,7 @@ open class StatefulViewModel<TState>(
     val state: TState
         get() = _stateFlow.value
 
-    open fun load() {}
+    protected open fun load() {}
 
     protected fun update(newState: TState.() -> TState) {
         _stateFlow.update(newState)

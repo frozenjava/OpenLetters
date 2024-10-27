@@ -37,8 +37,10 @@ import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestinati
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterView
 import net.frozendevelopment.openletters.feature.letter.scan.ScanViewModel
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.letters(
@@ -61,10 +63,17 @@ fun NavGraphBuilder.letters(
                         }
                     }
                 },
-                onScanClicked = { navController.navigate(ScanLetterDestination) },
+                onScanClicked = { navController.navigate(ScanLetterDestination()) },
                 toggleCategory = viewModel::toggleCategory,
                 setSearchTerms = viewModel::setSearchTerms,
-                openLetter = { navController.navigate(LetterDetailDestination(it)) },
+                openLetter = { id, edit ->
+                    if (edit) {
+                        navController.navigate(ScanLetterDestination(id))
+                    } else {
+                        navController.navigate(LetterDetailDestination(id))
+                    }
+                },
+                onDeleteLetterClicked = viewModel::delete,
                 onReminderClicked = { id, edit ->
                     if (edit) {
                         navController.navigate(ReminderDetailDestination(id))
@@ -72,7 +81,7 @@ fun NavGraphBuilder.letters(
                         navController.navigate(ReminderDetailDestination(id))
                     }
                 },
-                viewAllRemindersClicked = { navController.navigate(ReminderListDestination) },
+                onCreateReminderClicked = { navController.navigate(ReminderFormDestination(preselectedLetters = it)) },
             )
         }
     }
@@ -80,14 +89,8 @@ fun NavGraphBuilder.letters(
         typeMap = mapOf(typeOf<LetterId>() to LetterIdNavType),
     ) { backStackEntry ->
         val destination = backStackEntry.toRoute<LetterDetailDestination>()
-        val viewModel: LetterDetailViewModel = koinViewModel()
+        val viewModel: LetterDetailViewModel = koinViewModel { parametersOf(destination.letterId) }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-
-        LaunchedEffect(viewModel) {
-            withContext(Dispatchers.IO) {
-                viewModel.load(destination.letterId)
-            }
-        }
 
         Surface {
             LetterDetailView(
@@ -95,36 +98,38 @@ fun NavGraphBuilder.letters(
                 onBackClicked = navController::popBackStack
             )
         }
-
     }
-    composable<ScanLetterDestination> {
+    composable<ScanLetterDestination>(
+        typeMap = ScanLetterDestination.typeMap,
+    ) { backStackEntry ->
+        val destination = backStackEntry.toRoute<ScanLetterDestination>()
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
+        val viewModel: ScanViewModel = koinViewModel { parametersOf(destination.letterId) }
+        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+        val letterScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                viewModel.importScannedDocuments(scanResult)
+            }
+        }
+
+        val senderScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                viewModel.importScannedSender(scanResult)
+            }
+        }
+
+        val recipientScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                viewModel.importScannedRecipient(scanResult)
+            }
+        }
+
         Surface {
-            val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current
-            val viewModel: ScanViewModel = koinViewModel()
-            val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-
-            val letterScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                    viewModel.importScannedDocuments(scanResult)
-                }
-            }
-
-            val senderScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                    viewModel.importScannedSender(scanResult)
-                }
-            }
-
-            val recipientScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                    viewModel.importScannedRecipient(scanResult)
-                }
-            }
-
             ScanLetterView(
                 modifier = Modifier
                     .statusBarsPadding()

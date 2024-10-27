@@ -77,12 +77,12 @@ fun ReminderPeekMenu(
                     onAcknowledgeClick()
                     onDismissRequest()
                 }) {
-                    Text("Acknowledge")
+                    Text(stringResource(R.string.acknowledge))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showAcknowledgedDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -96,7 +96,7 @@ fun ReminderPeekMenu(
                     onViewClick()
                     onDismissRequest()
                 }) {
-                    Text("View")
+                    Text(stringResource(R.string.view))
                 }
 
                 if (!(state as ReminderDetailState.Detail).isAcknowledged) {
@@ -104,7 +104,7 @@ fun ReminderPeekMenu(
                         onEditClick()
                         onDismissRequest()
                     }) {
-                        Text("Edit")
+                        Text(stringResource(R.string.edit))
                     }
                 }
 
@@ -112,7 +112,7 @@ fun ReminderPeekMenu(
                     showDeleteConfirmation = true
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }) {
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
 
                 if (!(state as ReminderDetailState.Detail).isAcknowledged) {
@@ -120,7 +120,7 @@ fun ReminderPeekMenu(
                         showAcknowledgedDialog = true
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     }) {
-                        Text("Acknowledge")
+                        Text(stringResource(R.string.acknowledge))
                     }
                 }
             } else {

@@ -14,8 +14,12 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
+import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
+import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 import net.frozendevelopment.openletters.util.TextExtractorType
 import java.io.File
@@ -25,38 +29,52 @@ data class ScanState(
     val isBusy: Boolean = false,
     val sender: String? = null,
     val recipient: String? = null,
-    val documents: List<Uri> = emptyList(),
-    val categories: Map<Category, Boolean> = emptyMap(),
+    val documents: Map<DocumentId, Uri> = emptyMap(),
+    val categories: List<Category> = emptyList(),
+    val selectedCategories: Set<Category> = emptySet(),
 ) {
     val canLeaveSafely: Boolean
         get() = !isBusy && sender.isNullOrBlank() && recipient.isNullOrBlank() && documents.isEmpty()
 
     val isSavable: Boolean
         get() = documents.isNotEmpty()
+
+    val categoryMap: Map<Category, Boolean>
+        get() = categories.associateWith { category -> selectedCategories.contains(category) }
 }
 
 class ScanViewModel(
+    letterToEdit: LetterId?,
     private val textExtractor: TextExtractorType,
     private val createLetter: CreateLetterUseCase,
+    private val letterWithDetails: LetterWithDetailsUseCase,
     private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): StatefulViewModel<ScanState>(ScanState()) {
-
-    init {
-        observe()
+    private val letterId: LetterId by lazy {
+        if (letterToEdit?.value.isNullOrBlank()) {
+            LetterId.random()
+        } else {
+            letterToEdit!!
+        }
     }
 
-    private fun observe() = viewModelScope.launch {
-        categoryQueries.allCategories()
-            .asFlow()
-            .mapToList(ioDispatcher)
-            .collect { categories ->
-                update {
-                    copy(categories = categories.associateWith {
-                        this.categories.getOrDefault(it, false)
-                    })
-                }
-            }
+    private val isEditing: Boolean = letterToEdit != null
+
+    override fun load() {
+        var state = ScanState(categories = categoryQueries.allCategories().executeAsList())
+
+        if (isEditing) {
+            val details = letterWithDetails(letterId) ?: return
+            state = state.copy(
+                sender = details.letter.sender,
+                recipient = details.letter.recipient,
+                documents = details.documents,
+                selectedCategories = details.categories.toSet(),
+            )
+        }
+
+        update { state }
     }
 
     fun getScanner(pageLimit: Int = 0): GmsDocumentScanner {
@@ -80,7 +98,7 @@ class ScanViewModel(
             }
 
             // update the state to show the processing indicator and the scanned documents
-            update { copy(documents = documents + pages.map { it.imageUri }) }
+            update { copy(documents = documents + pages.map { it.imageUri }.associateBy { DocumentId.random() }) }
         }
     }
 
@@ -121,9 +139,15 @@ class ScanViewModel(
     }
 
     fun toggleCategory(category: Category) = viewModelScope.launch {
-        val categories = state.categories.toMutableMap()
-        categories[category] = !categories.getOrDefault(category, false)
-        update { copy(categories = categories) }
+        val selectedCategories = state.selectedCategories.toMutableSet()
+
+        if (selectedCategories.contains(category)) {
+            selectedCategories.remove(category)
+        } else {
+            selectedCategories.add(category)
+        }
+
+        update { copy(selectedCategories = selectedCategories) }
     }
 
     fun setSender(sender: String) = viewModelScope.launch {
@@ -134,11 +158,11 @@ class ScanViewModel(
         update { copy(recipient = recipient) }
     }
 
-    fun removeDocument(index: Int) = viewModelScope.launch {
+    fun removeDocument(documentId: DocumentId) = viewModelScope.launch {
         update { copy(
             documents = documents
-                .toMutableList()
-                .apply { removeAt(index) }
+                .toMutableMap()
+                .apply { remove(documentId) }
         )}
     }
 
@@ -155,9 +179,9 @@ class ScanViewModel(
         createLetter(
             sender = saveState.sender,
             recipient = saveState.recipient,
-            categories = saveState.categories.filter { it.value }.map { it.key.id },
-            documents = saveState.documents,
-            threads = emptyList(),
+            categories = saveState.selectedCategories.map { it.id },
+            documents = saveState.documents.filterValues { it != null } as Map<DocumentId, Uri>,
+            letterId = letterId,
         )
 
         update { copy(isBusy = false) }
@@ -165,8 +189,8 @@ class ScanViewModel(
     }
 
     private fun cleanUpCache() {
-        for (documents in state.documents) {
-            val path = documents.path ?: continue
+        for (document in state.documents.values) {
+            val path = document?.path ?: continue
             File(path).takeIf { it.exists() }?.delete()
         }
     }

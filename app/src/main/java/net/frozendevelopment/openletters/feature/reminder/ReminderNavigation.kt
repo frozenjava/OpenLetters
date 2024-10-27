@@ -86,7 +86,9 @@ fun NavGraphBuilder.reminders(
     ) { backStackEntry ->
         val destination = backStackEntry.toRoute<ReminderFormDestination>()
         val coroutineScope = rememberCoroutineScope()
-        val viewModel = koinViewModel<ReminderFormViewModel> { parametersOf(destination.reminderId) }
+        val viewModel = koinViewModel<ReminderFormViewModel> {
+            parametersOf(destination.reminderId, destination.preselectedLetters)
+        }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
         Surface {

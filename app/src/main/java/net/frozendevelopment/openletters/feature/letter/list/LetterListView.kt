@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
-import net.frozendevelopment.openletters.data.mock.mockLetter
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
@@ -31,9 +30,10 @@ fun LetterListView(
     onScanClicked: () -> Unit,
     toggleCategory: (CategoryId?) -> Unit,
     setSearchTerms: (String) -> Unit,
-    openLetter: (LetterId) -> Unit,
+    openLetter: (id: LetterId, edit: Boolean) -> Unit,
+    onDeleteLetterClicked: (id: LetterId) -> Unit,
     onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
-    viewAllRemindersClicked: () -> Unit,
+    onCreateReminderClicked: (List<LetterId>) -> Unit,
 ) {
     if (state.isLoading) {
         Box(contentAlignment = Alignment.Center) {
@@ -48,13 +48,14 @@ fun LetterListView(
         LetterList(
             modifier = modifier,
             state = state,
-            onCellClicked = openLetter,
+            onLetterClicked = openLetter,
+            onDeleteLetterClicked = onDeleteLetterClicked,
             onNavDrawerClicked = onNavDrawerClicked,
             onScanClicked = onScanClicked,
             selectCategory = toggleCategory,
             setSearchTerms = setSearchTerms,
             onReminderClicked = onReminderClicked,
-            viewAllRemindersClicked = viewAllRemindersClicked,
+            onCreateReminderClicked = onCreateReminderClicked,
         )
     }
 }
@@ -74,9 +75,10 @@ private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
                 onScanClicked = {},
                 toggleCategory = {},
                 setSearchTerms = {},
-                openLetter = {},
+                openLetter = { _, _, -> },
+                onDeleteLetterClicked = {},
                 onReminderClicked = { _, _ -> },
-                viewAllRemindersClicked = {},
+                onCreateReminderClicked = {},
             )
         }
     }

@@ -66,6 +66,7 @@ fun ActionReminderCell(
     onDeleteClick: (ReminderId) -> Unit,
     reminderQueries: ReminderQueries = koinInject()
 ) {
+    // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
     val reminder = reminderQueries.reminderInfo(id).executeAsOneOrNull() ?: return
     val haptic = LocalHapticFeedback.current
 
@@ -101,7 +102,7 @@ fun ActionReminderCell(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit"
+                        contentDescription = stringResource(R.string.edit)
                     )
                 }
             }
@@ -116,7 +117,7 @@ fun ActionReminderCell(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete"
+                    contentDescription = stringResource(R.string.delete)
                 )
             }
         }

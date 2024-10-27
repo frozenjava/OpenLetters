@@ -21,19 +21,20 @@ class CreateLetterUseCase(
     suspend operator fun invoke(
         sender: String?,
         recipient: String?,
-        documents: List<Uri>,
+        documents: Map<DocumentId, Uri>,
         categories: List<CategoryId>,
-        threads: List<ReminderId>,
+        letterId: LetterId = LetterId.random(),
     ) {
-        val letterId = LetterId.random()
         val currentTime = now()
 
         val extractedText = documents
+            .values
             .mapNotNull { textExtractor.extractFromImage(it) }
             .filter { it.isNotBlank() }
             .joinToString("\n\n")
 
         database.transaction {
+            // insert the letter into the database
             database.letterQueries.upsertLetter(
                 id = letterId,
                 sender = sender,
@@ -43,13 +44,48 @@ class CreateLetterUseCase(
                 lastModified = currentTime,
             )
 
-            for (document in documents) {
-                val docId = DocumentId.random()
-                database.documentQueries.insertDocument(id = docId, letterId = letterId)
-                documentManager.persist(document, docId)
+            // find currently existing documents for this letter
+            val existingDocuments = database.documentQueries.documentsForLetter(letterId)
+                .executeAsList()
+                .map { it.id }
+
+            // remove all documents that are not in the new `documents` map
+            for (documentId in existingDocuments) {
+                if (documentId !in documents) {
+                    database.documentQueries.deleteDocument(documentId)
+                    documentManager.delete(documentId)
+                }
             }
 
+            // persist any new documents
+            for ((documentId, documentUri) in documents) {
+                // skip any documents that have already been persisted
+                if (documentId in existingDocuments) {
+                    continue
+                }
+
+                documentManager.persist(documentUri, documentId)
+                database.documentQueries.insertDocument(id = documentId, letterId = letterId)
+            }
+
+            // find existing categories for the letter
+            val existingCategories = database.letterQueries.categoriesForLetter(letterId)
+                .executeAsList()
+
+            // remove all categories that are not in the new `categories` list
+            for (categoryId in existingCategories) {
+                if (categoryId !in categories) {
+                    database.letterQueries.untagCategoryFromLetter(letterId = letterId, categoryId = categoryId)
+                }
+            }
+
+            // tag the letter with the new categories
             for (category in categories) {
+                // skip any categories that have already been tagged
+                if (category in existingCategories) {
+                    continue
+                }
+
                 database.letterQueries.tagLetterWithCategory(letterId = letterId, categoryId = category)
             }
         }

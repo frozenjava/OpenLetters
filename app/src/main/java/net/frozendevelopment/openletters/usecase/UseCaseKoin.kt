@@ -68,4 +68,15 @@ class UseCaseKoin {
         reminderQueries: ReminderQueries,
         reminderNotification: ReminderNotification
     ) = AcknowledgeReminderUseCase(reminderQueries, reminderNotification)
+
+    @Factory
+    fun deleteReminderUseCase(
+        reminderQueries: ReminderQueries,
+        reminderNotification: ReminderNotification
+    ) = DeleteReminderUseCase(reminderQueries, reminderNotification)
+
+    @Factory
+    fun deleteLetterUseCase(
+        letterQueries: LetterQueries
+    ) = DeleteLetterUseCase(letterQueries)
 }

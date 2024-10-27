@@ -3,6 +3,7 @@ package net.frozendevelopment.openletters.feature.reminder.list
 import androidx.compose.runtime.Immutable
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
+import net.frozendevelopment.openletters.usecase.DeleteReminderUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
 @Immutable
@@ -16,7 +17,8 @@ data class ReminderListState(
 }
 
 class ReminderListViewModel(
-    private val reminderQueries: ReminderQueries
+    private val reminderQueries: ReminderQueries,
+    private val deleteReminder: DeleteReminderUseCase,
 ) : StatefulViewModel<ReminderListState>(ReminderListState()) {
     override fun load() {
         update { copy(
@@ -27,7 +29,7 @@ class ReminderListViewModel(
     }
 
     fun delete(id: ReminderId) {
-        reminderQueries.delete(id)
+        deleteReminder(id)
         load()
     }
 }

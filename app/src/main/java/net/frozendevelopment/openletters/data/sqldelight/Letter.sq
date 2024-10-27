@@ -6,7 +6,15 @@ INSERT INTO letter (id, sender, recipient, body, created, lastModified) VALUES (
     :body,
     :created,
     :lastModified
-);
+) ON CONFLICT (id) DO UPDATE SET
+    sender = excluded.sender,
+    recipient = excluded.recipient,
+    body = excluded.body,
+    created = excluded.created,
+    lastModified = excluded.lastModified;
+
+deleteLetter:
+DELETE FROM letter WHERE id = :letterId;
 
 tagLetterWithCategory:
 INSERT INTO letterToCategory (letterId, categoryId) VALUES (
@@ -14,11 +22,17 @@ INSERT INTO letterToCategory (letterId, categoryId) VALUES (
     :categoryId
 );
 
+untagCategoryFromLetter:
+DELETE FROM letterToCategory WHERE letterId = :letterId AND categoryId = :categoryId;
+
 tagLetterWithReminder:
 INSERT INTO letterToReminder (letterId, reminderId) VALUES (
     :letterId,
     :reminderId
 );
+
+categoriesForLetter:
+SELECT categoryId FROM letterToCategory WHERE letterId = :letterId;
 
 letterInfo:
 SELECT

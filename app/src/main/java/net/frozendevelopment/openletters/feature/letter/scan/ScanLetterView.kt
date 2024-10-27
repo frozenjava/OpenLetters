@@ -19,14 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
+import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.letter.scan.ui.CategoryPicker
 import net.frozendevelopment.openletters.feature.letter.scan.ui.DocumentRow
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScanAppBar
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScannableTextField
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
-
-@Serializable
-object ScanLetterDestination
+import kotlin.reflect.typeOf
 
 @Composable
 fun ScanLetterView(
@@ -40,7 +40,7 @@ fun ScanLetterView(
     openRecipientScanner: () -> Unit,
     onSaveClicked: () -> Unit,
     onBackClicked: () -> Unit,
-    onDeleteDocumentClicked: (Int) -> Unit,
+    onDeleteDocumentClicked: (DocumentId) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -103,7 +103,7 @@ fun ScanLetterView(
         } else {
             CategoryPicker(
                 modifier = Modifier.fillMaxWidth(),
-                categories = state.categories,
+                categories = state.categoryMap,
                 toggleCategory = toggleCategory,
                 onCreateClicked = {},
             )
