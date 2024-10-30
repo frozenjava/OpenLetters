@@ -1,5 +1,6 @@
 package net.frozendevelopment.openletters.feature
 
+import android.app.Application
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
@@ -91,22 +92,26 @@ class FeatureKoin {
 
     @KoinViewModel
     fun reminderListViewModel(
+        application: Application,
         reminderQueries: ReminderQueries,
         deleteReminder: DeleteReminderUseCase,
     ) = ReminderListViewModel(
+        application = application,
         reminderQueries = reminderQueries,
         deleteReminder = deleteReminder
     )
 
     @KoinViewModel
     fun reminderFormViewModel(
-        @InjectedParam reminderToEdit: ReminderId,
+        @InjectedParam reminderToEdit: ReminderId?,
         @InjectedParam preselectedLetters: List<LetterId>,
+        application: Application,
         searchLettersUseCase: SearchLettersUseCase,
         upsertReminderUseCase: UpsertReminderUseCase,
         reminderQueries: ReminderQueries,
     ) = ReminderFormViewModel(
         reminderToEdit = reminderToEdit,
+        application = application,
         searchLetters = searchLettersUseCase,
         createReminder = upsertReminderUseCase,
         reminderQueries = reminderQueries,
@@ -116,10 +121,12 @@ class FeatureKoin {
     @KoinViewModel
     fun reminderDetailViewModel(
         @InjectedParam reminderId: ReminderId,
+        application: Application,
         reminderWithDetailsUseCase: ReminderWithDetailsUseCase,
         acknowledgeReminderUseCase: AcknowledgeReminderUseCase,
     ) = ReminderDetailViewModel(
         reminderId = reminderId,
+        application = application,
         reminderWithDetails = reminderWithDetailsUseCase,
         acknowledgeReminder = acknowledgeReminderUseCase
     )

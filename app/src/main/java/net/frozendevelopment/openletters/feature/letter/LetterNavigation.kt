@@ -26,6 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
+import net.frozendevelopment.openletters.feature.category.form.CategoryFormMode
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailView
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailViewModel
@@ -94,7 +96,10 @@ fun NavGraphBuilder.letters(
 
         Surface {
             LetterDetailView(
+                modifier = Modifier.fillMaxSize(),
                 state = state,
+                onEditClicked = { navController.navigate(ScanLetterDestination(destination.letterId)) },
+                onCreateReminderClicked = { navController.navigate(ReminderFormDestination(preselectedLetters = listOf(destination.letterId))) },
                 onBackClicked = navController::popBackStack
             )
         }
@@ -138,6 +143,7 @@ fun NavGraphBuilder.letters(
                 toggleCategory = viewModel::toggleCategory,
                 setSender = viewModel::setSender,
                 setRecipient = viewModel::setRecipient,
+                setTranscript = viewModel::setTranscript,
                 openLetterScanner = {
                     val activity = context as? Activity
                     if (activity != null) {
@@ -184,7 +190,8 @@ fun NavGraphBuilder.letters(
                     }
                 },
                 onBackClicked = navController::navigateUp,
-                onDeleteDocumentClicked = viewModel::removeDocument
+                onDeleteDocumentClicked = viewModel::removeDocument,
+                onCreateCategoryClicked = { navController.navigate(CategoryFormDestination(CategoryFormMode.Create)) }
             )
         }
     }

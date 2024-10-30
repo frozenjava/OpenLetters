@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         coroutineScope.launch { drawerState.close() }
                     },
                     goToCreateReminder = {
-                        navHostController.navigate(ReminderFormDestination)
+                        navHostController.navigate(ReminderFormDestination())
                         coroutineScope.launch { drawerState.close() }
                     }
                 ) {

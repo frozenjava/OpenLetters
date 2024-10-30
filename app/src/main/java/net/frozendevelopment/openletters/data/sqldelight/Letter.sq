@@ -73,19 +73,12 @@ END AS hasLetters
 FROM letter;
 
 letterList:
-SELECT id
-FROM (
-    WITH FilteredLetters AS (
-        SELECT DISTINCT l.id, l.created
-        FROM letter l
-        LEFT JOIN letterToCategory ltc ON l.id = ltc.letterId
-        WHERE (ltc.categoryId = :categoryId OR :categoryId IS NULL)
-    )
-    SELECT fl.id
-    FROM FilteredLetters fl
-    ORDER BY fl.created DESC
-    LIMIT :limit
-);
+SELECT l.id FROM letter l
+    LEFT JOIN letterToCategory ltc ON l.id = ltc.letterId
+    WHERE (ltc.categoryId = :categoryId OR :categoryId IS NULL)
+GROUP BY l.id
+ORDER BY MAX(l.created) DESC
+LIMIT :limit;
 
 search:
 SELECT id

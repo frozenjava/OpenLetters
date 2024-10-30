@@ -48,10 +48,14 @@ fun DocumentPager(
             state = pagerState,
         ) { page ->
             if (page == 0 && !body.isNullOrBlank()) {
-                TranscriptionText(
-                    modifier = Modifier.fillMaxSize(),
-                    body = body
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    TranscriptionText(
+                        modifier = Modifier
+                            .fillMaxWidth(.95f)
+                            .align(Alignment.TopCenter),
+                        body = body
+                    )
+                }
             } else {
                 val documentUri = documents.values.toList()[page - pageIndexOffset]
                 if (documentUri != null) {

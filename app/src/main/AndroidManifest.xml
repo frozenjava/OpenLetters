@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:enableOnBackInvokedCallback="true"
         android:name=".OpenLettersApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

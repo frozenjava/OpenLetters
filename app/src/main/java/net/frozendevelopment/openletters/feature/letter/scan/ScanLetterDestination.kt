@@ -24,7 +24,8 @@ val NullableLetterIdNavType = object : NavType<LetterId?>(isNullableAllowed = tr
         }
     }
 
-    override fun parseValue(value: String): LetterId {
+    override fun parseValue(value: String): LetterId? {
+        if (value.isBlank()) return null
         return LetterId(value)
     }
 

@@ -1,6 +1,7 @@
 package net.frozendevelopment.openletters.usecase
 
 import android.content.Context
+import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.OpenLettersDB
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
@@ -16,26 +17,17 @@ class UseCaseKoin {
     @Factory
     fun createLetterUseCase(
         documentManager: DocumentManagerType,
-        textExtractor: TextExtractorType,
         database: OpenLettersDB
-    ): CreateLetterUseCase {
-        return CreateLetterUseCase(
-            documentManager,
-            textExtractor,
-            database
-        )
-    }
+    ): CreateLetterUseCase = CreateLetterUseCase(documentManager, database)
 
     @Factory
     fun metaLetterUseCase(
         letterQueries: LetterQueries
-    ): MetaLetterUseCase {
-        return MetaLetterUseCase(queries = letterQueries)
-    }
+    ): MetaLetterUseCase = MetaLetterUseCase(queries = letterQueries)
 
     @Factory
     fun upsertCategoryUseCase(
-        categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
+        categoryQueries: CategoryQueries
     ) = UpsertCategoryUseCase(categoryQueries)
 
     @Factory

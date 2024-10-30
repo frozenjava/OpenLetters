@@ -2,7 +2,6 @@ package net.frozendevelopment.openletters.feature.letter.peek
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.AlertDialog
@@ -36,11 +36,13 @@ import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.ui.components.BrokenImageView
 import net.frozendevelopment.openletters.ui.components.CategoryPill
 import net.frozendevelopment.openletters.ui.components.LazyImageView
 import net.frozendevelopment.openletters.ui.components.PagerIndicator
 import net.frozendevelopment.openletters.ui.components.PeekMenu
+import net.frozendevelopment.openletters.ui.components.ReminderCell
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -105,12 +107,13 @@ fun LetterPeekMenu(
             ) { page ->
                 if (!state.transcript.isNullOrBlank() && page == 0) {
                     TranscriptionText(modifier = Modifier.padding(8.dp), body = state.transcript!!)
-                } else if (page > state.documents.size) {
-                    SenderRecipientAndCategories(
+                } else if (page == horizontalPagerState.pageCount - 1) {
+                    SenderRecipientCategoriesAndReminders(
                         modifier = Modifier.padding(8.dp),
                         sender = state.sender,
                         recipient = state.recipient,
                         categories = state.selectedCategories,
+                        reminders = state.reminders,
                     )
                 } else {
                     val pageIndexOffset: Int = if (!state.transcript.isNullOrBlank()) 1 else 0
@@ -191,50 +194,75 @@ private fun TranscriptionText(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SenderRecipientAndCategories(
+private fun SenderRecipientCategoriesAndReminders(
     modifier: Modifier = Modifier,
     sender: String?,
     recipient: String?,
     categories: List<Category>,
+    reminders: List<ReminderId>,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(.5f),
-            text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("From: ")
-                }
+        item(key = "sender-recipient") {
+            Text(
+                modifier = Modifier.fillMaxWidth(.5f),
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("From: ")
+                    }
 
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                    append(sender ?: "Unknown")
-                }
-            },
-            fontSize = MaterialTheme.typography.labelLarge.fontSize,
-        )
-        Text(
-            text = buildAnnotatedString {
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append("To: ")
-                }
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                        append(sender ?: "Unknown")
+                    }
+                },
+                fontSize = MaterialTheme.typography.labelLarge.fontSize,
+            )
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("To: ")
+                    }
 
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                    append(recipient ?: "Unknown")
-                }
-            },
-            fontSize = MaterialTheme.typography.labelLarge.fontSize,
-        )
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                        append(recipient ?: "Unknown")
+                    }
+                },
+                fontSize = MaterialTheme.typography.labelLarge.fontSize,
+            )
+        }
 
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            categories.forEach {
-                CategoryPill(category = it, isSelected = true) {}
+        item(key = "categories") {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                categories.forEach {
+                    CategoryPill(category = it, isSelected = true)
+                }
+            }
+        }
+
+        if (reminders.isNotEmpty()) {
+            item(key = "reminders-label") {
+                Text("Reminders", fontWeight = FontWeight.Bold)
+            }
+
+            items(
+                items = reminders,
+                key = { it.value }
+            ) {
+                ReminderCell(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .fillMaxWidth(),
+                    id = it,
+                    onClick = {}
+                )
             }
         }
     }
-
 }
+
+

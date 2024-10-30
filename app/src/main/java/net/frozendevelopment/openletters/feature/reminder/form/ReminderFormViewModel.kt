@@ -1,5 +1,8 @@
 package net.frozendevelopment.openletters.feature.reminder.form
 
+import android.Manifest
+import android.app.Application
+import android.os.Build
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
@@ -14,6 +17,7 @@ import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.dateString
+import net.frozendevelopment.openletters.extensions.isPermissionGranted
 import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
@@ -25,6 +29,7 @@ import java.time.format.DateTimeFormatter
 
 @Immutable
 data class ReminderFormState(
+    val hasNotificationPermission: Boolean = false,
     val title: String = "",
     val titleError: String = "",
     val description: String = "",
@@ -114,6 +119,7 @@ data class ReminderFormState(
 
 class ReminderFormViewModel(
     reminderToEdit: ReminderId?,
+    private val application: Application,
     private val preselectedLetters: List<LetterId>,
     private val searchLetters: SearchLettersUseCase,
     private val createReminder: UpsertReminderUseCase,
@@ -128,9 +134,16 @@ class ReminderFormViewModel(
     private val isEditing: Boolean = reminderToEdit != null
 
     override fun load() {
+        val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            application.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            true
+        }
+
         update { copy(
+            hasNotificationPermission = hasNotificationPermission,
             letters = searchLetters(""),
-            selectedLetters = preselectedLetters
+            selectedLetters = preselectedLetters,
         )}
 
         if (isEditing) {
@@ -149,6 +162,10 @@ class ReminderFormViewModel(
                 )
             }
         }
+    }
+
+    fun handlePermissionResult(granted: Boolean) {
+        update { copy(hasNotificationPermission = granted) }
     }
 
     fun setTitle(title: String) = viewModelScope.launch {

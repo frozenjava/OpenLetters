@@ -42,7 +42,7 @@ fun CategoryPill(
     modifier: Modifier = Modifier,
     category: Category,
     isSelected: Boolean,
-    onToggle: () -> Unit
+    onToggle: (() -> Unit)? = null,
 ) {
     CategoryPill(
         modifier = modifier,
@@ -59,7 +59,7 @@ fun CategoryPill(
     label: String,
     color: Color,
     isSelected: Boolean,
-    onToggle: () -> Unit
+    onToggle: (() -> Unit)? = null
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
@@ -72,20 +72,24 @@ fun CategoryPill(
         modifier = modifier
             .scale(scale.value)
             .clip(ButtonDefaults.shape)
-            .clickable {
-                onToggle()
-                coroutineScope.launch {
-                    scale.animateTo(
-                        0.90f,
-                        animationSpec = tween(100)
-                    )
-                    scale.animateTo(
-                        1f,
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioHighBouncy,
-                            stiffness = Spring.StiffnessLow
+            .let {
+                if (onToggle == null) return@let it
+
+                it.clickable {
+                    onToggle()
+                    coroutineScope.launch {
+                        scale.animateTo(
+                            0.90f,
+                            animationSpec = tween(100)
                         )
-                    )
+                        scale.animateTo(
+                            1f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioHighBouncy,
+                                stiffness = Spring.StiffnessLow
+                            )
+                        )
+                    }
                 }
             },
         color = buttonColor,

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
@@ -15,6 +16,7 @@ data class LetterPeekState(
     val recipient: String? = null,
     val documents: Map<DocumentId, Uri?> = emptyMap(),
     val selectedCategories: List<Category> = emptyList(),
+    val reminders: List<ReminderId> = emptyList(),
 ) {
     val pagerCount: Int
         get() {
@@ -51,7 +53,8 @@ class LetterPeekViewModel(
             sender = details.letter.sender,
             recipient = details.letter.recipient,
             documents = details.documents,
-            selectedCategories = details.categories
+            selectedCategories = details.categories,
+            reminders = details.reminders
         )}
     }
 }

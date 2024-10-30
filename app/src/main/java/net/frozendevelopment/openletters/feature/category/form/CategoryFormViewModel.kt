@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
+import net.frozendevelopment.openletters.extensions.Random
 import net.frozendevelopment.openletters.usecase.UpsertCategoryUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
@@ -14,7 +15,7 @@ data class CategoryFormState(
     private val mode: CategoryFormMode,
     val isBusy: Boolean = true,
     val label: String = "",
-    val color: Color = Color(0xFF0F0FF0),
+    val color: Color = Color.Random,
 ) {
     val isSavable = label.isNotBlank()
 

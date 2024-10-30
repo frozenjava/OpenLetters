@@ -32,7 +32,8 @@ val NullableReminderIdNavType = object : NavType<ReminderId?>(isNullableAllowed 
         }
     }
 
-    override fun parseValue(value: String): ReminderId {
+    override fun parseValue(value: String): ReminderId? {
+        if (value.isBlank()) return null
         return ReminderId(value)
     }
 

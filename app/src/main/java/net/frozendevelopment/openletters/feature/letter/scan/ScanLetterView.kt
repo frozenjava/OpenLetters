@@ -2,6 +2,7 @@ package net.frozendevelopment.openletters.feature.letter.scan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,12 +36,14 @@ fun ScanLetterView(
     setSender: (String) -> Unit,
     setRecipient: (String) -> Unit,
     toggleCategory: (Category) -> Unit,
+    setTranscript: (String) -> Unit,
     openLetterScanner: () -> Unit,
     openSenderScanner: () -> Unit,
     openRecipientScanner: () -> Unit,
     onSaveClicked: () -> Unit,
     onBackClicked: () -> Unit,
     onDeleteDocumentClicked: (DocumentId) -> Unit,
+    onCreateCategoryClicked: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -105,13 +108,16 @@ fun ScanLetterView(
                 modifier = Modifier.fillMaxWidth(),
                 categories = state.categoryMap,
                 toggleCategory = toggleCategory,
-                onCreateClicked = {},
+                onCreateClicked = onCreateCategoryClicked,
             )
             DocumentRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
+                transcript = state.transcript,
+                isLoadingTranscript = state.isCreatingTranscript,
                 documents = state.documents,
                 onAddButtonClicks = openLetterScanner,
                 onDeleteDocumentClicked = onDeleteDocumentClicked,
+                onEditTranscript = setTranscript,
             )
         }
     }
@@ -127,12 +133,14 @@ private fun ScanFormViewPreview() {
                 toggleCategory = {},
                 setSender = {},
                 setRecipient = {},
+                setTranscript = {},
                 openLetterScanner = {},
                 openSenderScanner = {},
                 openRecipientScanner = {},
                 onSaveClicked = {},
                 onBackClicked = {},
                 onDeleteDocumentClicked = {},
+                onCreateCategoryClicked = {},
             )
         }
     }

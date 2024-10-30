@@ -1,5 +1,6 @@
 package net.frozendevelopment.openletters.feature.reminder.form
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
@@ -28,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,12 +38,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
+import net.frozendevelopment.openletters.extensions.openAppSettings
 import net.frozendevelopment.openletters.ui.components.FormAppBar
 import net.frozendevelopment.openletters.ui.components.LetterCell
 import net.frozendevelopment.openletters.ui.components.SelectCell
@@ -64,6 +72,7 @@ fun ReminderFormView(
     onSaveClicked: () -> Unit,
     onBackClicked: () -> Unit,
 ) {
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -75,17 +84,38 @@ fun ReminderFormView(
             isSavable = state.isSavable,
             onBackClicked = onBackClicked,
             onSaveClicked = onSaveClicked,
-            title = { Text("Reminder") },
+            title = { Text(stringResource(R.string.reminder)) },
         )
+
+        if (!state.hasNotificationPermission) {
+            Surface(
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                color = MaterialTheme.colorScheme.errorContainer,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(stringResource(R.string.notification_permission_required))
+                    TextButton(onClick = { (context as? Activity)?.openAppSettings() }) {
+                        Text(stringResource(R.string.grant))
+                    }
+                }
+            }
+        }
 
         LazyColumn(modifier = Modifier.imePadding()) {
             item {
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(.95f),
                     value = state.title,
-                    label = { Text("Title") },
+                    label = { Text(stringResource(R.string.title)) },
                     onValueChange = onTitleChanged,
                     singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words),
                     supportingText = {
                         if (state.titleError.isNotBlank()) {
                             Text(state.titleError)
@@ -101,12 +131,12 @@ fun ReminderFormView(
                 OutlinedTextField(
                     value = state.formattedDate,
                     onValueChange = { },
-                    label = { Text("Date") },
+                    label = { Text(stringResource(R.string.date)) },
                     supportingText = {
                         if (state.dateError.isNotBlank()) {
                             Text(state.dateError)
                         } else {
-                            Text("Select a date to be reminded on")
+                            Text(stringResource(R.string.select_a_date))
                         }
                     },
                     readOnly = true,
@@ -115,7 +145,7 @@ fun ReminderFormView(
                         IconButton(onClick = { openDialog(ReminderFormState.Dialog.DATE) }) {
                             Icon(
                                 imageVector = Icons.Default.DateRange,
-                                contentDescription = "Select date"
+                                contentDescription = stringResource(R.string.select_date)
                             )
                         }
                     },
@@ -133,12 +163,12 @@ fun ReminderFormView(
                 OutlinedTextField(
                     value = state.formattedTime,
                     onValueChange = { },
-                    label = { Text("Time") },
+                    label = { Text(stringResource(R.string.time)) },
                     supportingText = {
                         if (state.dateError.isNotBlank()) {
                             Text(state.dateError)
                         } else {
-                            Text("Select a time to be reminded at")
+                            Text(stringResource(R.string.select_a_time))
                         }
                     },
                     readOnly = true,
@@ -147,7 +177,7 @@ fun ReminderFormView(
                         IconButton(onClick = { openDialog(ReminderFormState.Dialog.TIME) }) {
                             Icon(
                                 imageVector = Icons.Default.AccessTime,
-                                contentDescription = "Select date"
+                                contentDescription = stringResource(R.string.select_time)
                             )
                         }
                     },
@@ -165,9 +195,10 @@ fun ReminderFormView(
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(.95f),
                     value = state.description,
-                    label = { Text("Description (Optional)") },
+                    label = { Text(stringResource(R.string.description_optional)) },
                     onValueChange = onDescriptionChanged,
                     supportingText = { Text(state.descriptionHelperText) },
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Sentences),
                     isError = !state.isValidDescription,
                     minLines = 3,
                     maxLines = 5,
@@ -180,7 +211,7 @@ fun ReminderFormView(
                         modifier = Modifier
                             .fillMaxWidth(.95f)
                             .padding(vertical = 16.dp),
-                        text = "Tagged Letters",
+                        text = stringResource(R.string.tag_letters),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
@@ -203,7 +234,7 @@ fun ReminderFormView(
                         modifier = Modifier.fillMaxWidth(.95f),
                         onClick = { openDialog(ReminderFormState.Dialog.LETTERS) }
                     ) {
-                        Text("Tag Additional Letters")
+                        Text(stringResource(R.string.tag_additional_letters))
                     }
                 }
 
@@ -216,7 +247,7 @@ fun ReminderFormView(
                         modifier = Modifier.fillMaxWidth(.95f),
                         onClick = { openDialog(ReminderFormState.Dialog.LETTERS) }
                     ) {
-                        Text("Tag Letters")
+                        Text(stringResource(R.string.tag_letters))
                     }
                 }
             }

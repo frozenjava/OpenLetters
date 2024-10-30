@@ -6,11 +6,13 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
@@ -32,12 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import net.frozendevelopment.openletters.extensions.Random
 import net.frozendevelopment.openletters.extensions.contrastColor
 import net.frozendevelopment.openletters.ui.components.CategoryPill
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
@@ -95,6 +99,7 @@ fun CategoryFormView(
                 onValueChange = onLabelChanged,
                 singleLine = true,
                 interactionSource = interactionSource,
+                keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words),
                 cursorBrush = SolidColor(state.color.contrastColor),
                 textStyle = MaterialTheme.typography.titleLarge.copy(
                     color = state.color.contrastColor,
@@ -115,10 +120,20 @@ fun CategoryFormView(
 
         HorizontalDivider()
 
+        TextButton(
+            modifier = Modifier.fillMaxWidth(.95f),
+            onClick = {
+                val color = Color.Random
+                controller.selectByColor(color, true)
+                onColorChanged(color)
+            }
+        ) {
+            Text(text = "Randomize Color")
+        }
+
         BrightnessSlider(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .fillMaxWidth(.95f)
                 .height(35.dp),
             controller = controller,
             borderRadius = 32.dp,
@@ -127,8 +142,8 @@ fun CategoryFormView(
         HsvColorPicker(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .navigationBarsPadding(),
+                .navigationBarsPadding()
+                .padding(horizontal = 16.dp),
             onColorChanged = { onColorChanged(it.color) },
             controller = controller,
             initialColor = state.color,

@@ -11,4 +11,21 @@
     <string name="delete_confirmation">Deleting this item is permanent and can not be undone. Are you sure you want to delete it?</string>
     <string name="create_reminder">Create Reminder</string>
     <string name="edit_categories">Edit Categories</string>
+    <string name="notification_permission_required">Notification Permission Required</string>
+    <string name="grant">Grant</string>
+    <string name="reminder">Reminder</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="description_optional">Description (Optional)</string>
+    <string name="tag_letters">Tag Letters</string>
+    <string name="tag_additional_letters">Tag Additional Letters</string>
+    <string name="title">Title</string>
+    <string name="select_a_date">Select a date to be reminded on</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_a_time">Select a time to be reminded at</string>
+    <string name="select_time">Select Time</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="create_category">Create Category</string>
+    <string name="category_tooltip">Organize your letters by tagging them with categories like spam, bill, important, or any custom categories you create. This helps you keep track of different types of letters and find what you need quickly and efficiently.</string>
 </resources>

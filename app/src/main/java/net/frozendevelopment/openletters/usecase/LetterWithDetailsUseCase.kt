@@ -4,15 +4,18 @@ import android.net.Uri
 import net.frozendevelopment.openletters.data.sqldelight.OpenLettersDB
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Letter
+import net.frozendevelopment.openletters.data.sqldelight.migrations.Reminder
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.util.DocumentManagerType
 
 data class LetterWithDetails(
     val letter: Letter,
     val documents: Map<DocumentId, Uri>,
     val categories: List<Category>,
+    val reminders: List<ReminderId>
 )
 
 class LetterWithDetailsUseCase(
@@ -34,6 +37,8 @@ class LetterWithDetailsUseCase(
                 documentManager.get(it) ?: Uri.EMPTY
             }
 
+        val reminders = database.reminderQueries.remindersForLetter(id).executeAsList()
+
         return LetterWithDetails(
             letter = Letter(
                 id = letterDetail.id,
@@ -45,6 +50,7 @@ class LetterWithDetailsUseCase(
             ),
             documents = documents,
             categories = categories,
+            reminders = reminders
         )
     }
 }

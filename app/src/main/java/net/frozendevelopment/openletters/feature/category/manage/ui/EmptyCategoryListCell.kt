@@ -10,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.ui.theme.tipCardColors
 
 @Composable
@@ -38,12 +40,12 @@ fun EmptyCategoryListCell(
                 Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
-                    text = "Create Category",
+                    text = stringResource(R.string.create_category),
                     style = MaterialTheme.typography.headlineLarge,
                 )
             }
             Text(
-                text = "Organize your emails by tagging them with categories like spam, bill, important, or any custom categories you create. This helps you keep track of different types of emails and find what you need quickly and efficiently.",
+                text = stringResource(R.string.category_tooltip),
                 style = MaterialTheme.typography.bodyMedium,
                 fontStyle = FontStyle.Italic,
             )

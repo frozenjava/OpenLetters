@@ -14,24 +14,18 @@ import java.time.ZoneOffset
 
 class CreateLetterUseCase(
     private val documentManager: DocumentManagerType,
-    private val textExtractor: TextExtractorType,
     private val database: OpenLettersDB,
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         sender: String?,
         recipient: String?,
+        transcript: String?,
         documents: Map<DocumentId, Uri>,
         categories: List<CategoryId>,
         letterId: LetterId = LetterId.random(),
     ) {
         val currentTime = now()
-
-        val extractedText = documents
-            .values
-            .mapNotNull { textExtractor.extractFromImage(it) }
-            .filter { it.isNotBlank() }
-            .joinToString("\n\n")
 
         database.transaction {
             // insert the letter into the database
@@ -39,7 +33,7 @@ class CreateLetterUseCase(
                 id = letterId,
                 sender = sender,
                 recipient = recipient,
-                body = extractedText,
+                body = transcript,
                 created = currentTime,
                 lastModified = currentTime,
             )
