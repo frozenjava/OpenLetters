@@ -4,8 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -34,6 +40,10 @@ import net.frozendevelopment.openletters.feature.letter.list.LetterListDestinati
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import net.frozendevelopment.openletters.feature.reminder.reminders
+import net.frozendevelopment.openletters.ui.animation.navigationEnterTransition
+import net.frozendevelopment.openletters.ui.animation.navigationExitTransition
+import net.frozendevelopment.openletters.ui.animation.navigationPopEnterTransition
+import net.frozendevelopment.openletters.ui.animation.navigationPopExitTransition
 import net.frozendevelopment.openletters.ui.components.MailNavDrawer
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import java.util.concurrent.TimeUnit
@@ -97,8 +107,10 @@ class MainActivity : ComponentActivity() {
                             NavHost(
                                 navController = navHostController,
                                 startDestination = LetterListDestination,
-                                enterTransition = { EnterTransition.None },
-                                exitTransition = { ExitTransition.None },
+                                enterTransition = { navigationEnterTransition() },
+                                exitTransition = { navigationExitTransition() },
+                                popEnterTransition = { navigationPopEnterTransition() },
+                                popExitTransition = { navigationPopExitTransition() },
                             ) {
                                 categories(navHostController, drawerState)
                                 letters(navHostController, drawerState)
@@ -107,7 +119,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-
             }
         }
     }
