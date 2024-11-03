@@ -232,57 +232,6 @@ fun ManageCategoryView(
                     }
                 )
             }
-
-//            itemsIndexed(
-//                items = state.categories,
-//                key = { _, category -> category.id.value }
-//            ) { index, category ->
-//                CategoryRow(
-//                    category = category,
-//                    onEditClicked = editCategoryClicked,
-//                    onDeleteClicked = onDeleteClicked,
-//                    modifier = Modifier
-//                        .then(if (draggedItem == category.id) Modifier.offset { IntOffset(0, draggedOffset.toInt()) }.zIndex(1f) else Modifier)
-//                        .pointerInput(Unit) {
-//                            detectDragGesturesAfterLongPress(
-//                                onDragStart = { offset ->
-////                                    val startIndex = listState.layoutInfo.visibleItemsInfo
-////                                        .firstOrNull { offset.y.toInt() in it.offset..it.offset + it.size }
-////                                        ?.index
-//                                    val startIndex = index
-//                                    if (startIndex != null) {
-//                                        originalDraggedIndex = startIndex
-//                                        draggedItem = category.id
-//                                        draggedOffset =
-//                                            offset.y //- listState.layoutInfo.visibleItemsInfo[startIndex].offset
-//                                    }
-//                                },
-//                                onDragEnd = {
-////                                    draggedItem?.let { d ->
-////                                        onMove(d, listState.layoutInfo.visibleItemsInfo
-////                                            .firstOrNull { draggedOffset.toInt() in it.offset..it.offset + it.size }
-////                                            ?.index ?: d)
-////                                    }
-//                                    draggedItem = null
-//                                    originalDraggedIndex = null
-//                                },
-//                                onDragCancel = { draggedItem = null },
-//                                onDrag = { change, dragAmount ->
-//                                    if (draggedItem != null) {
-//                                        draggedOffset += dragAmount.y
-//                                    }
-//
-//                                    draggedItem?.let { d ->
-//                                        val adjustedOffset = (listState.layoutInfo.visibleItemsInfo[index].offset + draggedOffset).toInt()
-//                                        onMove(index, listState.layoutInfo.visibleItemsInfo
-//                                            .firstOrNull { adjustedOffset in it.offset..it.offset + it.size }
-//                                            ?.index ?: index)
-//                                    }
-//                                }
-//                            )
-//                        }
-//                )
-//            }
         }
     }
 }

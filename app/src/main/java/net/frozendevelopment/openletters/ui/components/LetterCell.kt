@@ -70,7 +70,7 @@ fun ActionLetterCell(
     letterUseCase: MetaLetterUseCase = koinInject(),
 ) {
     // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
-    val letter = letterUseCase.load(id) ?: return
+    val letter = letterUseCase(id) ?: return
     val haptic = LocalHapticFeedback.current
 
     var showDeleteConfirmation: Boolean by remember { mutableStateOf(false) }
@@ -142,7 +142,7 @@ fun LetterCell(
     letterUseCase: MetaLetterUseCase = koinInject(),
 ) {
     // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
-    val letter = letterUseCase.load(id) ?: return
+    val letter = letterUseCase(id) ?: return
 
     LetterCell(
         modifier = modifier,

@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
+import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
@@ -60,6 +62,7 @@ fun LetterList(
     letterUseCase: MetaLetterUseCase = koinInject(),
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     var showLetterPeek by remember { mutableStateOf<LetterId?>(null) }
 
@@ -72,10 +75,6 @@ fun LetterList(
             onAddReminderClicked = { onCreateReminderClicked(listOf(it)) },
             onDismissRequest = { showLetterPeek = null }
         )
-    }
-
-    LaunchedEffect(state.listHash) {
-        listState.scrollToItem(0)
     }
 
     Box(
@@ -158,9 +157,17 @@ fun LetterList(
             selectedCategoryId = state.selectedCategoryId,
             categories = state.categories,
             onToggleCategory = {
+                coroutineScope.launch {
+                    listState.scrollToItem(0)
+                }
+
                 selectCategory(it)
             },
             onSearchChanged = {
+                coroutineScope.launch {
+                    listState.scrollToItem(0)
+                }
+
                 setSearchTerms(it)
             },
             onNavDrawerClicked = onNavDrawerClicked

@@ -34,6 +34,12 @@ INSERT INTO letterToReminder (letterId, reminderId) VALUES (
 categoriesForLetter:
 SELECT categoryId FROM letterToCategory WHERE letterId = :letterId;
 
+categoryColorsForLetter:
+SELECT category.color FROM letterToCategory AS ltc
+INNER JOIN category AS category ON ltc.categoryId = category.id
+WHERE ltc.letterId = :letterId
+ORDER BY category.priority ASC, label ASC;
+
 letterInfo:
 SELECT
     letter.id,
