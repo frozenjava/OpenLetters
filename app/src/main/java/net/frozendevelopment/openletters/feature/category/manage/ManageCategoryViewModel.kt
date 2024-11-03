@@ -3,12 +3,18 @@ package net.frozendevelopment.openletters.feature.category.manage
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
+import net.frozendevelopment.openletters.usecase.SaveCategoryOrderUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
 @Immutable
@@ -21,6 +27,7 @@ data class ManageCategoryState(
 }
 
 class ManageCategoryViewModel(
+    private val saveCategoryOrder: SaveCategoryOrderUseCase,
     private val categoryQueries: CategoryQueries,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): StatefulViewModel<ManageCategoryState>(ManageCategoryState()) {
@@ -41,26 +48,19 @@ class ManageCategoryViewModel(
 
         Log.d("ManageCategoryViewModel", "onMove: $from -> $to")
 
-        val categories = stateFlow.value.categories.toMutableList()
-        val item = categories[from]
-
-        categories.removeAt(from)
-
-        if (to < from) {
-            categories.add(to, item)
-        } else {
-            categories.add(to - 1, item)
+        val categories = stateFlow.value.categories.toMutableList().apply {
+            add(to, removeAt(from))
         }
 
-        viewModelScope.launch(ioDispatcher) {
-            update { copy(
-                categories = categories
-            )}
-        }
+        update { copy(
+            categories = categories
+        )}
     }
 
     fun saveOrder() = viewModelScope.launch(ioDispatcher) {
-
+        state.categories.forEachIndexed { index, category ->
+            saveCategoryOrder(category.id, index.toLong())
+        }
     }
 
     fun select(category: CategoryId?) = viewModelScope.launch {

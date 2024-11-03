@@ -20,3 +20,9 @@ DELETE FROM category WHERE id = ?;
 
 get:
 SELECT * FROM category WHERE id = ?;
+
+setPriority:
+UPDATE category SET
+    priority = :priority,
+    lastModified = :modifiedTimestamp
+WHERE id = :id;

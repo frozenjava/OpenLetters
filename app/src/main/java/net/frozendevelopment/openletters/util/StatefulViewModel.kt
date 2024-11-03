@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.update
 
 open class StatefulViewModel<TState>(
     initialState: TState,
-    loadStateStrategy: SharingStarted = SharingStarted.WhileSubscribed(5000),
+    loadStateStrategy: SharingStarted = SharingStarted.WhileSubscribed(1000),
 ) : ViewModel() {
     private val _stateFlow: MutableStateFlow<TState> = MutableStateFlow(initialState)
 

@@ -71,4 +71,9 @@ class UseCaseKoin {
     fun deleteLetterUseCase(
         letterQueries: LetterQueries
     ) = DeleteLetterUseCase(letterQueries)
+
+    @Factory
+    fun saveCategoryOrderUseCase(
+        categoryQueries: CategoryQueries
+    ) = SaveCategoryOrderUseCase(categoryQueries)
 }

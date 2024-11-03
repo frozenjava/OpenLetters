@@ -23,6 +23,7 @@ import net.frozendevelopment.openletters.usecase.DeleteReminderUseCase
 import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.ReminderWithDetailsUseCase
+import net.frozendevelopment.openletters.usecase.SaveCategoryOrderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.usecase.UpsertCategoryUseCase
 import net.frozendevelopment.openletters.util.TextExtractorType
@@ -75,8 +76,9 @@ class FeatureKoin {
 
     @KoinViewModel
     fun manageCategoryViewModel(
+        saveCategoryOrderUseCase: SaveCategoryOrderUseCase,
         categoryQueries: CategoryQueries,
-    ) = ManageCategoryViewModel(categoryQueries)
+    ) = ManageCategoryViewModel(saveCategoryOrderUseCase, categoryQueries)
 
     @KoinViewModel
     fun letterDetailViewModel(

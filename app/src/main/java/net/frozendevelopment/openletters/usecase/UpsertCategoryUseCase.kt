@@ -22,7 +22,7 @@ class UpsertCategoryUseCase(
             id = id,
             label = label,
             color = color,
-            priority = 0,
+            priority = Long.MAX_VALUE,
             created = currentTime,
             lastModified = currentTime
         )

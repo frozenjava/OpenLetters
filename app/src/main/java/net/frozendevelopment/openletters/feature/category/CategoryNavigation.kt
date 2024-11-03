@@ -75,6 +75,7 @@ fun NavGraphBuilder.categories(
                 },
                 onDeleteClicked = viewModel::delete,
                 onMove = viewModel::onMove,
+                onMoveComplete = viewModel::saveOrder
             )
         }
 
