@@ -51,12 +51,14 @@ class FeatureKoin {
     @KoinViewModel
     fun scanViewModel(
         @InjectedParam letterToEdit: LetterId?,
+        letterQueries: LetterQueries,
         textExtractor: TextExtractorType,
         createLetter: CreateLetterUseCase,
         categoryQueries: CategoryQueries,
         letterWithDetailsUseCase: LetterWithDetailsUseCase,
     ) = ScanViewModel(
         letterToEdit = letterToEdit,
+        letterQueries = letterQueries,
         textExtractor = textExtractor,
         createLetter = createLetter,
         categoryQueries = categoryQueries,

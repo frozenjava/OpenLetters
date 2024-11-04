@@ -18,16 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
-import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.letter.scan.ui.CategoryPicker
 import net.frozendevelopment.openletters.feature.letter.scan.ui.DocumentRow
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScanAppBar
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScannableTextField
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
-import kotlin.reflect.typeOf
 
 @Composable
 fun ScanLetterView(
@@ -64,6 +61,7 @@ fun ScanLetterView(
             placeholder = """
                         Jane Doe 123 Street Drive
                     """.trimIndent(),
+            suggestions = state.possibleSenders,
             onValueChange = setSender,
             onScanClick = openSenderScanner,
         )
@@ -75,6 +73,7 @@ fun ScanLetterView(
             placeholder = """
                         Jane Doe 123 Street Drive
                     """.trimIndent(),
+            suggestions = state.possibleRecipients,
             onValueChange = setRecipient,
             onScanClick = openRecipientScanner
         )

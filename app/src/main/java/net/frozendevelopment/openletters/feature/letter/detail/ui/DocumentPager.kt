@@ -69,11 +69,13 @@ fun DocumentPager(
             }
         }
 
-        PagerIndicator(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            currentPage = pagerState.currentPage,
-            pageCount = pagerState.pageCount
-        )
+        if (pagerState.pageCount > 1) {
+            PagerIndicator(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                currentPage = pagerState.currentPage,
+                pageCount = pagerState.pageCount
+            )
+        }
     }
 }
 

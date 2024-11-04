@@ -72,3 +72,6 @@ SELECT id FROM reminder
 WHERE id IN (
     SELECT reminderId FROM letterToReminder WHERE letterId = :letterId
 );
+
+unacknowledgedReminders:
+SELECT * FROM reminder WHERE acknowledged = 0;

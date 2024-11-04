@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteException
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.extensions.sanitizeForSearch
 
 class SearchLettersUseCase(
     private val letterQueries: LetterQueries,
@@ -20,10 +21,9 @@ class SearchLettersUseCase(
             ).executeAsList()
         } else {
             try {
-                val sanitizedQuery: String = query.replace(Regex("[-:()|\"\\[\\]{}*?+~\\\\/]"), "*")
                 letterQueries.search(
                     categoryId = category,
-                    query = "$sanitizedQuery*",
+                    query = "${query.sanitizeForSearch()}*",
                     limit = limit
                 ).executeAsList()
             } catch (e: SQLiteException) {

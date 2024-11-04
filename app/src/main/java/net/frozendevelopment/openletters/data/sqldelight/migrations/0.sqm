@@ -69,7 +69,7 @@ CREATE VIRTUAL TABLE letterFTS USING fts5(
     created TEXT
 );
 
-CREATE TRIGGER launch_after_letter_insert
+CREATE TRIGGER launchAfterLetterInsert
 AFTER INSERT ON letter
 BEGIN
     INSERT INTO letterFTS (id, sender, recipient, body, created)
@@ -82,7 +82,7 @@ BEGIN
     );
 END;
 
-CREATE TRIGGER launch_after_letter_update
+CREATE TRIGGER launchAfterLetterUpdate
 AFTER UPDATE ON letter
 BEGIN
     UPDATE letterFTS SET

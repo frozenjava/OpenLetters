@@ -14,18 +14,15 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
+import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.extensions.sanitizeForSearch
 import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
@@ -43,6 +40,8 @@ data class ScanState(
     val selectedCategories: Set<Category> = emptySet(),
     val newDocuments: Map<DocumentId, Uri> = emptyMap(), // any new documents added before saving
     val existingDocuments: Map<DocumentId, Uri> = emptyMap(), // any existing documents when editing
+    val possibleSenders: List<String> = emptyList(),
+    val possibleRecipients: List<String> = emptyList(),
 ) {
     val canLeaveSafely: Boolean
         get() = !isBusy && sender.isNullOrBlank() && recipient.isNullOrBlank() && documents.isEmpty()
@@ -60,6 +59,7 @@ data class ScanState(
 
 class ScanViewModel(
     letterToEdit: LetterId?,
+    private val letterQueries: LetterQueries,
     private val textExtractor: TextExtractorType,
     private val createLetter: CreateLetterUseCase,
     private val letterWithDetails: LetterWithDetailsUseCase,
@@ -191,11 +191,17 @@ class ScanViewModel(
     }
 
     fun setSender(sender: String) = viewModelScope.launch {
-        update { copy(sender = sender) }
+        update { copy(
+            sender = sender,
+            possibleSenders = searchSendersAndRecipients(sender)
+        )}
     }
 
     fun setRecipient(recipient: String) = viewModelScope.launch {
-        update { copy(recipient = recipient) }
+        update { copy(
+            recipient = recipient,
+            possibleRecipients = searchSendersAndRecipients(recipient)
+        )}
     }
 
     fun setTranscript(transcript: String) = viewModelScope.launch {
@@ -266,6 +272,19 @@ class ScanViewModel(
         for (document in state.newDocuments.values) {
             val path = document.path ?: continue
             File(path).takeIf { it.exists() }?.delete()
+        }
+    }
+
+    private fun searchSendersAndRecipients(query: String): List<String> {
+        return try {
+            letterQueries
+                .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                .executeAsList() + letterQueries.searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                .executeAsList()
+                .filter { it.isNotBlank() }
+                .distinct()
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
