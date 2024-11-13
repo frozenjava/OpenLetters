@@ -2,6 +2,8 @@ package net.frozendevelopment.openletters.feature.letter.detail.ui
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,10 +23,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.ui.components.BrokenImageView
@@ -36,6 +43,7 @@ fun DocumentPager(
     modifier: Modifier = Modifier,
     body: String?,
     documents: Map<DocumentId, Uri?>,
+    onImageClick: (Uri) -> Unit
 ) {
     val pageIndexOffset: Int = if (!body.isNullOrBlank()) 1 else 0
     val pagerState = rememberPagerState {
@@ -60,7 +68,13 @@ fun DocumentPager(
                 val documentUri = documents.values.toList()[page - pageIndexOffset]
                 if (documentUri != null) {
                     LazyImageView(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize()
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = { onImageClick(documentUri) },
+                                    onDoubleTap = { onImageClick(documentUri) },
+                                )
+                            },
                         uri = documentUri
                     )
                 } else {

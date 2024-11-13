@@ -1,5 +1,6 @@
 package net.frozendevelopment.openletters.feature.letter.detail
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -53,6 +54,7 @@ fun LetterDetailView(
     onEditClicked: () -> Unit,
     onCreateReminderClicked: () -> Unit,
     onBackClicked: () -> Unit,
+    onImageClick: (Uri) -> Unit,
 ) {
     Column(modifier = modifier) {
         CenterAlignedTopAppBar(
@@ -94,7 +96,8 @@ fun LetterDetailView(
         when(state) {
             is LetterDetailState.Detail -> LetterDetail(
                 modifier = Modifier.padding(),
-                state = state
+                state = state,
+                onImageClick = onImageClick,
             )
             LetterDetailState.Loading -> Loading()
             LetterDetailState.NotFound -> LetterNotFound()
@@ -106,6 +109,7 @@ fun LetterDetailView(
 fun LetterDetail(
     modifier: Modifier = Modifier,
     state: LetterDetailState.Detail,
+    onImageClick: (Uri) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -167,6 +171,7 @@ fun LetterDetail(
             modifier = Modifier.fillMaxWidth(),
             body = state.letter.body,
             documents = state.documents,
+            onImageClick = onImageClick,
         )
     }
 }
@@ -195,6 +200,7 @@ private fun LetterDetailPreview(darkTheme: Boolean, state: LetterDetailState) {
                 onEditClicked = {},
                 onCreateReminderClicked = {},
                 onBackClicked = {},
+                onImageClick = {},
             )
         }
     }

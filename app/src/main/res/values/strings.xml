@@ -38,6 +38,7 @@
     <string name="select_time">Select Time</string>
     <string name="save">Save</string>
     <string name="back">Back</string>
+    <string name="close">Close</string>
     <string name="create_category">Create Category</string>
     <string name="category_tooltip">Organize your letters by tagging them with categories like spam, bill, important, or any custom categories you create. This helps you keep track of different types of letters and find what you need quickly and efficiently.</string>
     <string name="privacy_policy_text"><![CDATA[

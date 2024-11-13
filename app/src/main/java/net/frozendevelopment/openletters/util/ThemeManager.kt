@@ -26,12 +26,12 @@ class ThemeManager(
     coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ): ThemeManagerType {
     private val themeKey = stringPreferencesKey("theme")
-    private val variantKey = stringPreferencesKey("variant")
+    private val colorPaletteKey = stringPreferencesKey("color_palette")
 
     override val current: StateFlow<Pair<AppTheme, ColorPalette>> = datastore.data.map { preferences ->
-        val themeName = preferences[themeKey] ?: AppTheme.OPEN_LETTERS.name
-        val variantName = preferences[variantKey] ?: ColorPalette.LIGHT.name
-        Pair(AppTheme.valueOf(themeName), ColorPalette.valueOf(variantName))
+        val themeName = preferences[themeKey]?.let { AppTheme.valueOf(it) } ?: AppTheme.OPEN_LETTERS
+        val colorPalette = preferences[colorPaletteKey]?.let { ColorPalette.valueOf(it) } ?: ColorPalette.SYSTEM
+        Pair(themeName, colorPalette)
     }.stateIn(
         coroutineScope,
         SharingStarted.Eagerly,
@@ -46,7 +46,7 @@ class ThemeManager(
 
     override suspend fun setVariant(variant: ColorPalette) {
         datastore.edit { preferences ->
-            preferences[variantKey] = variant.name
+            preferences[colorPaletteKey] = variant.name
         }
     }
 }

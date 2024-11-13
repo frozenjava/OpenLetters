@@ -2,6 +2,7 @@ package net.frozendevelopment.openletters.feature.letter
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -10,6 +11,8 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -19,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -29,13 +33,13 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormMode
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailView
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailViewModel
-import net.frozendevelopment.openletters.feature.letter.detail.LetterIdNavType
+import net.frozendevelopment.openletters.feature.letter.image.ImageDestination
+import net.frozendevelopment.openletters.feature.letter.image.ImageView
 import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
 import net.frozendevelopment.openletters.feature.letter.list.LetterListView
 import net.frozendevelopment.openletters.feature.letter.list.LetterListViewModel
@@ -44,15 +48,31 @@ import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterView
 import net.frozendevelopment.openletters.feature.letter.scan.ScanViewModel
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
-import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.letters(
     navController: NavController,
     drawerState: DrawerState,
 ) {
+    composable<ImageDestination>(
+        enterTransition = { fadeIn() + scaleIn() },
+        exitTransition = { fadeOut() + scaleOut() },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None },
+    ) {
+        val destination = it.toRoute<ImageDestination>()
+        Surface(
+            color = Color.Black,
+            contentColor = Color.White,
+        ) {
+            ImageView(
+                modifier = Modifier.fillMaxSize(),
+                uri = Uri.parse(destination.uri),
+                onBackClick = navController::popBackStack,
+            )
+        }
+    }
     composable<LetterListDestination> {
         val coroutineScope = rememberCoroutineScope()
         val viewModel: LetterListViewModel = koinViewModel()
@@ -92,7 +112,7 @@ fun NavGraphBuilder.letters(
         }
     }
     composable<LetterDetailDestination>(
-        typeMap = mapOf(typeOf<LetterId>() to LetterIdNavType),
+        typeMap = LetterDetailDestination.typeMap,
     ) { backStackEntry ->
         val destination = backStackEntry.toRoute<LetterDetailDestination>()
         val viewModel: LetterDetailViewModel = koinViewModel { parametersOf(destination.letterId) }
@@ -104,7 +124,8 @@ fun NavGraphBuilder.letters(
                 state = state,
                 onEditClicked = { navController.navigate(ScanLetterDestination(destination.letterId)) },
                 onCreateReminderClicked = { navController.navigate(ReminderFormDestination(preselectedLetters = listOf(destination.letterId))) },
-                onBackClicked = navController::popBackStack
+                onBackClicked = navController::popBackStack,
+                onImageClick = { uri -> navController.navigate(ImageDestination(uri.toString())) },
             )
         }
     }
