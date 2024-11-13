@@ -33,6 +33,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
@@ -59,7 +60,7 @@ fun LetterPeekMenu(
         parameters = { parametersOf(letterId) },
     )
 ) {
-    val state by viewModel.stateFlow.collectAsState()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
     var showDeleteConfirmation: Boolean by remember { mutableStateOf(false) }
     val horizontalPagerState = PagerState { state.pagerCount }
     val haptic = LocalHapticFeedback.current

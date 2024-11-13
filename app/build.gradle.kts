@@ -89,6 +89,8 @@ dependencies {
     implementation(libs.koin.compose.navigation)
     implementation(libs.androidx.adaptive.android)
     implementation(libs.androidx.core.animation)
+    implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.datastore.core.android)
     compileOnly(libs.koin.annotations)
     ksp(libs.koin.ksp)
 

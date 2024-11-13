@@ -20,7 +20,7 @@ import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 
 @Serializable
-object LetterListDestination
+data object LetterListDestination
 
 @Composable
 fun LetterListView(

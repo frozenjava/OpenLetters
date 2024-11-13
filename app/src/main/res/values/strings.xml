@@ -1,4 +1,16 @@
 <resources>
+    <string name="theme">Theme</string>
+    <string name="material_you">Material You</string>
+    <string name="open_letters">Open Letters</string>
+    <string name="medium_contrast">Medium Contrast</string>
+    <string name="high_contrast">High Contrast</string>
+    <string name="color_palette">Color Palette</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+    <string name="system">System</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="settings">Settings</string>
+    <string name="view_source">View source on Github</string>
     <string name="app_name">Letters</string>
     <string name="edit">Edit</string>
     <string name="view">View</string>
@@ -28,4 +40,50 @@
     <string name="back">Back</string>
     <string name="create_category">Create Category</string>
     <string name="category_tooltip">Organize your letters by tagging them with categories like spam, bill, important, or any custom categories you create. This helps you keep track of different types of letters and find what you need quickly and efficiently.</string>
+    <string name="privacy_policy_text"><![CDATA[
+    <h1>Privacy Policy<h1>
+
+    <i>Last Updated: November 9, 2024</i>
+
+    <p>Open Letters ("we," "our," or "us") is committed to respecting your privacy. This Privacy Policy outlines the types of data we collect and how we handle your information. By using our app, you agree to the terms of this policy.</p>
+    <h2>1. Information Collection and Use</h2>
+
+    <p>We prioritize user privacy and have designed Open Letters to operate without collecting or storing any Personally Identifiable Information (PII). All user data remains solely on the user\'s device and is not transmitted to our servers or any third parties, except as outlined below.</p>
+    <h2>2. Data on Your Device</h2>
+
+    <p>All information that you input or store within Open Letters stays on your device and is not accessible to us. We do not collect or access any data that can personally identify you, such as your name, email address, or physical location.</p>
+    <h2>3. Analytics and Crash Reporting</h2>
+
+    <p>We use limited third-party tools to help improve our app\'s performance and reliability:
+        <ul>
+        <li>
+        <b>Google Analytics:</b> We use Google Analytics to gather anonymous usage information, such as screen views and in-app actions (e.g., when a form is saved). This information helps us understand how users interact with the app to improve functionality. Google Analytics does not receive any data that could personally identify you.
+        </li>
+
+        <li>
+        <b>Crashlytics (Firebase):</b> We use Firebase Crashlytics to monitor app stability and diagnose issues that may cause the app to crash. Crashlytics collects anonymized crash logs and device information to help us fix bugs and improve app performance. This data does not include any PII.
+        </li>
+        </ul>
+    </p>
+
+    <h2>4. Data Security</h2>
+    <p>
+    We take the security of your data seriously. Because no personal data is collected or transmitted by the app, the risk of unauthorized access to your personal information is minimized. However, we recommend using standard device security practices to protect the information you store on your device.
+    </p>
+
+    <h2>5. Third-Party Services</h2>
+    <p>
+    Our app integrates with third-party tools (Google Analytics and Firebase Crashlytics), which may collect anonymous usage and crash data. For more information, you may review their respective privacy policies:
+        <ul>
+        <li>Google Analytics Privacy Policy</li>
+        <li>Firebase Crashlytics Privacy Policy</li>
+        </ul>
+    </p>
+
+    <h2>6. Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will notify users of any changes by posting the updated policy in the app. We recommend reviewing this policy periodically for any updates.</p>
+
+    <h2>7. Contact Us</h2>
+    <p>If you have any questions or concerns regarding this Privacy Policy or our data practices, please contact us at info@openletters.io.</p>
+    ]]></string>
 </resources>

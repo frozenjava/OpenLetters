@@ -27,6 +27,7 @@ fun MailNavDrawer(
     goToCreateCategory: () -> Unit,
     goToReminders: () -> Unit,
     goToCreateReminder: () -> Unit,
+    goToSettings: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
@@ -40,7 +41,8 @@ fun MailNavDrawer(
                     goToManageCategories = goToManageCategories,
                     goToCreateCategory = goToCreateCategory,
                     goToReminders = goToReminders,
-                    goToCreateReminder = goToCreateReminder
+                    goToCreateReminder = goToCreateReminder,
+                    goToSettings = goToSettings,
                 )
             }
         },
@@ -54,6 +56,7 @@ private fun DrawerContent(
     goToCreateCategory: () -> Unit,
     goToReminders: () -> Unit,
     goToCreateReminder: () -> Unit,
+    goToSettings: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(16.dp),
@@ -113,7 +116,7 @@ private fun DrawerContent(
         NavigationDrawerItem(
             label = { Text("Settings") },
             selected = false,
-            onClick = {}
+            onClick = goToSettings,
         )
     }
 }
@@ -129,6 +132,7 @@ fun MailNavDrawerPreview() {
                 goToCreateCategory = {},
                 goToReminders = {},
                 goToCreateReminder = {},
+                goToSettings = {},
             )
         }
     }

@@ -12,6 +12,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+
+enum class AppTheme {
+    MATERIAL_YOU,
+    OPEN_LETTERS,
+    MEDIUM_CONTRAST,
+    HIGH_CONTRAST;
+
+    companion object {
+        val available: List<AppTheme>
+            get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                entries
+            } else {
+                entries.filter { it != MATERIAL_YOU }
+            }
+    }
+}
+
+enum class ColorPalette {
+    SYSTEM, LIGHT, DARK
+}
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -255,24 +276,51 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun OpenLettersTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable() () -> Unit
+    appTheme: AppTheme,
+    colorPalette: ColorPalette,
+    content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+
+    val darkTheme = when (colorPalette) {
+        ColorPalette.SYSTEM -> isSystemInDarkTheme()
+        ColorPalette.LIGHT -> false
+        ColorPalette.DARK -> true
+    }
+
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
+        appTheme == AppTheme.MATERIAL_YOU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> darkScheme
-        else -> lightScheme
+        appTheme == AppTheme.HIGH_CONTRAST -> if (darkTheme) highContrastDarkColorScheme else highContrastLightColorScheme
+        appTheme == AppTheme.MEDIUM_CONTRAST -> if (darkTheme) mediumContrastDarkColorScheme else mediumContrastLightColorScheme
+        else -> if (darkTheme) darkScheme else lightScheme
     }
+
+//    LaunchedEffect(darkTheme) {
+        val window = (context as Activity).window
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = !darkTheme
+//    }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        content = content
+    )
+}
+
+
+@Composable
+fun OpenLettersTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    OpenLettersTheme(
+        appTheme = if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AppTheme.MATERIAL_YOU else AppTheme.OPEN_LETTERS,
+        colorPalette = if (darkTheme) ColorPalette.DARK else ColorPalette.LIGHT,
         content = content
     )
 }

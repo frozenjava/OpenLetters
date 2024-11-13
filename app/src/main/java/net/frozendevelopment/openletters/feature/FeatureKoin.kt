@@ -16,6 +16,7 @@ import net.frozendevelopment.openletters.feature.letter.scan.ScanViewModel
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailViewModel
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormViewModel
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListViewModel
+import net.frozendevelopment.openletters.feature.settings.SettingsViewModel
 import net.frozendevelopment.openletters.usecase.AcknowledgeReminderUseCase
 import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
 import net.frozendevelopment.openletters.usecase.DeleteLetterUseCase
@@ -27,6 +28,7 @@ import net.frozendevelopment.openletters.usecase.SaveCategoryOrderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.usecase.UpsertCategoryUseCase
 import net.frozendevelopment.openletters.util.TextExtractorType
+import net.frozendevelopment.openletters.util.ThemeManagerType
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
 import org.koin.core.annotation.Module
@@ -134,4 +136,9 @@ class FeatureKoin {
         reminderWithDetails = reminderWithDetailsUseCase,
         acknowledgeReminder = acknowledgeReminderUseCase
     )
+
+    @KoinViewModel
+    fun settingsViewModel(
+        themeManager: ThemeManagerType
+    ) = SettingsViewModel(themeManager)
 }
