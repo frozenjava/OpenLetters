@@ -1,10 +1,7 @@
 package net.frozendevelopment.openletters.data.sqldelight
 
 import android.content.Context
-import android.util.Log
-import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import app.cash.sqldelight.logs.LogSqliteDriver
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Document
@@ -34,13 +31,8 @@ class SqlDelightKoin {
                 factory = RequerySQLiteOpenHelperFactory(),
             )
 
-        val logDriver: SqlDriver =
-            LogSqliteDriver(sqlDriver = driver) { log ->
-                Log.d("SQLDELIGHT", log)
-            }
-
         return OpenLettersDB(
-            driver = logDriver,
+            driver = driver,
             letterAdapter =
                 Letter.Adapter(
                     idAdapter = LetterId.adapter,
