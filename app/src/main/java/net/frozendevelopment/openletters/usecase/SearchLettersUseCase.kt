@@ -12,19 +12,19 @@ class SearchLettersUseCase(
     operator fun invoke(
         query: String,
         category: CategoryId? = null,
-        limit: Long = Long.MAX_VALUE
+        limit: Long = Long.MAX_VALUE,
     ): List<LetterId> {
         return if (query.isBlank()) {
             letterQueries.letterList(
                 categoryId = category,
-                limit = limit
+                limit = limit,
             ).executeAsList()
         } else {
             try {
                 letterQueries.search(
                     categoryId = category,
                     query = "${query.sanitizeForSearch()}*",
-                    limit = limit
+                    limit = limit,
                 ).executeAsList()
             } catch (e: SQLiteException) {
                 // a user can crash the app by constructing a query that FTS doesnt like

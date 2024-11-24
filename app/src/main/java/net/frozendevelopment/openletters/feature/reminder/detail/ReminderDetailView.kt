@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -75,7 +74,7 @@ fun ReminderDetailScreen(
                         Text("Acknowledge")
                     }
                 }
-            }
+            },
         )
 
         if (state is ReminderDetailState.Detail && !state.hasNotificationPermission) {
@@ -84,9 +83,10 @@ fun ReminderDetailScreen(
                 color = MaterialTheme.colorScheme.errorContainer,
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -114,7 +114,7 @@ fun ReminderDetailScreen(
                     """
                     Are you sure you want to acknowledge this reminder?
                     If so you will not get a notification at the scheduled time.
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             },
             confirmButton = {
@@ -129,7 +129,7 @@ fun ReminderDetailScreen(
                 TextButton(onClick = { showAcknowledgedDialog = false }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }
@@ -140,7 +140,7 @@ fun ReminderDetailView(
     state: ReminderDetailState,
     onLetterClicked: (LetterId) -> Unit,
 ) {
-    when(state) {
+    when (state) {
         is ReminderDetailState.Detail -> {
             ReminderDetail(
                 modifier = modifier,
@@ -173,15 +173,16 @@ private fun ReminderDetail(
 
         item {
             Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Scheduled for: ")
-                    }
+                text =
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Scheduled for: ")
+                        }
 
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                        append(state.date.dateTimeString)
-                    }
-                },
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                            append(state.date.dateTimeString)
+                        }
+                    },
                 style = MaterialTheme.typography.labelSmall,
             )
         }
@@ -206,7 +207,7 @@ private fun ReminderDetail(
 
             items(
                 items = state.letters,
-                key = { id -> id.value }
+                key = { id -> id.value },
             ) { id ->
                 LetterCell(
                     modifier = Modifier.fillMaxWidth(),
@@ -224,7 +225,7 @@ private fun ReminderDetail(
                     modifier = Modifier.fillMaxWidth(),
                     text = "No letters tagged.",
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelSmall
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
         }

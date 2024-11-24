@@ -16,10 +16,11 @@ class AppMigrationKoin {
     ): AppMigrator {
         return AppMigrator(
             appMigrationQueries = appMigrationQueries,
-            migrations = listOf(
-                InitialCategoriesMigration(categoryQueries),
-                TestDataMigration(letterQueries),
-            )
+            migrations =
+                listOf(
+                    InitialCategoriesMigration(categoryQueries),
+                    TestDataMigration(letterQueries),
+                ),
         )
     }
 }

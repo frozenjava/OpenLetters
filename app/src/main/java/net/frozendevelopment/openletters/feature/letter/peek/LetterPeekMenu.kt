@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,10 +54,11 @@ fun LetterPeekMenu(
     onDeleteClick: () -> Unit,
     onAddReminderClicked: () -> Unit,
     onDismissRequest: () -> Unit,
-    viewModel: LetterPeekViewModel = koinViewModel(
-        key = letterId.value,
-        parameters = { parametersOf(letterId) },
-    )
+    viewModel: LetterPeekViewModel =
+        koinViewModel(
+            key = letterId.value,
+            parameters = { parametersOf(letterId) },
+        ),
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
     var showDeleteConfirmation: Boolean by remember { mutableStateOf(false) }
@@ -82,7 +82,7 @@ fun LetterPeekMenu(
                 TextButton(onClick = { showDeleteConfirmation = false }) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
+            },
         )
     }
 
@@ -122,7 +122,7 @@ fun LetterPeekMenu(
                     if (documentUri != null) {
                         LazyImageView(
                             modifier = Modifier.fillMaxSize(),
-                            uri = documentUri
+                            uri = documentUri,
                         )
                     } else {
                         BrokenImageView(modifier = Modifier.fillMaxSize())
@@ -131,14 +131,14 @@ fun LetterPeekMenu(
             }
 
             PagerIndicator(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 8.dp),
                 currentPage = horizontalPagerState.currentPage,
                 pageCount = horizontalPagerState.pageCount,
             )
         }
-
     }
 }
 
@@ -166,7 +166,7 @@ private fun PeekMenu(
 @Composable
 private fun TranscriptionText(
     modifier: Modifier = Modifier,
-    body: String
+    body: String,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -209,27 +209,29 @@ private fun SenderRecipientCategoriesAndReminders(
         item(key = "sender-recipient") {
             Text(
                 modifier = Modifier.fillMaxWidth(.5f),
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("From: ")
-                    }
+                text =
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("From: ")
+                        }
 
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                        append(sender ?: "Unknown")
-                    }
-                },
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                            append(sender ?: "Unknown")
+                        }
+                    },
                 fontSize = MaterialTheme.typography.labelLarge.fontSize,
             )
             Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("To: ")
-                    }
+                text =
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("To: ")
+                        }
 
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                        append(recipient ?: "Unknown")
-                    }
-                },
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                            append(recipient ?: "Unknown")
+                        }
+                    },
                 fontSize = MaterialTheme.typography.labelLarge.fontSize,
             )
         }
@@ -252,18 +254,17 @@ private fun SenderRecipientCategoriesAndReminders(
 
             items(
                 items = reminders,
-                key = { it.value }
+                key = { it.value },
             ) {
                 ReminderCell(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth(),
                     id = it,
-                    onClick = {}
+                    onClick = {},
                 )
             }
         }
     }
 }
-
-

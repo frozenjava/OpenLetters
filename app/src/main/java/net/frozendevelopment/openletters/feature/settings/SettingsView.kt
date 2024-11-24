@@ -59,7 +59,7 @@ fun SettingsView(
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CenterAlignedTopAppBar(
             title = { Text(stringResource(R.string.settings)) },
@@ -67,9 +67,10 @@ fun SettingsView(
                 IconButton(onClick = onBackClicked) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back))
+                        contentDescription = stringResource(R.string.back),
+                    )
                 }
-            }
+            },
         )
 
         DropDownButton(
@@ -78,7 +79,7 @@ fun SettingsView(
             value = { Text(state.appTheme.label) },
             menuItems = state.availableThemes,
             menuItemLabel = { Text(it.label) },
-            onMenuItemSelected = onThemeChanged
+            onMenuItemSelected = onThemeChanged,
         )
 
         DropDownButton(
@@ -87,19 +88,19 @@ fun SettingsView(
             value = { Text(state.themeVariant.label) },
             menuItems = state.availableVariants,
             menuItemLabel = { Text(it.label) },
-            onMenuItemSelected = onColorVariantChanged
+            onMenuItemSelected = onColorVariantChanged,
         )
 
         HorizontalDivider()
 
         TextButton(
             modifier = Modifier.fillMaxWidth(.95f),
-            onClick = onViewSourceClicked
+            onClick = onViewSourceClicked,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(stringResource(R.string.view_source))
                 Icon(imageVector = Icons.Outlined.OpenInBrowser, contentDescription = null)
@@ -108,12 +109,12 @@ fun SettingsView(
 
         TextButton(
             modifier = Modifier.fillMaxWidth(.95f),
-            onClick = { showPrivacyPolicy = true }
+            onClick = { showPrivacyPolicy = true },
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(stringResource(R.string.privacy_policy))
                 Icon(imageVector = Icons.Outlined.PrivacyTip, contentDescription = null)
@@ -126,7 +127,7 @@ fun SettingsView(
             modifier = Modifier.navigationBarsPadding(),
             text = "Open Letters version ${state.appVersion}",
             style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Light
+            fontWeight = FontWeight.Light,
         )
     }
 
@@ -136,19 +137,25 @@ fun SettingsView(
 }
 
 private val ColorPalette.label: String
-    @Composable get() = stringResource(when (this) {
-        ColorPalette.LIGHT -> R.string.light
-        ColorPalette.DARK -> R.string.dark
-        ColorPalette.SYSTEM -> R.string.system
-    })
+    @Composable get() =
+        stringResource(
+            when (this) {
+                ColorPalette.LIGHT -> R.string.light
+                ColorPalette.DARK -> R.string.dark
+                ColorPalette.SYSTEM -> R.string.system
+            },
+        )
 
 private val AppTheme.label: String
-    @Composable get() = stringResource(when (this) {
-        AppTheme.MATERIAL_YOU -> R.string.material_you
-        AppTheme.HIGH_CONTRAST -> R.string.high_contrast
-        AppTheme.MEDIUM_CONTRAST -> R.string.medium_contrast
-        AppTheme.OPEN_LETTERS -> R.string.open_letters
-    })
+    @Composable get() =
+        stringResource(
+            when (this) {
+                AppTheme.MATERIAL_YOU -> R.string.material_you
+                AppTheme.HIGH_CONTRAST -> R.string.high_contrast
+                AppTheme.MEDIUM_CONTRAST -> R.string.medium_contrast
+                AppTheme.OPEN_LETTERS -> R.string.open_letters
+            },
+        )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,16 +167,19 @@ private fun PrivacyPolicyDialog(
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        sheetState = bottomSheetState
+        sheetState = bottomSheetState,
     ) {
         Column(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .padding(horizontal = 4.dp),
+            modifier =
+                Modifier
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 4.dp),
         ) {
-            Text(buildAnnotatedString {
-                append(stringResource(R.string.privacy_policy_text).parseAsHtml())
-            })
+            Text(
+                buildAnnotatedString {
+                    append(stringResource(R.string.privacy_policy_text).parseAsHtml())
+                },
+            )
         }
     }
 }
@@ -184,7 +194,7 @@ private fun SettingsPreview(darkTheme: Boolean) {
                 onBackClicked = {},
                 onThemeChanged = {},
                 onColorVariantChanged = {},
-                onViewSourceClicked = {}
+                onViewSourceClicked = {},
             )
         }
     }

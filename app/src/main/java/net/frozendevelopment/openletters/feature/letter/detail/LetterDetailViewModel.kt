@@ -11,8 +11,9 @@ import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 
 sealed interface LetterDetailState {
-    data object Loading: LetterDetailState
-    data object NotFound: LetterDetailState
+    data object Loading : LetterDetailState
+
+    data object NotFound : LetterDetailState
 
     @Immutable
     data class Detail(
@@ -20,18 +21,16 @@ sealed interface LetterDetailState {
         val documents: Map<DocumentId, Uri?> = emptyMap(),
         val categories: List<Category> = emptyList(),
         val threads: List<Thread> = emptyList(),
-    ): LetterDetailState
+    ) : LetterDetailState
 }
-
 
 class LetterDetailViewModel(
     private val letterId: LetterId,
     private val letterWithDetails: LetterWithDetailsUseCase,
 ) : StatefulViewModel<LetterDetailState>(
-    LetterDetailState.Loading,
-    loadStateStrategy = SharingStarted.WhileSubscribed(1000),
-) {
-
+        LetterDetailState.Loading,
+        loadStateStrategy = SharingStarted.WhileSubscribed(1000),
+    ) {
     override fun load() {
         val letter = letterWithDetails(letterId)
 

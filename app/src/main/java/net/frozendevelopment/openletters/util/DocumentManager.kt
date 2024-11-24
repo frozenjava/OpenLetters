@@ -11,7 +11,10 @@ interface DocumentManagerType {
 
     fun delete(documents: Collection<DocumentId>)
 
-    fun persist(cacheUri: Uri, documentId: DocumentId): Uri
+    fun persist(
+        cacheUri: Uri,
+        documentId: DocumentId,
+    ): Uri
 
     fun get(documentId: DocumentId): Uri?
 
@@ -21,7 +24,6 @@ interface DocumentManagerType {
 class DocumentManager(
     private val context: Context,
 ) : DocumentManagerType {
-
     private val documentDirectory: File by lazy {
         File(context.filesDir, "documents").also {
             if (!it.exists()) {
@@ -44,7 +46,10 @@ class DocumentManager(
     }
 
     @Throws(IllegalStateException::class)
-    override fun persist(cacheUri: Uri, documentId: DocumentId): Uri {
+    override fun persist(
+        cacheUri: Uri,
+        documentId: DocumentId,
+    ): Uri {
         val cachePath = cacheUri.path
         if (cachePath.isNullOrBlank() || !File(cachePath).exists()) {
             throw IllegalStateException("Cache file does not exist")

@@ -61,54 +61,54 @@ private fun DrawerContent(
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-    ){
+    ) {
         Text(
             text = "Your Mail",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
 
         NavigationDrawerItem(
             label = { Text("Mail Box") },
             selected = false,
-            onClick = goToMail
+            onClick = goToMail,
         )
 
         HorizontalDivider()
 
         Text(
             text = "Categories",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
 
         NavigationDrawerItem(
             label = { Text("Manage Categories") },
             selected = false,
-            onClick = goToManageCategories
+            onClick = goToManageCategories,
         )
 
         NavigationDrawerItem(
             label = { Text("Create Category") },
             selected = false,
-            onClick = goToCreateCategory
+            onClick = goToCreateCategory,
         )
 
         HorizontalDivider()
 
         Text(
             text = "Reminders",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
 
         NavigationDrawerItem(
             label = { Text("Manage Reminders") },
             selected = false,
-            onClick = goToReminders
+            onClick = goToReminders,
         )
 
         NavigationDrawerItem(
             label = { Text("Create Reminder") },
             selected = false,
-            onClick = goToCreateReminder
+            onClick = goToCreateReminder,
         )
 
         HorizontalDivider()
@@ -136,5 +136,4 @@ fun MailNavDrawerPreview() {
             )
         }
     }
-
 }

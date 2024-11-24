@@ -4,9 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
@@ -33,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -51,7 +48,7 @@ fun PeekMenu(
     val animatedColor by animateColorAsState(
         if (beginAnimation) Color.Black.copy(alpha = 0.75f) else Color.Transparent,
         animationSpec = tween(animationDuration, easing = LinearEasing),
-        label = "color"
+        label = "color",
     )
 
     LaunchedEffect(Unit) {
@@ -64,16 +61,17 @@ fun PeekMenu(
 
     Popup(onDismissRequest = onDismissRequest) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .blur(100.dp)
-                .background(animatedColor)
-                .clickable(onClick = onDismissRequest)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .blur(100.dp)
+                    .background(animatedColor)
+                    .clickable(onClick = onDismissRequest),
         )
 
         AnimatedVisibility(
             visible = beginAnimation,
-            enter = scaleIn(animationSpec = tween(animationDuration)) + fadeIn(animationSpec = tween(animationDuration))
+            enter = scaleIn(animationSpec = tween(animationDuration)) + fadeIn(animationSpec = tween(animationDuration)),
         ) {
             Box(
                 contentAlignment = Alignment.TopCenter,
@@ -82,17 +80,16 @@ fun PeekMenu(
                 if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                     VerticalPeekMenu(
                         peekContent = peekContent,
-                        menuContent = menuContent
+                        menuContent = menuContent,
                     )
                 } else {
                     HorizontalPeekMenu(
                         peekContent = peekContent,
-                        menuContent = menuContent
+                        menuContent = menuContent,
                     )
                 }
             }
         }
-
     }
 }
 
@@ -102,16 +99,16 @@ fun PeekMenu(
 @Composable
 private fun HorizontalPeekMenu(
     peekContent: @Composable () -> Unit,
-    menuContent: @Composable ColumnScope.() -> Unit
+    menuContent: @Composable ColumnScope.() -> Unit,
 ) {
     Row(
         modifier = Modifier.padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Surface(
             shape = MaterialTheme.shapes.medium,
             tonalElevation = 2.dp,
-            modifier = Modifier.fillMaxSize(.75f)
+            modifier = Modifier.fillMaxSize(.75f),
         ) {
             peekContent()
         }
@@ -137,18 +134,19 @@ private fun HorizontalPeekMenu(
 @Composable
 private fun VerticalPeekMenu(
     peekContent: @Composable () -> Unit,
-    menuContent: @Composable ColumnScope.() -> Unit
+    menuContent: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Surface(
             shape = MaterialTheme.shapes.medium,
             tonalElevation = 2.dp,
-            modifier = Modifier
-                .fillMaxWidth(.95f)
-                .fillMaxHeight(.5f),
+            modifier =
+                Modifier
+                    .fillMaxWidth(.95f)
+                    .fillMaxHeight(.5f),
         ) {
             peekContent()
         }

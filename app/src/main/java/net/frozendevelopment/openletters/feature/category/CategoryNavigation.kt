@@ -2,7 +2,6 @@ package net.frozendevelopment.openletters.feature.category
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,18 +65,18 @@ fun NavGraphBuilder.categories(
                     }
                 },
                 editCategoryClicked = { categoryId ->
-                    val mode = if (categoryId == null) {
-                        CategoryFormMode.Create
-                    } else {
-                        CategoryFormMode.Edit(categoryId)
-                    }
+                    val mode =
+                        if (categoryId == null) {
+                            CategoryFormMode.Create
+                        } else {
+                            CategoryFormMode.Edit(categoryId)
+                        }
                     navController.navigate(CategoryFormDestination(mode = mode))
                 },
                 onDeleteClicked = viewModel::delete,
                 onMove = viewModel::onMove,
-                onMoveComplete = viewModel::saveOrder
+                onMoveComplete = viewModel::saveOrder,
             )
         }
-
     }
 }

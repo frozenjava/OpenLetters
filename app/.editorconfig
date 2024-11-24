@@ -1,0 +1,11 @@
+root = true
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+ktlint_function_naming_ignore_when_annotated_with=Composable
+max_line_length = 160
+
+## Testing rules
+[**/{test,androidTest,commonTest}/**.kt]
+max_line_length = off
+spacing-between-declarations-with-comments = off

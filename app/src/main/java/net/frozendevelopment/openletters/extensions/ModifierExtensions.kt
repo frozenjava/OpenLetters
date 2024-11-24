@@ -17,12 +17,14 @@ fun Modifier.pulse() {
         label = "pulseAnimation",
         initialValue = 1f,
         targetValue = 0.95f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 600,
-                easing = FastOutLinearInEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = 600,
+                        easing = FastOutLinearInEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse
-        ),
     )
 }

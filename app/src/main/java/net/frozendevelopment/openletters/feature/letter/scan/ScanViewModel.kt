@@ -38,8 +38,10 @@ data class ScanState(
     val transcript: String? = null,
     val categories: List<Category> = emptyList(),
     val selectedCategories: Set<Category> = emptySet(),
-    val newDocuments: Map<DocumentId, Uri> = emptyMap(), // any new documents added before saving
-    val existingDocuments: Map<DocumentId, Uri> = emptyMap(), // any existing documents when editing
+    // any new documents added before saving
+    val newDocuments: Map<DocumentId, Uri> = emptyMap(),
+    // any existing documents when editing
+    val existingDocuments: Map<DocumentId, Uri> = emptyMap(),
     val possibleSenders: List<String> = emptyList(),
     val possibleRecipients: List<String> = emptyList(),
 ) {
@@ -65,10 +67,10 @@ class ScanViewModel(
     private val letterWithDetails: LetterWithDetailsUseCase,
     private val categoryQueries: CategoryQueries,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-): StatefulViewModel<ScanState>(
-    initialState = ScanState(),
-    loadStateStrategy = SharingStarted.Eagerly,
-) {
+) : StatefulViewModel<ScanState>(
+        initialState = ScanState(),
+        loadStateStrategy = SharingStarted.Eagerly,
+    ) {
     private var buildTranscriptJob: Job? = null
     private var collectionObserver: Job? = null
 
@@ -87,13 +89,14 @@ class ScanViewModel(
 
         if (isEditing) {
             val details = letterWithDetails(letterId) ?: return
-            state = state.copy(
-                sender = details.letter.sender,
-                recipient = details.letter.recipient,
-                transcript = details.letter.body,
-                existingDocuments = details.documents,
-                selectedCategories = details.categories.toSet(),
-            )
+            state =
+                state.copy(
+                    sender = details.letter.sender,
+                    recipient = details.letter.recipient,
+                    transcript = details.letter.body,
+                    existingDocuments = details.documents,
+                    selectedCategories = details.categories.toSet(),
+                )
         }
 
         update { state }
@@ -104,26 +107,29 @@ class ScanViewModel(
         // i hate this but im not sure a better way to do it.
         // all abstractions i create seem worse.
         collectionObserver?.cancel()
-        collectionObserver = viewModelScope.launch {
-            categoryQueries.allCategories()
-                .asFlow()
-                .mapToList(ioDispatcher)
-                .collectLatest { categories ->
-                    update { copy(categories = categories) }
-                }
-        }
+        collectionObserver =
+            viewModelScope.launch {
+                categoryQueries.allCategories()
+                    .asFlow()
+                    .mapToList(ioDispatcher)
+                    .collectLatest { categories ->
+                        update { copy(categories = categories) }
+                    }
+            }
     }
 
     fun getScanner(pageLimit: Int = 0): GmsDocumentScanner {
-        return GmsDocumentScanning.getClient(GmsDocumentScannerOptions.Builder().apply {
-            setGalleryImportAllowed(false)
-            setResultFormats(RESULT_FORMAT_JPEG)
-            setScannerMode(SCANNER_MODE_FULL)
+        return GmsDocumentScanning.getClient(
+            GmsDocumentScannerOptions.Builder().apply {
+                setGalleryImportAllowed(false)
+                setResultFormats(RESULT_FORMAT_JPEG)
+                setScannerMode(SCANNER_MODE_FULL)
 
-            if (pageLimit > 0) {
-                setPageLimit(pageLimit)
-            }
-        }.build())
+                if (pageLimit > 0) {
+                    setPageLimit(pageLimit)
+                }
+            }.build(),
+        )
     }
 
     fun importScannedDocuments(scanResult: GmsDocumentScanningResult?) {
@@ -153,10 +159,12 @@ class ScanViewModel(
             update { copy(isBusy = true) }
 
             val sender = textExtractor.extractFromImage(pages.first().imageUri)
-            update { copy(
-                isBusy = false,
-                sender = sender
-            )}
+            update {
+                copy(
+                    isBusy = false,
+                    sender = sender,
+                )
+            }
         }
     }
 
@@ -171,55 +179,70 @@ class ScanViewModel(
             update { copy(isBusy = true) }
 
             val recipient = textExtractor.extractFromImage(pages.first().imageUri)
-            update { copy(
-                isBusy = false,
-                recipient = recipient
-            )}
+            update {
+                copy(
+                    isBusy = false,
+                    recipient = recipient,
+                )
+            }
         }
     }
 
-    fun toggleCategory(category: Category) = viewModelScope.launch {
-        val selectedCategories = state.selectedCategories.toMutableSet()
+    fun toggleCategory(category: Category) =
+        viewModelScope.launch {
+            val selectedCategories = state.selectedCategories.toMutableSet()
 
-        if (selectedCategories.contains(category)) {
-            selectedCategories.remove(category)
-        } else {
-            selectedCategories.add(category)
+            if (selectedCategories.contains(category)) {
+                selectedCategories.remove(category)
+            } else {
+                selectedCategories.add(category)
+            }
+
+            update { copy(selectedCategories = selectedCategories) }
         }
 
-        update { copy(selectedCategories = selectedCategories) }
-    }
+    fun setSender(sender: String) =
+        viewModelScope.launch {
+            update {
+                copy(
+                    sender = sender,
+                    possibleSenders = searchSendersAndRecipients(sender),
+                )
+            }
+        }
 
-    fun setSender(sender: String) = viewModelScope.launch {
-        update { copy(
-            sender = sender,
-            possibleSenders = searchSendersAndRecipients(sender)
-        )}
-    }
+    fun setRecipient(recipient: String) =
+        viewModelScope.launch {
+            update {
+                copy(
+                    recipient = recipient,
+                    possibleRecipients = searchSendersAndRecipients(recipient),
+                )
+            }
+        }
 
-    fun setRecipient(recipient: String) = viewModelScope.launch {
-        update { copy(
-            recipient = recipient,
-            possibleRecipients = searchSendersAndRecipients(recipient)
-        )}
-    }
+    fun setTranscript(transcript: String) =
+        viewModelScope.launch {
+            update { copy(transcript = transcript.takeIf { it.isNotBlank() }) }
+        }
 
-    fun setTranscript(transcript: String) = viewModelScope.launch {
-        update { copy(transcript = transcript.takeIf { it.isNotBlank() }) }
-    }
+    fun removeDocument(documentId: DocumentId) =
+        viewModelScope.launch {
+            update {
+                copy(
+                    newDocuments =
+                        newDocuments
+                            .toMutableMap()
+                            .apply { remove(documentId) },
+                    existingDocuments =
+                        existingDocuments
+                            .toMutableMap()
+                            .apply { remove(documentId) },
+                )
+            }
 
-    fun removeDocument(documentId: DocumentId) = viewModelScope.launch {
-        update { copy(
-            newDocuments = newDocuments
-                .toMutableMap()
-                .apply { remove(documentId) },
-            existingDocuments = existingDocuments
-                .toMutableMap()
-                .apply { remove(documentId) }
-        )}
-
-        rebuildTranscript()
-    }
+            rebuildTranscript()
+        }
 
     suspend fun save(): Boolean {
         update { copy(isBusy = true) }
@@ -250,15 +273,17 @@ class ScanViewModel(
 
     private fun rebuildTranscript() {
         buildTranscriptJob?.cancel()
-        buildTranscriptJob = viewModelScope.launch {
-            val extractedText = state.documents
-                .values
-                .mapNotNull { textExtractor.extractFromImage(it) }
-                .filter { it.isNotBlank() }
-                .joinToString("\n\n")
+        buildTranscriptJob =
+            viewModelScope.launch {
+                val extractedText =
+                    state.documents
+                        .values
+                        .mapNotNull { textExtractor.extractFromImage(it) }
+                        .filter { it.isNotBlank() }
+                        .joinToString("\n\n")
 
-            update { copy(transcript = extractedText, isCreatingTranscript = false) }
-        }
+                update { copy(transcript = extractedText, isCreatingTranscript = false) }
+            }
     }
 
     /**
@@ -277,13 +302,15 @@ class ScanViewModel(
 
     private fun searchSendersAndRecipients(query: String): List<String> {
         try {
-            val recipients = letterQueries
-                .searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
-                .executeAsList()
+            val recipients =
+                letterQueries
+                    .searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                    .executeAsList()
 
-            val senders = letterQueries
-                .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
-                .executeAsList()
+            val senders =
+                letterQueries
+                    .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                    .executeAsList()
 
             return (recipients + senders)
                 .filter { it.isNotBlank() }

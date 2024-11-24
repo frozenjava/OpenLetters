@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +72,7 @@ fun LetterList(
             onEditClick = { onLetterClicked(it, true) },
             onDeleteClick = { onDeleteLetterClicked(it) },
             onAddReminderClicked = { onCreateReminderClicked(listOf(it)) },
-            onDismissRequest = { showLetterPeek = null }
+            onDismissRequest = { showLetterPeek = null },
         )
     }
 
@@ -85,8 +84,8 @@ fun LetterList(
             modifier = Modifier.fillMaxSize(),
         ) {
             if (
-                windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT
-                && (state.urgentReminders.isNotEmpty() || state.upcomingReminders.isNotEmpty())
+                windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT &&
+                (state.urgentReminders.isNotEmpty() || state.upcomingReminders.isNotEmpty())
             ) {
                 ReminderColumn(
                     modifier = Modifier.fillMaxWidth(.33f),
@@ -97,21 +96,22 @@ fun LetterList(
             }
 
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .imePadding(),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .imePadding(),
                 state = listState,
                 contentPadding = PaddingValues(bottom = 192.dp, top = 128.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (
-                    windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
-                    && state.urgentReminders.isNotEmpty()
+                    windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT &&
+                    state.urgentReminders.isNotEmpty()
                 ) {
                     reminderRow(
                         reminders = state.urgentReminders,
-                        onReminderClicked = onReminderClicked
+                        onReminderClicked = onReminderClicked,
                     )
 
                     item {
@@ -121,12 +121,13 @@ fun LetterList(
 
                 items(
                     items = state.letters,
-                    key = { it.value }
+                    key = { it.value },
                 ) {
                     ActionLetterCell(
-                        modifier = Modifier
-                            .fillMaxWidth(.95f)
-                            .animateItem(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(.95f)
+                                .animateItem(),
                         id = it,
                         onClick = { onLetterClicked(it, false) },
                         onLongClick = { showLetterPeek = it },
@@ -145,14 +146,15 @@ fun LetterList(
                     selectCategory(null)
                     setSearchTerms("")
                     focusManager.clearFocus()
-                }
+                },
             )
         }
 
         FilterBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .pointerInput(Unit) { /* Consume all touch events */ },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .pointerInput(Unit) { /* Consume all touch events */ },
             searchTerms = state.searchTerms,
             selectedCategoryId = state.selectedCategoryId,
             categories = state.categories,
@@ -170,14 +172,15 @@ fun LetterList(
 
                 setSearchTerms(it)
             },
-            onNavDrawerClicked = onNavDrawerClicked
+            onNavDrawerClicked = onNavDrawerClicked,
         )
 
         FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = 28.dp, vertical = 64.dp),
-            onClick = onScanClicked
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(horizontal = 28.dp, vertical = 64.dp),
+            onClick = onScanClicked,
         ) {
             Icon(imageVector = Icons.Outlined.DocumentScanner, contentDescription = "Import Mail")
         }
@@ -187,7 +190,7 @@ fun LetterList(
 @Composable
 private fun BadFilters(
     modifier: Modifier = Modifier,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -196,10 +199,11 @@ private fun BadFilters(
         Text(
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelLarge,
-            text = """
-                        There are no letters to display.
-                        Please check your filters.
-                    """.trimIndent()
+            text =
+                """
+                There are no letters to display.
+                Please check your filters.
+                """.trimIndent(),
         )
 
         TextButton(onClick = onClearClick) {

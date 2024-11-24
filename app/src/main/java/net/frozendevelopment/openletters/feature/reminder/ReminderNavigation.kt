@@ -1,8 +1,6 @@
 package net.frozendevelopment.openletters.feature.reminder
 
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,10 +41,11 @@ fun NavGraphBuilder.reminders(
         val viewModel = koinViewModel<ReminderListViewModel>()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        val notificationPermissionResultLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = viewModel::handlePermissionResult
-        )
+        val notificationPermissionResultLauncher =
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = viewModel::handlePermissionResult,
+            )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
             LaunchedEffect(Unit) {
@@ -73,22 +72,23 @@ fun NavGraphBuilder.reminders(
                     }
                 },
                 createReminderClicked = { navController.navigate(ReminderFormDestination()) },
-                onDeleteReminderClicked = viewModel::delete
+                onDeleteReminderClicked = viewModel::delete,
             )
         }
     }
     composable<ReminderDetailDestination>(
         typeMap = ReminderDetailDestination.typeMap,
-        deepLinks = ReminderDetailDestination.deepLinks
+        deepLinks = ReminderDetailDestination.deepLinks,
     ) { backStackEntry ->
         val destination = backStackEntry.toRoute<ReminderDetailDestination>()
         val viewModel = koinViewModel<ReminderDetailViewModel> { parametersOf(destination.reminderId) }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        val notificationPermissionResultLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = viewModel::handlePermissionResult
-        )
+        val notificationPermissionResultLauncher =
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = viewModel::handlePermissionResult,
+            )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && (state as? ReminderDetailState.Detail)?.hasNotificationPermission == false) {
             LaunchedEffect(Unit) {
@@ -102,7 +102,7 @@ fun NavGraphBuilder.reminders(
                 state = state,
                 onBackClicked = navController::navigateUp,
                 onAcknowledgeClicked = viewModel::acknowledge,
-                onLetterClicked = { navController.navigate(LetterDetailDestination(it)) }
+                onLetterClicked = { navController.navigate(LetterDetailDestination(it)) },
             )
         }
     }
@@ -111,15 +111,17 @@ fun NavGraphBuilder.reminders(
     ) { backStackEntry ->
         val destination = backStackEntry.toRoute<ReminderFormDestination>()
         val coroutineScope = rememberCoroutineScope()
-        val viewModel = koinViewModel<ReminderFormViewModel> {
-            parametersOf(destination.reminderId, destination.preselectedLetters)
-        }
+        val viewModel =
+            koinViewModel<ReminderFormViewModel> {
+                parametersOf(destination.reminderId, destination.preselectedLetters)
+            }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        val notificationPermissionResultLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = viewModel::handlePermissionResult
-        )
+        val notificationPermissionResultLauncher =
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = viewModel::handlePermissionResult,
+            )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
             LaunchedEffect(Unit) {

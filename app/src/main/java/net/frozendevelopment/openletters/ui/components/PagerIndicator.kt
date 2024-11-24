@@ -29,16 +29,17 @@ fun PagerIndicator(
                 .navigationBarsPadding()
                 .padding(bottom = 4.dp)
                 .background(Color.Black.copy(alpha = 0.85f), shape = RoundedCornerShape(16.dp)),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             repeat(pageCount) { iteration ->
                 val color = if (currentPage == iteration) Color.White else Color.Gray
                 Box(
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
+                    modifier =
+                        Modifier
+                            .padding(6.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp),
                 )
             }
         }

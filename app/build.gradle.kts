@@ -6,10 +6,11 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.serialization)
     alias(libs.plugins.parcelize)
+    alias(libs.plugins.ktlint)
 }
 
 ksp {
-    arg("KOIN_CONFIG_CHECK","true")
+    arg("KOIN_CONFIG_CHECK", "true")
 }
 
 android {
@@ -35,7 +36,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -79,7 +80,6 @@ sqldelight {
         }
     }
 }
-
 
 dependencies {
     implementation(libs.androidx.core.ktx)

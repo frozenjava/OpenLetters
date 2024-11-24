@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,14 +14,12 @@ import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -64,7 +61,7 @@ fun ActionReminderCell(
     onLongClick: ((id: ReminderId) -> Unit)? = null,
     onEditClick: (id: ReminderId) -> Unit,
     onDeleteClick: (ReminderId) -> Unit,
-    reminderQueries: ReminderQueries = koinInject()
+    reminderQueries: ReminderQueries = koinInject(),
 ) {
     // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
     val reminder = reminderQueries.reminderInfo(id).executeAsOneOrNull() ?: return
@@ -89,59 +86,64 @@ fun ActionReminderCell(
                 TextButton(onClick = { showDeleteConfirmation = false }) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
+            },
         )
     }
 
     SwipeCell(
-        leftMenu = reminder.takeIf { !it.acknowledged }?.let {
-            {
-                IconButton(
-                    modifier = it,
-                    onClick = { onEditClick(id) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = stringResource(R.string.edit)
-                    )
+        leftMenu =
+            reminder.takeIf { !it.acknowledged }?.let {
+                {
+                    IconButton(
+                        modifier = it,
+                        onClick = { onEditClick(id) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = stringResource(R.string.edit),
+                        )
+                    }
                 }
-            }
-        },
+            },
         rightMenu = {
             IconButton(
                 modifier = it,
-                    onClick = {
+                onClick = {
                     showDeleteConfirmation = true
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                }
+                },
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = stringResource(R.string.delete)
+                    contentDescription = stringResource(R.string.delete),
                 )
             }
-        }
+        },
     ) {
         ReminderCell(
-            modifier = modifier
-                .pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        awaitFirstDown().also {
-                            it.consume()
+            modifier =
+                modifier
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            awaitFirstDown().also {
+                                it.consume()
+                            }
                         }
-                    }
-                },
+                    },
             title = reminder.title,
             description = reminder.description,
             scheduledFor = reminder.scheduledFor,
             created = reminder.created,
             onClick = { onClick(id) },
-            onLongClick = onLongClick?.let {{
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                it(id)
-            }},
+            onLongClick =
+                onLongClick?.let {
+                    {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        it(id)
+                    }
+                },
             containerColor = reminder.cardColor,
-            contentColor = reminder.cardColor.contrastColor
+            contentColor = reminder.cardColor.contrastColor,
         )
     }
 }
@@ -152,31 +154,35 @@ fun ReminderCell(
     id: ReminderId,
     onClick: (id: ReminderId) -> Unit,
     onLongClick: ((id: ReminderId) -> Unit)? = null,
-    reminderQueries: ReminderQueries = koinInject()
+    reminderQueries: ReminderQueries = koinInject(),
 ) {
     val reminder = reminderQueries.reminderInfo(id).executeAsOneOrNull() ?: return
     val haptic = LocalHapticFeedback.current
 
     ReminderCell(
-        modifier = modifier
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    awaitFirstDown().also {
-                        it.consume()
+        modifier =
+            modifier
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        awaitFirstDown().also {
+                            it.consume()
+                        }
                     }
-                }
-            },
+                },
         title = reminder.title,
         description = reminder.description,
         scheduledFor = reminder.scheduledFor,
         created = reminder.created,
         onClick = { onClick(id) },
-        onLongClick = onLongClick?.let {{
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            it(id)
-        }},
+        onLongClick =
+            onLongClick?.let {
+                {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    it(id)
+                }
+            },
         containerColor = reminder.cardColor,
-        contentColor = reminder.cardColor.contrastColor
+        contentColor = reminder.cardColor.contrastColor,
     )
 }
 
@@ -196,28 +202,29 @@ private fun ReminderCell(
         LocalContentColor provides contentColor,
     ) {
         Box(
-            modifier = modifier
-                .minimumInteractiveComponentSize()
-                .background(
-                    color = containerColor,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { onClick() },
-                        onLongPress = onLongClick?.let { { it() } }
+            modifier =
+                modifier
+                    .minimumInteractiveComponentSize()
+                    .background(
+                        color = containerColor,
+                        shape = MaterialTheme.shapes.medium,
                     )
-                }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { onClick() },
+                            onLongPress = onLongClick?.let { { it() } },
+                        )
+                    },
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Icon(Icons.Default.Alarm, contentDescription = null)
                     Text(text = title, style = MaterialTheme.typography.titleLarge)
@@ -228,28 +235,30 @@ private fun ReminderCell(
                 }
 
                 Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Scheduled for: ")
-                        }
+                    text =
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Scheduled for: ")
+                            }
 
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                            append(scheduledFor.dateTimeString)
-                        }
-                    },
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                                append(scheduledFor.dateTimeString)
+                            }
+                        },
                     fontSize = MaterialTheme.typography.labelMedium.fontSize,
                 )
 
                 Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Created: ")
-                        }
+                    text =
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Created: ")
+                            }
 
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                            append(created.dateString)
-                        }
-                    },
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                                append(created.dateString)
+                            }
+                        },
                     fontSize = MaterialTheme.typography.labelMedium.fontSize,
                 )
             }
@@ -268,11 +277,12 @@ private val ReminderInfo.cardColor: Color
         val today = LocalDate.now()
         val diff = ChronoUnit.DAYS.between(today, scheduledFor).toInt()
         val maxDiff = 5
-        val normalizedDiff = when {
-            diff < 0 -> 1f // Past dates are fully red
-            diff > maxDiff -> .1f // Dates further than maxDiff are the start color
-            else -> maxOf(.15f, minOf(.75f, 1 - (diff.toFloat() / maxDiff))) // Interpolate for dates within range
-        }
+        val normalizedDiff =
+            when {
+                diff < 0 -> 1f // Past dates are fully red
+                diff > maxDiff -> .1f // Dates further than maxDiff are the start color
+                else -> maxOf(.15f, minOf(.75f, 1 - (diff.toFloat() / maxDiff))) // Interpolate for dates within range
+            }
 
         return lerp(startColor, Color.Red, normalizedDiff)
     }

@@ -19,7 +19,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.toSize
 
-
 @Composable
 fun <T> DropDownButton(
     modifier: Modifier = Modifier,
@@ -34,22 +33,23 @@ fun <T> DropDownButton(
 
     Column(modifier = modifier) {
         ValueButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned {
-                    buttonSize = it.size.toSize()
-                },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned {
+                        buttonSize = it.size.toSize()
+                    },
             title = title,
             value = value,
             onClick = { expanded = !expanded },
             rightContent = {
                 Icon(Icons.Filled.ExpandMore, contentDescription = null)
-            }
+            },
         )
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.width(with(LocalDensity.current) { buttonSize.width.toDp() })
+            modifier = Modifier.width(with(LocalDensity.current) { buttonSize.width.toDp() }),
         ) {
             menuItems.forEach { item ->
                 DropdownMenuItem(
@@ -57,7 +57,7 @@ fun <T> DropDownButton(
                     onClick = {
                         onMenuItemSelected(item)
                         expanded = false
-                    }
+                    },
                 )
             }
         }

@@ -47,7 +47,7 @@ fun FormAppBar(
                 TextButton(onClick = { showLeaveConfirmation = false }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 
@@ -63,19 +63,19 @@ fun FormAppBar(
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "back"
+                    contentDescription = "back",
                 )
             }
         },
         actions = {
             TextButton(
                 onClick = onSaveClicked,
-                enabled = isSavable
+                enabled = isSavable,
             ) {
                 Text("Save")
             }
 
             actions?.invoke(this)
-        }
+        },
     )
 }

@@ -1,6 +1,5 @@
 package net.frozendevelopment.openletters.ui.components
 
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -18,20 +17,22 @@ fun PulseIndicator(
     modifier: Modifier = Modifier,
     targetValue: Float = 1f,
     initialValue: Float = 0.98f,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "pulseInfiniteTransition")
     val scale by infiniteTransition.animateFloat(
         label = "pulseAnimation",
         initialValue = initialValue,
         targetValue = targetValue,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 600,
-                easing = LinearOutSlowInEasing,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = 600,
+                        easing = LinearOutSlowInEasing,
+                    ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse
-        ),
     )
 
     Box(

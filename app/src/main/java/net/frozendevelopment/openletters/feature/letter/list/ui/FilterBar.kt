@@ -23,21 +23,24 @@ fun FilterBar(
     onSearchChanged: (String) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .background(color = MaterialTheme.colorScheme.surface.copy(alpha = .9f)),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier =
+            modifier
+                .background(color = MaterialTheme.colorScheme.surface.copy(alpha = .9f)),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SearchBar(
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             searchTerms = searchTerms,
             onSearchChanged = onSearchChanged,
             onNavDrawerClicked = onNavDrawerClicked,
         )
 
         CategorySelector(
-            modifier = Modifier.fillMaxWidth()
-                .padding(bottom = 16.dp),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(bottom = 16.dp),
             selectedCategoryId = selectedCategoryId,
             categories = categories,
             toggleCategory = onToggleCategory,

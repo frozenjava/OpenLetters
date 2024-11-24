@@ -12,7 +12,6 @@ class UpsertReminderUseCase(
     private val reminderNotification: ReminderNotification,
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
 ) {
-
     operator fun invoke(
         title: String,
         description: String?,
@@ -20,9 +19,12 @@ class UpsertReminderUseCase(
         letters: Set<LetterId>,
         reminderId: ReminderId = ReminderId.random(),
     ) {
-        val notificationId = (reminderQueries
-            .largestNotificationId()
-            .executeAsOneOrNull()?.MAX ?: 0) + 1
+        val notificationId =
+            (
+                reminderQueries
+                    .largestNotificationId()
+                    .executeAsOneOrNull()?.MAX ?: 0
+            ) + 1
 
         // if a reminder with the id already exists, then cancel the current scheduled notification
         // just in case the reminder date/time has changed. it will get rescheduled
@@ -47,7 +49,7 @@ class UpsertReminderUseCase(
             for (letter in letters) {
                 reminderQueries.tagLetter(
                     letterId = letter,
-                    reminderId = reminderId
+                    reminderId = reminderId,
                 )
             }
         }
@@ -57,7 +59,7 @@ class UpsertReminderUseCase(
             content = description,
             notificationId = notificationId.toInt(),
             reminderId = reminderId.toString(),
-            notifyAtMillis = scheduledFor.atZone(ZoneId.systemDefault()).toEpochSecond()*1000L
+            notifyAtMillis = scheduledFor.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000L,
         )
     }
 }

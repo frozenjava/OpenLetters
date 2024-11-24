@@ -9,9 +9,10 @@ class DeleteReminderUseCase(
     private val reminderNotification: ReminderNotification,
 ) {
     operator fun invoke(id: ReminderId) {
-        val existingReminder = reminderQueries
-            .reminderDetail(id)
-            .executeAsOneOrNull() ?: return
+        val existingReminder =
+            reminderQueries
+                .reminderDetail(id)
+                .executeAsOneOrNull() ?: return
 
         reminderNotification.cancel(existingReminder.notificationId.toInt())
         reminderQueries.delete(id)

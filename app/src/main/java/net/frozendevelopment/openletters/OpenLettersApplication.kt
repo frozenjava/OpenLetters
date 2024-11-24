@@ -18,8 +18,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
 
-
-class OpenLettersApplication: Application(), KoinComponent {
+class OpenLettersApplication : Application(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
 
@@ -32,7 +31,7 @@ class OpenLettersApplication: Application(), KoinComponent {
                 UseCaseKoin().module,
                 AppMigrationKoin().module,
                 WorkKoin().module,
-                UtilKoin().module
+                UtilKoin().module,
             )
         }
 
@@ -43,18 +42,20 @@ class OpenLettersApplication: Application(), KoinComponent {
     private fun initializeWorkManager() {
         val workManager = WorkManager.getInstance(this)
 
-        val appMigrationRequest = OneTimeWorkRequestBuilder<AppMigrationWorker>()
-            .build()
+        val appMigrationRequest =
+            OneTimeWorkRequestBuilder<AppMigrationWorker>()
+                .build()
 
         workManager.enqueue(appMigrationRequest)
     }
 
     private fun initializeNotificationChannel() {
-        val notificationChannel = NotificationChannel(
-            REMINDERS_CHANNEL_ID,
-            REMINDERS_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_HIGH
-        )
+        val notificationChannel =
+            NotificationChannel(
+                REMINDERS_CHANNEL_ID,
+                REMINDERS_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH,
+            )
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)

@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -123,7 +122,11 @@ fun NavGraphBuilder.letters(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 onEditClicked = { navController.navigate(ScanLetterDestination(destination.letterId)) },
-                onCreateReminderClicked = { navController.navigate(ReminderFormDestination(preselectedLetters = listOf(destination.letterId))) },
+                onCreateReminderClicked = {
+                    navController.navigate(
+                        ReminderFormDestination(preselectedLetters = listOf(destination.letterId)),
+                    )
+                },
                 onBackClicked = navController::popBackStack,
                 onImageClick = { uri -> navController.navigate(ImageDestination(uri.toString())) },
             )
@@ -138,32 +141,36 @@ fun NavGraphBuilder.letters(
         val viewModel: ScanViewModel = koinViewModel { parametersOf(destination.letterId) }
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        val letterScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                viewModel.importScannedDocuments(scanResult)
+        val letterScanLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    viewModel.importScannedDocuments(scanResult)
+                }
             }
-        }
 
-        val senderScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                viewModel.importScannedSender(scanResult)
+        val senderScanLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    viewModel.importScannedSender(scanResult)
+                }
             }
-        }
 
-        val recipientScanLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                viewModel.importScannedRecipient(scanResult)
+        val recipientScanLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    viewModel.importScannedRecipient(scanResult)
+                }
             }
-        }
 
         Surface {
             ScanLetterView(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .navigationBarsPadding(),
+                modifier =
+                    Modifier
+                        .statusBarsPadding()
+                        .navigationBarsPadding(),
                 state = state,
                 canNavigateBack = destination.canNavigateBack,
                 toggleCategory = viewModel::toggleCategory,
@@ -227,7 +234,7 @@ fun NavGraphBuilder.letters(
                 },
                 onBackClicked = navController::navigateUp,
                 onDeleteDocumentClicked = viewModel::removeDocument,
-                onCreateCategoryClicked = { navController.navigate(CategoryFormDestination(CategoryFormMode.Create)) }
+                onCreateCategoryClicked = { navController.navigate(CategoryFormDestination(CategoryFormMode.Create)) },
             )
         }
     }

@@ -42,19 +42,21 @@ data class LetterPeekState(
 
 class LetterPeekViewModel(
     private val letterId: LetterId,
-    private val letterWithDetails: LetterWithDetailsUseCase
+    private val letterWithDetails: LetterWithDetailsUseCase,
 ) : StatefulViewModel<LetterPeekState>(LetterPeekState()) {
     override fun load() {
         // TODO: Handle this not loading, although it should never happen in this context
         val details = letterWithDetails(letterId) ?: return
 
-        update { copy(
-            transcript = details.letter.body,
-            sender = details.letter.sender,
-            recipient = details.letter.recipient,
-            documents = details.documents,
-            selectedCategories = details.categories,
-            reminders = details.reminders
-        )}
+        update {
+            copy(
+                transcript = details.letter.body,
+                sender = details.letter.sender,
+                recipient = details.letter.recipient,
+                documents = details.documents,
+                selectedCategories = details.categories,
+                reminders = details.reminders,
+            )
+        }
     }
 }

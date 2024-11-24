@@ -17,7 +17,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,15 +26,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import net.frozendevelopment.openletters.data.sqldelight.ReminderInfo
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.extensions.contrastColor
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 @Composable
 fun CategoryPill(
@@ -49,7 +44,7 @@ fun CategoryPill(
         label = category.label,
         color = category.color,
         isSelected = isSelected,
-        onToggle = onToggle
+        onToggle = onToggle,
     )
 }
 
@@ -59,39 +54,43 @@ fun CategoryPill(
     label: String,
     color: Color,
     isSelected: Boolean,
-    onToggle: (() -> Unit)? = null
+    onToggle: (() -> Unit)? = null,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
-    val buttonColor = if (isSelected)
-        color
-    else
-        lerp(color, Color.Gray, .5f)
+    val buttonColor =
+        if (isSelected) {
+            color
+        } else {
+            lerp(color, Color.Gray, .5f)
+        }
 
     CategoryPill(
-        modifier = modifier
-            .scale(scale.value)
-            .clip(ButtonDefaults.shape)
-            .let {
-                if (onToggle == null) return@let it
+        modifier =
+            modifier
+                .scale(scale.value)
+                .clip(ButtonDefaults.shape)
+                .let {
+                    if (onToggle == null) return@let it
 
-                it.clickable {
-                    onToggle()
-                    coroutineScope.launch {
-                        scale.animateTo(
-                            0.90f,
-                            animationSpec = tween(100)
-                        )
-                        scale.animateTo(
-                            1f,
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioHighBouncy,
-                                stiffness = Spring.StiffnessLow
+                    it.clickable {
+                        onToggle()
+                        coroutineScope.launch {
+                            scale.animateTo(
+                                0.90f,
+                                animationSpec = tween(100),
                             )
-                        )
+                            scale.animateTo(
+                                1f,
+                                animationSpec =
+                                    spring(
+                                        dampingRatio = Spring.DampingRatioHighBouncy,
+                                        stiffness = Spring.StiffnessLow,
+                                    ),
+                            )
+                        }
                     }
-                }
-            },
+                },
         color = buttonColor,
     ) {
         if (isSelected) {
@@ -157,18 +156,19 @@ fun CategoryPill(
 fun CategoryPill(
     modifier: Modifier = Modifier,
     color: Color,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .background(
-                color = color,
-                shape = ButtonDefaults.shape
-            )
-            .clip(ButtonDefaults.shape)
-            .padding(ButtonDefaults.ContentPadding),
+        modifier =
+            modifier
+                .background(
+                    color = color,
+                    shape = ButtonDefaults.shape,
+                )
+                .clip(ButtonDefaults.shape)
+                .padding(ButtonDefaults.ContentPadding),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
     ) {
         content()
     }
@@ -181,7 +181,7 @@ private fun CategoryPillPreview() {
         label = "Some Label",
         color = Color(111111),
         isSelected = false,
-        onToggle = {}
+        onToggle = {},
     )
 }
 
@@ -192,6 +192,6 @@ private fun SelectedCategoryPillPreview() {
         label = "Some Label",
         color = Color(111111),
         isSelected = true,
-        onToggle = {}
+        onToggle = {},
     )
 }

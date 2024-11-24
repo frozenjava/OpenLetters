@@ -3,9 +3,7 @@ package net.frozendevelopment.openletters.usecase
 import androidx.compose.ui.graphics.Color
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class UpsertCategoryUseCase(
     private val categoryQueries: CategoryQueries,
@@ -14,7 +12,7 @@ class UpsertCategoryUseCase(
     suspend operator fun invoke(
         id: CategoryId = CategoryId.random(),
         label: String,
-        color: Color
+        color: Color,
     ) {
         val currentTime = now()
 
@@ -24,7 +22,7 @@ class UpsertCategoryUseCase(
             color = color,
             priority = Long.MAX_VALUE,
             created = currentTime,
-            lastModified = currentTime
+            lastModified = currentTime,
         )
     }
 }

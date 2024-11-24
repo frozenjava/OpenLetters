@@ -3,13 +3,8 @@ package net.frozendevelopment.openletters.feature.category.manage
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.viewModelScope
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
@@ -29,46 +24,56 @@ data class ManageCategoryState(
 class ManageCategoryViewModel(
     private val saveCategoryOrder: SaveCategoryOrderUseCase,
     private val categoryQueries: CategoryQueries,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-): StatefulViewModel<ManageCategoryState>(ManageCategoryState()) {
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : StatefulViewModel<ManageCategoryState>(ManageCategoryState()) {
     override fun load() {
         val categories = categoryQueries.allCategories().executeAsList()
         update { copy(categories = categories) }
     }
 
-    fun delete(category: CategoryId) = viewModelScope.launch(ioDispatcher) {
-        categoryQueries.delete(category)
-        load()
-    }
+    fun delete(category: CategoryId) =
+        viewModelScope.launch(ioDispatcher) {
+            categoryQueries.delete(category)
+            load()
+        }
 
-    fun onMove(from: Int, to: Int) {
+    fun onMove(
+        from: Int,
+        to: Int,
+    ) {
         if (from == to) {
             return
         }
 
         Log.d("ManageCategoryViewModel", "onMove: $from -> $to")
 
-        val categories = stateFlow.value.categories.toMutableList().apply {
-            add(to, removeAt(from))
-        }
+        val categories =
+            stateFlow.value.categories.toMutableList().apply {
+                add(to, removeAt(from))
+            }
 
-        update { copy(
-            categories = categories
-        )}
-    }
-
-    fun saveOrder() = viewModelScope.launch(ioDispatcher) {
-        state.categories.forEachIndexed { index, category ->
-            saveCategoryOrder(category.id, index.toLong())
+        update {
+            copy(
+                categories = categories,
+            )
         }
     }
 
-    fun select(category: CategoryId?) = viewModelScope.launch {
-        val selectedCategory = if (category == state.selectedCategory) {
-            null
-        } else {
-            category
+    fun saveOrder() =
+        viewModelScope.launch(ioDispatcher) {
+            state.categories.forEachIndexed { index, category ->
+                saveCategoryOrder(category.id, index.toLong())
+            }
         }
-        update { copy(selectedCategory = selectedCategory) }
-    }
+
+    fun select(category: CategoryId?) =
+        viewModelScope.launch {
+            val selectedCategory =
+                if (category == state.selectedCategory) {
+                    null
+                } else {
+                    category
+                }
+            update { copy(selectedCategory = selectedCategory) }
+        }
 }

@@ -11,14 +11,14 @@ import kotlinx.serialization.json.Json
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 
 @Serializable
-sealed interface CategoryFormMode: Parcelable {
+sealed interface CategoryFormMode : Parcelable {
     @Serializable
     @Parcelize
-    data object Create: CategoryFormMode
+    data object Create : CategoryFormMode
 
     @Serializable
     @Parcelize
-    data class Edit(val id: CategoryId): CategoryFormMode
+    data class Edit(val id: CategoryId) : CategoryFormMode
 }
 
 @Serializable
@@ -26,25 +26,33 @@ data class CategoryFormDestination(
     val mode: CategoryFormMode = CategoryFormMode.Create,
 )
 
-val CategoryFormModeType = object : NavType<CategoryFormMode>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): CategoryFormMode? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.getParcelable(key, CategoryFormMode::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            bundle.getParcelable(key)
+val CategoryFormModeType =
+    object : NavType<CategoryFormMode>(isNullableAllowed = false) {
+        override fun get(
+            bundle: Bundle,
+            key: String,
+        ): CategoryFormMode? {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getParcelable(key, CategoryFormMode::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                bundle.getParcelable(key)
+            }
+        }
+
+        override fun parseValue(value: String): CategoryFormMode {
+            return Json.decodeFromString(value)
+        }
+
+        override fun serializeAsValue(value: CategoryFormMode): String {
+            return Json.encodeToString(value)
+        }
+
+        override fun put(
+            bundle: Bundle,
+            key: String,
+            value: CategoryFormMode,
+        ) {
+            bundle.putParcelable(key, value)
         }
     }
-
-    override fun parseValue(value: String): CategoryFormMode {
-        return Json.decodeFromString(value)
-    }
-
-    override fun serializeAsValue(value: CategoryFormMode): String {
-        return Json.encodeToString(value)
-    }
-
-    override fun put(bundle: Bundle, key: String, value: CategoryFormMode) {
-        bundle.putParcelable(key, value)
-    }
-}

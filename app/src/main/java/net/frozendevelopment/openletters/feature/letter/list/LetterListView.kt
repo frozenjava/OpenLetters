@@ -61,12 +61,16 @@ fun LetterListView(
 }
 
 @Composable
-private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
+private fun LetterListPreview(
+    darkTheme: Boolean,
+    state: LetterListState,
+) {
     OpenLettersTheme(darkTheme = darkTheme) {
         Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier =
+                Modifier
+                    .fillMaxSize(),
+            color = MaterialTheme.colorScheme.background,
         ) {
             LetterListView(
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -75,7 +79,7 @@ private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
                 onScanClicked = {},
                 toggleCategory = {},
                 setSearchTerms = {},
-                openLetter = { _, _, -> },
+                openLetter = { _, _ -> },
                 onDeleteLetterClicked = {},
                 onReminderClicked = { _, _ -> },
                 onCreateReminderClicked = {},
@@ -89,7 +93,7 @@ private fun LetterListPreview(darkTheme: Boolean, state: LetterListState) {
 private fun EmptyPreviewLight() {
     LetterListPreview(
         darkTheme = false,
-        state = LetterListState(showEmptyListView = true, isLoading = false)
+        state = LetterListState(showEmptyListView = true, isLoading = false),
     )
 }
 
@@ -98,7 +102,7 @@ private fun EmptyPreviewLight() {
 private fun EmptyPreviewDark() {
     LetterListPreview(
         darkTheme = true,
-        state = LetterListState(showEmptyListView = true, isLoading = false)
+        state = LetterListState(showEmptyListView = true, isLoading = false),
     )
 }
 
@@ -107,7 +111,7 @@ private fun EmptyPreviewDark() {
 private fun LoadingPreviewLight() {
     LetterListPreview(
         darkTheme = false,
-        state = LetterListState(isLoading = true)
+        state = LetterListState(isLoading = true),
     )
 }
 
@@ -116,6 +120,6 @@ private fun LoadingPreviewLight() {
 fun LoadingPreviewDark() {
     LetterListPreview(
         darkTheme = true,
-        state = LetterListState(isLoading = true)
+        state = LetterListState(isLoading = true),
     )
 }

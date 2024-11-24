@@ -1,7 +1,6 @@
 package net.frozendevelopment.openletters.usecase
 
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
-import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 
 class DeleteLetterUseCase(

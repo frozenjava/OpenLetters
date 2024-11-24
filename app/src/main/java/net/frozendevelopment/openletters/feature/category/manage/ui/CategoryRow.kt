@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
@@ -50,7 +49,11 @@ fun CategoryRow(
             onDismissRequest = { showDeleteConfirmation = false },
             icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete") },
             title = { Text(text = "Delete Category \"${category.label}\"") },
-            text = { Text(text = "Are you sure you want to delete this category? This will not delete any letters associated with this category.") },
+            text = {
+                Text(
+                    text = "Are you sure you want to delete this category? This will not delete any letters associated with this category.",
+                )
+            },
             confirmButton = {
                 Button(onClick = {
                     onDeleteClicked(category.id)
@@ -63,14 +66,14 @@ fun CategoryRow(
                 TextButton(onClick = { showDeleteConfirmation = false }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 
     Surface(
         modifier = modifier,
         color = category.color,
-        contentColor = category.color.contrastColor
+        contentColor = category.color.contrastColor,
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -105,14 +108,15 @@ private fun ManagePillPreview() {
     OpenLettersTheme {
         Surface {
             CategoryRow(
-                category = Category(
-                    id = CategoryId.random(),
-                    label = "Some Label",
-                    color = Color(0xFF0F0FF0),
-                    created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                    lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                    priority = 0,
-                ),
+                category =
+                    Category(
+                        id = CategoryId.random(),
+                        label = "Some Label",
+                        color = Color(0xFF0F0FF0),
+                        created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+                        lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+                        priority = 0,
+                    ),
                 onEditClicked = {},
                 onDeleteClicked = {},
             )

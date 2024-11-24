@@ -15,8 +15,9 @@ import net.frozendevelopment.openletters.util.StatefulViewModel
 import java.time.LocalDateTime
 
 sealed interface ReminderDetailState {
-    data object Loading: ReminderDetailState
-    data object NotFound: ReminderDetailState
+    data object Loading : ReminderDetailState
+
+    data object NotFound : ReminderDetailState
 
     @Immutable
     data class Detail(
@@ -26,7 +27,7 @@ sealed interface ReminderDetailState {
         val isAcknowledged: Boolean = false,
         val date: LocalDateTime = LocalDateTime.now(),
         val letters: List<LetterId> = emptyList(),
-    ): ReminderDetailState {
+    ) : ReminderDetailState {
         val hasLetters: Boolean
             get() = letters.isNotEmpty()
     }
@@ -39,11 +40,12 @@ class ReminderDetailViewModel(
     private val acknowledgeReminder: AcknowledgeReminderUseCase,
 ) : StatefulViewModel<ReminderDetailState>(ReminderDetailState.Loading) {
     override fun load() {
-        val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            application.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            true
-        }
+        val hasNotificationPermission =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                application.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                true
+            }
 
         val reminder = reminderWithDetails(reminderId)
         if (reminder == null) {
@@ -66,7 +68,7 @@ class ReminderDetailViewModel(
                 description = reminder.description,
                 isAcknowledged = isAcknowledged,
                 date = reminder.scheduledAt,
-                letters = reminder.letters
+                letters = reminder.letters,
             )
         }
     }
@@ -78,14 +80,15 @@ class ReminderDetailViewModel(
         }
     }
 
-    fun acknowledge() = viewModelScope.launch {
-        acknowledgeReminder(reminderId)
-        update {
-            if (this is ReminderDetailState.Detail) {
-                copy(isAcknowledged = true)
-            } else {
-                this
+    fun acknowledge() =
+        viewModelScope.launch {
+            acknowledgeReminder(reminderId)
+            update {
+                if (this is ReminderDetailState.Detail) {
+                    copy(isAcknowledged = true)
+                } else {
+                    this
+                }
             }
         }
-    }
 }

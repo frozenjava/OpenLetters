@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                 val navHostController = rememberNavController()
 
                 // lock the app to portrait for phone users
-                if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass ==  WindowWidthSizeClass.COMPACT) {
+                if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
 
@@ -101,21 +101,25 @@ class MainActivity : ComponentActivity() {
                     },
                 ) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()
-                            .windowInsetsPadding(
-                                WindowInsets.safeDrawing.only(
-                                    WindowInsetsSides.Horizontal
-                                )
-                            )
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .statusBarsPadding()
+                                    .windowInsetsPadding(
+                                        WindowInsets.safeDrawing.only(
+                                            WindowInsetsSides.Horizontal,
+                                        ),
+                                    ),
                         ) {
                             NavHost(
                                 navController = navHostController,
-                                startDestination = if (letterQueries.hasLetters().executeAsOne() == 1L)
-                                    LetterListDestination
-                                else
-                                    ScanLetterDestination(canNavigateBack = false),
+                                startDestination =
+                                    if (letterQueries.hasLetters().executeAsOne() == 1L) {
+                                        LetterListDestination
+                                    } else {
+                                        ScanLetterDestination(canNavigateBack = false)
+                                    },
                                 enterTransition = { navigationEnterTransition() },
                                 exitTransition = { navigationExitTransition() },
                                 popEnterTransition = { navigationPopEnterTransition() },

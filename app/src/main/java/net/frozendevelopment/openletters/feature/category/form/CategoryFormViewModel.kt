@@ -20,10 +20,11 @@ data class CategoryFormState(
     val isSavable = label.isNotBlank()
 
     val title: String
-        get() = when (mode) {
-            is CategoryFormMode.Create -> "Create Category"
-            is CategoryFormMode.Edit -> "Edit Category"
-        }
+        get() =
+            when (mode) {
+                is CategoryFormMode.Create -> "Create Category"
+                is CategoryFormMode.Edit -> "Edit Category"
+            }
 }
 
 class CategoryFormViewModel(
@@ -31,12 +32,12 @@ class CategoryFormViewModel(
     private val upsertCategoryUseCase: UpsertCategoryUseCase,
     private val categoryQueries: CategoryQueries,
 ) : StatefulViewModel<CategoryFormState>(CategoryFormState(mode)) {
-
     private val categoryId: CategoryId
-        get() = when(mode) {
-            is CategoryFormMode.Create -> CategoryId.random()
-            is CategoryFormMode.Edit -> mode.id
-        }
+        get() =
+            when (mode) {
+                is CategoryFormMode.Create -> CategoryId.random()
+                is CategoryFormMode.Edit -> mode.id
+            }
 
     override fun load() {
         if (mode is CategoryFormMode.Edit) {
@@ -55,19 +56,21 @@ class CategoryFormViewModel(
         }
     }
 
-    fun setLabel(label: String) = viewModelScope.launch {
-        update { copy(label = label) }
-    }
+    fun setLabel(label: String) =
+        viewModelScope.launch {
+            update { copy(label = label) }
+        }
 
-    fun setColor(color: Color) = viewModelScope.launch {
-        update { copy(color = color) }
-    }
+    fun setColor(color: Color) =
+        viewModelScope.launch {
+            update { copy(color = color) }
+        }
 
     suspend fun save() {
         upsertCategoryUseCase(
             id = categoryId,
             label = stateFlow.value.label,
-            color = stateFlow.value.color
+            color = stateFlow.value.color,
         )
     }
 }

@@ -9,11 +9,14 @@ import org.koin.core.component.inject
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class AlarmHydrationReceiver: BroadcastReceiver(), KoinComponent {
+class AlarmHydrationReceiver : BroadcastReceiver(), KoinComponent {
     private val reminderNotification: ReminderNotification by inject()
     private val reminderQueries: ReminderQueries by inject()
 
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(
+        context: Context?,
+        intent: Intent?,
+    ) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
             rehydrateAlarms()
         } else if (intent?.action == Intent.ACTION_TIME_CHANGED) {
@@ -29,17 +32,18 @@ class AlarmHydrationReceiver: BroadcastReceiver(), KoinComponent {
         for ((index, reminder) in pastReminders.withIndex()) {
             // Any alarm scheduled in the past will be sent immediately
             // to avoid this stagger the alarms by adding scheduling at (now + (1 + index) minutes))
-            val notifyAtMillis = LocalDateTime.now()
-                .plusMinutes((1 + index).toLong())
-                .atZone(ZoneId.systemDefault())
-                .toEpochSecond()*1000L
+            val notifyAtMillis =
+                LocalDateTime.now()
+                    .plusMinutes((1 + index).toLong())
+                    .atZone(ZoneId.systemDefault())
+                    .toEpochSecond() * 1000L
 
             reminderNotification.schedule(
                 title = reminder.title,
                 content = reminder.description,
                 notificationId = reminder.notificationId.toInt(),
                 reminderId = reminder.id.value,
-                notifyAtMillis = notifyAtMillis
+                notifyAtMillis = notifyAtMillis,
             )
         }
 
@@ -49,7 +53,7 @@ class AlarmHydrationReceiver: BroadcastReceiver(), KoinComponent {
                 content = reminder.description,
                 notificationId = reminder.notificationId.toInt(),
                 reminderId = reminder.id.value,
-                notifyAtMillis = reminder.scheduledFor.atZone(ZoneId.systemDefault()).toEpochSecond()*1000L
+                notifyAtMillis = reminder.scheduledFor.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000L,
             )
         }
     }

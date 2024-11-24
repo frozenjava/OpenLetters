@@ -1,12 +1,9 @@
 package net.frozendevelopment.openletters.feature.category.form
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -15,7 +12,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,7 +74,7 @@ fun CategoryFormView(
                 ) {
                     Text(text = "Save")
                 }
-            }
+            },
         )
 
         if (state.isBusy) {
@@ -88,9 +83,10 @@ fun CategoryFormView(
         }
 
         CategoryPill(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
             color = state.color,
         ) {
             BasicTextField(
@@ -101,10 +97,11 @@ fun CategoryFormView(
                 interactionSource = interactionSource,
                 keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words),
                 cursorBrush = SolidColor(state.color.contrastColor),
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = state.color.contrastColor,
-                    textAlign = TextAlign.Center,
-                )
+                textStyle =
+                    MaterialTheme.typography.titleLarge.copy(
+                        color = state.color.contrastColor,
+                        textAlign = TextAlign.Center,
+                    ),
             ) { innerTextField ->
                 if (state.label.isBlank() && !isFocused) {
                     Text(
@@ -126,24 +123,26 @@ fun CategoryFormView(
                 val color = Color.Random
                 controller.selectByColor(color, true)
                 onColorChanged(color)
-            }
+            },
         ) {
             Text(text = "Randomize Color")
         }
 
         BrightnessSlider(
-            modifier = Modifier
-                .fillMaxWidth(.95f)
-                .height(35.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth(.95f)
+                    .height(35.dp),
             controller = controller,
             borderRadius = 32.dp,
         )
 
         HsvColorPicker(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 16.dp),
             onColorChanged = { onColorChanged(it.color) },
             controller = controller,
             initialColor = state.color,
@@ -174,11 +173,12 @@ private fun CategoryFormPreview(
 private fun DarkPreview() {
     CategoryFormPreview(
         darkTheme = true,
-        state = CategoryFormState(
-            mode = CategoryFormMode.Create,
-            label = "",
-            color = Color(0xFF0F0FF0),
-        )
+        state =
+            CategoryFormState(
+                mode = CategoryFormMode.Create,
+                label = "",
+                color = Color(0xFF0F0FF0),
+            ),
     )
 }
 
@@ -187,10 +187,11 @@ private fun DarkPreview() {
 private fun LightPreview() {
     CategoryFormPreview(
         darkTheme = false,
-        state = CategoryFormState(
-            mode = CategoryFormMode.Create,
-            label = "",
-            color = Color(0xFF0F0FF0),
-        )
+        state =
+            CategoryFormState(
+                mode = CategoryFormMode.Create,
+                label = "",
+                color = Color(0xFF0F0FF0),
+            ),
     )
 }

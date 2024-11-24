@@ -1,36 +1,24 @@
 package net.frozendevelopment.openletters.feature.letter.detail.ui
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
@@ -43,12 +31,13 @@ fun DocumentPager(
     modifier: Modifier = Modifier,
     body: String?,
     documents: Map<DocumentId, Uri?>,
-    onImageClick: (Uri) -> Unit
+    onImageClick: (Uri) -> Unit,
 ) {
     val pageIndexOffset: Int = if (!body.isNullOrBlank()) 1 else 0
-    val pagerState = rememberPagerState {
-        if (!body.isNullOrBlank()) documents.size + 1 else documents.size
-    }
+    val pagerState =
+        rememberPagerState {
+            if (!body.isNullOrBlank()) documents.size + 1 else documents.size
+        }
 
     Box {
         HorizontalPager(
@@ -58,24 +47,26 @@ fun DocumentPager(
             if (page == 0 && !body.isNullOrBlank()) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     TranscriptionText(
-                        modifier = Modifier
-                            .fillMaxWidth(.95f)
-                            .align(Alignment.TopCenter),
-                        body = body
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(.95f)
+                                .align(Alignment.TopCenter),
+                        body = body,
                     )
                 }
             } else {
                 val documentUri = documents.values.toList()[page - pageIndexOffset]
                 if (documentUri != null) {
                     LazyImageView(
-                        modifier = Modifier.fillMaxSize()
-                            .pointerInput(Unit) {
-                                detectTapGestures(
-                                    onTap = { onImageClick(documentUri) },
-                                    onDoubleTap = { onImageClick(documentUri) },
-                                )
-                            },
-                        uri = documentUri
+                        modifier =
+                            Modifier.fillMaxSize()
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onTap = { onImageClick(documentUri) },
+                                        onDoubleTap = { onImageClick(documentUri) },
+                                    )
+                                },
+                        uri = documentUri,
                     )
                 } else {
                     BrokenImageView(modifier = Modifier.fillMaxSize())
@@ -87,7 +78,7 @@ fun DocumentPager(
             PagerIndicator(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 currentPage = pagerState.currentPage,
-                pageCount = pagerState.pageCount
+                pageCount = pagerState.pageCount,
             )
         }
     }
@@ -96,7 +87,7 @@ fun DocumentPager(
 @Composable
 private fun TranscriptionText(
     modifier: Modifier = Modifier,
-    body: String
+    body: String,
 ) {
     LazyColumn(
         modifier = modifier,

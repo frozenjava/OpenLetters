@@ -60,9 +60,10 @@ fun ScanLetterView(
             modifier = Modifier.fillMaxWidth(.95f),
             value = state.sender ?: "",
             label = "Sender",
-            placeholder = """
-                        Jane Doe 123 Street Drive
-                    """.trimIndent(),
+            placeholder =
+                """
+                Jane Doe 123 Street Drive
+                """.trimIndent(),
             suggestions = state.possibleSenders,
             onValueChange = setSender,
             onScanClick = openSenderScanner,
@@ -72,35 +73,38 @@ fun ScanLetterView(
             modifier = Modifier.fillMaxWidth(.95f),
             value = state.recipient ?: "",
             label = "Recipient",
-            placeholder = """
-                        Jane Doe 123 Street Drive
-                    """.trimIndent(),
+            placeholder =
+                """
+                Jane Doe 123 Street Drive
+                """.trimIndent(),
             suggestions = state.possibleRecipients,
             onValueChange = setRecipient,
-            onScanClick = openRecipientScanner
+            onScanClick = openRecipientScanner,
         )
 
         if (state.documents.isEmpty()) {
             OutlinedCard(
-                onClick = openLetterScanner
+                onClick = openLetterScanner,
             ) {
                 Column(
-                    modifier = Modifier
-                        .weight(1f, fill = true)
-                        .fillMaxWidth(.95f),
+                    modifier =
+                        Modifier
+                            .weight(1f, fill = true)
+                            .fillMaxWidth(.95f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Icon(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .size(64.dp),
+                        modifier =
+                            Modifier
+                                .padding(16.dp)
+                                .size(64.dp),
                         imageVector = Icons.Outlined.DocumentScanner,
                         contentDescription = "Scan",
                     )
                     Text(
                         text = "Scan Letter",
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.titleLarge,
                     )
                 }
             }

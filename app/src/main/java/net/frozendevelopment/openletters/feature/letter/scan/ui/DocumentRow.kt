@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -51,7 +49,7 @@ fun DocumentRow(
     onEditTranscript: (String) -> Unit,
     documents: Map<DocumentId, Uri>,
     onAddButtonClicks: () -> Unit,
-    onDeleteDocumentClicked: (DocumentId) -> Unit
+    onDeleteDocumentClicked: (DocumentId) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val initialPage = if (!transcript.isNullOrBlank() || isLoadingTranscript) 0 else 1
@@ -71,15 +69,16 @@ fun DocumentRow(
                     HorizontalDivider()
                     if (!isLoadingTranscript) {
                         BasicTextField(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .imePadding(),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .imePadding(),
                             value = transcript?.plus("\n\n\n") ?: "",
                             onValueChange = onEditTranscript,
                             cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                             textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
                             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         ) { innerTextField ->
                             if (transcript.isNullOrBlank()) {
                                 Text("No transcription available.")
@@ -103,11 +102,12 @@ fun DocumentRow(
                 val documentId = documents.keys.elementAt(page - 1)
                 val uri = documents.getValue(documentId)
                 ImageView(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .fillMaxSize(),
                     uri = uri,
-                    onDeleteClicked = { onDeleteDocumentClicked(documentId) }
+                    onDeleteClicked = { onDeleteDocumentClicked(documentId) },
                 )
             }
         }
@@ -119,16 +119,17 @@ fun DocumentRow(
                 .navigationBarsPadding()
                 .padding(bottom = 4.dp)
                 .background(Color.Black.copy(alpha = 0.85f), shape = RoundedCornerShape(16.dp)),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             repeat(pagerState.pageCount) { iteration ->
                 val color = if (pagerState.currentPage == iteration) Color.White else Color.Gray
                 Box(
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
+                    modifier =
+                        Modifier
+                            .padding(6.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp),
                 )
             }
         }
@@ -139,12 +140,12 @@ fun DocumentRow(
 private fun ImageView(
     modifier: Modifier = Modifier,
     uri: Uri,
-    onDeleteClicked: () -> Unit
+    onDeleteClicked: () -> Unit,
 ) {
     Box(modifier) {
         LazyImageView(
             modifier = Modifier.fillMaxSize(),
-            uri = uri
+            uri = uri,
         )
         IconButton(
             modifier = Modifier.align(Alignment.TopEnd),

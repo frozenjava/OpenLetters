@@ -31,7 +31,8 @@ data class LetterListState(
     val upcomingReminders: List<ReminderId> = emptyList(),
 ) {
     val listHash: String
-        get() = letters.hashCode().toString() +
+        get() =
+            letters.hashCode().toString() +
                 urgentReminders.hashCode().toString() +
                 upcomingReminders.hashCode().toString()
 }
@@ -44,7 +45,6 @@ class LetterListViewModel(
     private val deleteLetter: DeleteLetterUseCase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : StatefulViewModel<LetterListState>(LetterListState()) {
-
     init {
         viewModelScope.launch(ioDispatcher) {
             letterQueries.hasLetters()
@@ -66,20 +66,25 @@ class LetterListViewModel(
     ) {
         val categories = categoryQueries.allCategories().executeAsList()
 
-        val letters = searchUseCase(
-            query = searchTerms,
-            category = categoryFilter
-        )
+        val letters =
+            searchUseCase(
+                query = searchTerms,
+                category = categoryFilter,
+            )
 
-        val urgentReminders = if (searchTerms.isBlank() && categoryFilter == null)
-            reminderQueries.urgentReminders().executeAsList()
-        else
-            emptyList()
+        val urgentReminders =
+            if (searchTerms.isBlank() && categoryFilter == null) {
+                reminderQueries.urgentReminders().executeAsList()
+            } else {
+                emptyList()
+            }
 
-        val upcomingReminders = if (searchTerms.isBlank() && categoryFilter == null)
-            reminderQueries.upcomingReminders().executeAsList()
-        else
-            emptyList()
+        val upcomingReminders =
+            if (searchTerms.isBlank() && categoryFilter == null) {
+                reminderQueries.upcomingReminders().executeAsList()
+            } else {
+                emptyList()
+            }
 
         update {
             copy(
@@ -87,29 +92,33 @@ class LetterListViewModel(
                 letters = letters,
                 categories = categories,
                 urgentReminders = urgentReminders,
-                upcomingReminders = upcomingReminders
+                upcomingReminders = upcomingReminders,
             )
         }
     }
 
-    fun delete(id: LetterId) = viewModelScope.launch {
-        deleteLetter(id)
-        load()
-    }
-
-    fun toggleCategory(category: CategoryId?) = viewModelScope.launch {
-        val toggleCategory = if (category == state.selectedCategoryId) {
-            null
-        } else {
-            category
+    fun delete(id: LetterId) =
+        viewModelScope.launch {
+            deleteLetter(id)
+            load()
         }
 
-        update { copy(selectedCategoryId = toggleCategory) }
-        load(categoryFilter = toggleCategory, searchTerms = state.searchTerms)
-    }
+    fun toggleCategory(category: CategoryId?) =
+        viewModelScope.launch {
+            val toggleCategory =
+                if (category == state.selectedCategoryId) {
+                    null
+                } else {
+                    category
+                }
 
-    fun setSearchTerms(terms: String) = viewModelScope.launch {
-        update { copy(searchTerms = terms) }
-        load(state.selectedCategoryId, searchTerms = terms)
-    }
+            update { copy(selectedCategoryId = toggleCategory) }
+            load(categoryFilter = toggleCategory, searchTerms = state.searchTerms)
+        }
+
+    fun setSearchTerms(terms: String) =
+        viewModelScope.launch {
+            update { copy(searchTerms = terms) }
+            load(state.selectedCategoryId, searchTerms = terms)
+        }
 }

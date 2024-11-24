@@ -47,7 +47,7 @@ fun ScannableTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
     var showDropdown by remember { mutableStateOf(false) }
-    var textFieldSize by remember { mutableStateOf(Size.Zero)}
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     Row(
         modifier = modifier,
@@ -55,12 +55,13 @@ fun ScannableTextField(
     ) {
         Column(modifier = Modifier.weight(1f, fill = true)) {
             OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester)
-                    .onGloballyPositioned {
-                        textFieldSize = it.size.toSize()
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .onGloballyPositioned {
+                            textFieldSize = it.size.toSize()
+                        },
                 value = value,
                 maxLines = 3,
                 onValueChange = {
@@ -72,14 +73,14 @@ fun ScannableTextField(
                 },
                 placeholder = {
                     Text(text = placeholder)
-                }
+                },
             )
 
             DropdownMenu(
                 expanded = showDropdown && suggestions.isNotEmpty(),
                 onDismissRequest = { showDropdown = false },
                 properties = PopupProperties(focusable = false),
-                modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() }),
             ) {
                 suggestions.forEachIndexed { index, value ->
                     DropdownMenuItem(
@@ -89,7 +90,7 @@ fun ScannableTextField(
                             showDropdown = false
                             focusRequester.freeFocus()
                             keyboardController?.hide()
-                        }
+                        },
                     )
 
                     if (index < suggestions.lastIndex) {
@@ -98,7 +99,6 @@ fun ScannableTextField(
                 }
             }
         }
-
 
         IconButton(onClick = onScanClick) {
             Icon(imageVector = Icons.Outlined.DocumentScanner, contentDescription = "Scan")
@@ -118,9 +118,8 @@ private fun PreviewScannableTextField() {
                 placeholder = "123 Some Street",
                 suggestions = listOf("123 Some Street", "456 Other Street"),
                 onValueChange = {},
-                onScanClick = {}
+                onScanClick = {},
             )
         }
     }
-
 }

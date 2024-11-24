@@ -41,6 +41,8 @@
     <string name="close">Close</string>
     <string name="create_category">Create Category</string>
     <string name="category_tooltip">Organize your letters by tagging them with categories like spam, bill, important, or any custom categories you create. This helps you keep track of different types of letters and find what you need quickly and efficiently.</string>
+    <string name="reminder_tooltip">Set up reminders to receive notifications for important tasks, like bill due dates or calls you need to make. You can also attach specific letters your reminders, keeping all related information in one place and ensuring you stay organized and efficient.</string>
+    <string name="letter_tooltip">Tap here to get started importing your letters! You\'ll do this by taking pictures of your envelopes and letters. We handle the rest for you locally on your phone.</string>
     <string name="privacy_policy_text"><![CDATA[
     <h1>Privacy Policy<h1>
 

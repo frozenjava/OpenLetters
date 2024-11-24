@@ -35,10 +35,11 @@ fun ReminderPeekMenu(
     onAcknowledgeClick: () -> Unit,
     onLetterClicked: (LetterId) -> Unit,
     onDismissRequest: () -> Unit,
-    viewModel: ReminderDetailViewModel = koinViewModel<ReminderDetailViewModel>(
-        key = reminderId.value,
-        parameters = { parametersOf(reminderId) },
-    ),
+    viewModel: ReminderDetailViewModel =
+        koinViewModel<ReminderDetailViewModel>(
+            key = reminderId.value,
+            parameters = { parametersOf(reminderId) },
+        ),
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
     val haptic = LocalHapticFeedback.current
@@ -62,7 +63,7 @@ fun ReminderPeekMenu(
                 TextButton(onClick = { showDeleteConfirmation = false }) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
+            },
         )
     }
 
@@ -84,7 +85,7 @@ fun ReminderPeekMenu(
                 TextButton(onClick = { showAcknowledgedDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
+            },
         )
     }
 
@@ -134,9 +135,10 @@ fun ReminderPeekMenu(
                 onLetterClicked(it)
                 onDismissRequest()
             },
-            modifier = Modifier
-                .fillMaxWidth(.95f)
-                .fillMaxHeight(.5f),
+            modifier =
+                Modifier
+                    .fillMaxWidth(.95f)
+                    .fillMaxHeight(.5f),
         )
     }
 }

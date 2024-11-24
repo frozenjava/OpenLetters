@@ -23,7 +23,7 @@ data class SettingsState(
 
 class SettingsViewModel(
     private val appVersion: String,
-    private val themeManager: ThemeManagerType
+    private val themeManager: ThemeManagerType,
 ) : StatefulViewModel<SettingsState>(SettingsState(appVersion)) {
     override fun load() {
         viewModelScope.launch {
@@ -33,13 +33,15 @@ class SettingsViewModel(
         }
     }
 
-    fun setTheme(theme: AppTheme) = viewModelScope.launch {
-        themeManager.setTheme(theme)
-        update { copy(appTheme = theme) }
-    }
+    fun setTheme(theme: AppTheme) =
+        viewModelScope.launch {
+            themeManager.setTheme(theme)
+            update { copy(appTheme = theme) }
+        }
 
-    fun setVariant(variant: ColorPalette) = viewModelScope.launch {
-        themeManager.setVariant(variant)
-        update { copy(themeVariant = variant) }
-    }
+    fun setVariant(variant: ColorPalette) =
+        viewModelScope.launch {
+            themeManager.setVariant(variant)
+            update { copy(themeVariant = variant) }
+        }
 }

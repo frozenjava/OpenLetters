@@ -37,7 +37,6 @@ import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.openAppSettings
 import net.frozendevelopment.openletters.feature.reminder.list.ui.EmptyReminderListCell
 import net.frozendevelopment.openletters.ui.components.ActionReminderCell
-import net.frozendevelopment.openletters.ui.components.ReminderCell
 import net.frozendevelopment.openletters.ui.components.ReminderPeekMenu
 
 @Serializable
@@ -64,7 +63,7 @@ fun ReminderListView(
             onEditClick = { onReminderClicked(it, true) },
             onDeleteClick = { },
             onAcknowledgeClick = { },
-            onLetterClicked = {}
+            onLetterClicked = {},
         )
     }
 
@@ -89,7 +88,7 @@ fun ReminderListView(
                         contentDescription = "Back",
                     )
                 }
-            }
+            },
         )
 
         if (!state.hasNotificationPermission) {
@@ -98,9 +97,10 @@ fun ReminderListView(
                 color = MaterialTheme.colorScheme.errorContainer,
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -114,10 +114,11 @@ fun ReminderListView(
 
         if (state.isEmpty) {
             EmptyReminderListCell(
-                modifier = Modifier
-                    .fillMaxWidth(.95f)
-                    .padding(vertical = 16.dp),
-                onClicked = createReminderClicked
+                modifier =
+                    Modifier
+                        .fillMaxWidth(.95f)
+                        .padding(vertical = 16.dp),
+                onClicked = createReminderClicked,
             )
         }
 
@@ -136,12 +137,13 @@ fun ReminderListView(
 
                 items(
                     items = state.urgentReminders,
-                    key = { reminder -> reminder.value }
+                    key = { reminder -> reminder.value },
                 ) { reminder ->
                     ActionReminderCell(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .animateItem(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .animateItem(),
                         id = reminder,
                         onClick = { onReminderClicked(it, false) },
                         onLongClick = { showReminderPeek = it },
@@ -161,12 +163,13 @@ fun ReminderListView(
 
                 items(
                     items = state.upcomingReminders,
-                    key = { reminder -> reminder.value }
+                    key = { reminder -> reminder.value },
                 ) { reminder ->
                     ActionReminderCell(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .animateItem(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .animateItem(),
                         id = reminder,
                         onClick = { onReminderClicked(it, false) },
                         onLongClick = { showReminderPeek = it },
@@ -186,12 +189,13 @@ fun ReminderListView(
 
                 items(
                     items = state.pastReminders,
-                    key = { reminder -> reminder.value }
+                    key = { reminder -> reminder.value },
                 ) { reminder ->
                     ActionReminderCell(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .animateItem(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .animateItem(),
                         id = reminder,
                         onClick = { onReminderClicked(it, false) },
                         onLongClick = { showReminderPeek = it },
@@ -200,7 +204,6 @@ fun ReminderListView(
                     )
                 }
             }
-
         }
     }
 }

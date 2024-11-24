@@ -6,16 +6,16 @@ import java.time.LocalDateTime
 
 class SaveCategoryOrderUseCase(
     private val categoryQueries: CategoryQueries,
-    private val now: () -> LocalDateTime = { LocalDateTime.now() }
+    private val now: () -> LocalDateTime = { LocalDateTime.now() },
 ) {
     operator fun invoke(
         categoryId: CategoryId,
-        order: Long
+        order: Long,
     ) {
         categoryQueries.setPriority(
             priority = order,
             modifiedTimestamp = now(),
-            id = categoryId
+            id = categoryId,
         )
     }
 }

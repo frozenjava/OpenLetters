@@ -16,19 +16,20 @@ interface TextExtractorType {
 }
 
 class TextExtractor(
-    private val application: Application
-): TextExtractorType {
+    private val application: Application,
+) : TextExtractorType {
     private val textRecognizer: TextRecognizer by lazy {
         TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     }
 
     override suspend fun extractFromImage(uri: Uri): String? {
         return suspendCancellableCoroutine { continuation ->
-            val image = try {
-                InputImage.fromFilePath(application, uri)
-            } catch (e: IOException) {
-                return@suspendCancellableCoroutine
-            }
+            val image =
+                try {
+                    InputImage.fromFilePath(application, uri)
+                } catch (e: IOException) {
+                    return@suspendCancellableCoroutine
+                }
 
             textRecognizer.process(image)
                 .addOnSuccessListener { visionText ->

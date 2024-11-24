@@ -25,17 +25,18 @@ fun ScanCard(
     label: String,
     labelIcon: ImageVector,
     scannedText: String?,
-    onScanClicked: () -> Unit
+    onScanClicked: () -> Unit,
 ) {
     OutlinedCard(
         modifier = modifier,
-        onClick = onScanClicked
+        onClick = onScanClicked,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (scannedText.isNullOrBlank()) {
                 Text(label)
@@ -54,9 +55,10 @@ private fun ScanCardPreview() {
     OpenLettersTheme {
         Surface {
             ScanCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 label = "Tap to import sender",
                 labelIcon = Icons.Outlined.ContactMail,
                 scannedText = null,

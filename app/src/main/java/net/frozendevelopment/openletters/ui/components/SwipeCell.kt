@@ -1,6 +1,5 @@
 package net.frozendevelopment.openletters.ui.components
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -47,87 +46,94 @@ fun SwipeCell(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragStart = { coroutineScope.launch { offsetX.stop() } },
-                    onDragEnd = {
-                        val currentOffset = offsetX.value
-                        val threshold = 0.25f * maxOffsetLeft.toPx()
-                        val thresholdRight = -0.25f * maxOffsetRight.toPx()
-                        coroutineScope.launch {
-                            if (currentOffset > threshold) {
-                                offsetX.animateTo(maxOffsetLeft.toPx())
-                            } else if (currentOffset < thresholdRight){
-                                offsetX.animateTo(-maxOffsetRight.toPx())
-                            } else {
-                                offsetX.animateTo(0f)
+        modifier =
+            Modifier
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(
+                        onDragStart = { coroutineScope.launch { offsetX.stop() } },
+                        onDragEnd = {
+                            val currentOffset = offsetX.value
+                            val threshold = 0.25f * maxOffsetLeft.toPx()
+                            val thresholdRight = -0.25f * maxOffsetRight.toPx()
+                            coroutineScope.launch {
+                                if (currentOffset > threshold) {
+                                    offsetX.animateTo(maxOffsetLeft.toPx())
+                                } else if (currentOffset < thresholdRight) {
+                                    offsetX.animateTo(-maxOffsetRight.toPx())
+                                } else {
+                                    offsetX.animateTo(0f)
+                                }
                             }
-                        }
-                    },
-                    onHorizontalDrag = { change, dragAmount ->
-                        if (offsetX.value == 0f && change.pressure < 0.4f) {
-                            return@detectHorizontalDragGestures
-                        }
+                        },
+                        onHorizontalDrag = { change, dragAmount ->
+                            if (offsetX.value == 0f && change.pressure < 0.4f) {
+                                return@detectHorizontalDragGestures
+                            }
 
-                        coroutineScope.launch {
-                            val newOffset = (offsetX.value + dragAmount).coerceIn(-maxOffsetRight.toPx(), maxOffsetLeft.toPx())
-                            offsetX.snapTo(newOffset)
-                        }
-                    },
-                )
-            },
+                            coroutineScope.launch {
+                                val newOffset = (offsetX.value + dragAmount).coerceIn(-maxOffsetRight.toPx(), maxOffsetLeft.toPx())
+                                offsetX.snapTo(newOffset)
+                            }
+                        },
+                    )
+                },
     ) {
         // the background layer (hidden menu revealed by the swipe)
         Surface(
             color = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .align(Alignment.CenterStart)
-                .width(cellWidth)
-                .height(cellHeight)
+            modifier =
+                Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .align(Alignment.CenterStart)
+                    .width(cellWidth)
+                    .height(cellHeight),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .align(Alignment.Center)
+                modifier =
+                    Modifier
+                        .align(Alignment.Center),
             ) {
                 if (leftMenu != null) {
-                    leftMenu(Modifier
-                        .padding(horizontal = 10.dp)
-                        .height(cellHeight)
-                        .onGloballyPositioned { coordinates ->
-                            maxOffsetLeft = with(localDensity) { coordinates.size.width.toDp() + 10.dp }
-                        }
+                    leftMenu(
+                        Modifier
+                            .padding(horizontal = 10.dp)
+                            .height(cellHeight)
+                            .onGloballyPositioned { coordinates ->
+                                maxOffsetLeft = with(localDensity) { coordinates.size.width.toDp() + 10.dp }
+                            },
                     )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 if (rightMenu != null) {
-                    rightMenu(Modifier
-                        .padding(horizontal = 10.dp)
-                        .height(cellHeight)
-                        .onGloballyPositioned { coordinates ->
-                            maxOffsetRight = with(localDensity) { coordinates.size.width.toDp() + 10.dp }
-                        }
+                    rightMenu(
+                        Modifier
+                            .padding(horizontal = 10.dp)
+                            .height(cellHeight)
+                            .onGloballyPositioned { coordinates ->
+                                maxOffsetRight = with(localDensity) { coordinates.size.width.toDp() + 10.dp }
+                            },
                     )
                 }
             }
         }
 
         // foreground cell layer
-        Box(modifier = Modifier
-            .offset { IntOffset((offsetX.value).roundToInt(), 0) }
-            .shadow(
-                elevation = if (offsetX.value != 0f) 1.dp else 0.dp,
-                shape = MaterialTheme.shapes.medium
-            )
-            .onGloballyPositioned { coordinates ->
-                cellHeight = with(localDensity) { coordinates.size.height.toDp() }
-                cellWidth = with(localDensity) { coordinates.size.width.toDp() }
-            }
+        Box(
+            modifier =
+                Modifier
+                    .offset { IntOffset((offsetX.value).roundToInt(), 0) }
+                    .shadow(
+                        elevation = if (offsetX.value != 0f) 1.dp else 0.dp,
+                        shape = MaterialTheme.shapes.medium,
+                    )
+                    .onGloballyPositioned { coordinates ->
+                        cellHeight = with(localDensity) { coordinates.size.height.toDp() }
+                        cellWidth = with(localDensity) { coordinates.size.width.toDp() }
+                    },
         ) {
             content()
         }

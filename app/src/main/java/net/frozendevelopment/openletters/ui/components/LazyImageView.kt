@@ -70,14 +70,13 @@ fun LazyImageView(
 }
 
 @Composable
-fun BrokenImageView(
-    modifier: Modifier = Modifier,
-) {
+fun BrokenImageView(modifier: Modifier = Modifier) {
     Surface(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.small),
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small),
         color = MaterialTheme.colorScheme.secondaryContainer,
-        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
     ) {
         Icon(imageVector = Icons.Filled.BrokenImage, contentDescription = "Can not find image")
     }

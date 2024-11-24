@@ -21,12 +21,12 @@ import net.frozendevelopment.openletters.usecase.AcknowledgeReminderUseCase
 import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
 import net.frozendevelopment.openletters.usecase.DeleteLetterUseCase
 import net.frozendevelopment.openletters.usecase.DeleteReminderUseCase
-import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.ReminderWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.SaveCategoryOrderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.usecase.UpsertCategoryUseCase
+import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.util.TextExtractorType
 import net.frozendevelopment.openletters.util.ThemeManagerType
 import org.koin.android.annotation.KoinViewModel
@@ -104,7 +104,7 @@ class FeatureKoin {
     ) = ReminderListViewModel(
         application = application,
         reminderQueries = reminderQueries,
-        deleteReminder = deleteReminder
+        deleteReminder = deleteReminder,
     )
 
     @KoinViewModel
@@ -134,15 +134,15 @@ class FeatureKoin {
         reminderId = reminderId,
         application = application,
         reminderWithDetails = reminderWithDetailsUseCase,
-        acknowledgeReminder = acknowledgeReminderUseCase
+        acknowledgeReminder = acknowledgeReminderUseCase,
     )
 
     @KoinViewModel
     fun settingsViewModel(
         application: Application,
-        themeManager: ThemeManagerType
+        themeManager: ThemeManagerType,
     ) = SettingsViewModel(
         appVersion = application.packageManager.getPackageInfo(application.packageName, 0).versionName ?: "0.0.0",
-        themeManager = themeManager
+        themeManager = themeManager,
     )
 }

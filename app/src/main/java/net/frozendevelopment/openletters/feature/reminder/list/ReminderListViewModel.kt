@@ -27,18 +27,21 @@ class ReminderListViewModel(
     private val deleteReminder: DeleteReminderUseCase,
 ) : StatefulViewModel<ReminderListState>(ReminderListState()) {
     override fun load() {
-        val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            application.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            true
-        }
+        val hasNotificationPermission =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                application.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                true
+            }
 
-        update { copy(
-            hasNotificationPermission = hasNotificationPermission,
-            urgentReminders = reminderQueries.urgentReminders().executeAsList(),
-            upcomingReminders = reminderQueries.upcomingReminders().executeAsList(),
-            pastReminders = reminderQueries.pastReminders().executeAsList(),
-        )}
+        update {
+            copy(
+                hasNotificationPermission = hasNotificationPermission,
+                urgentReminders = reminderQueries.urgentReminders().executeAsList(),
+                upcomingReminders = reminderQueries.upcomingReminders().executeAsList(),
+                pastReminders = reminderQueries.pastReminders().executeAsList(),
+            )
+        }
     }
 
     fun handlePermissionResult(granted: Boolean) {

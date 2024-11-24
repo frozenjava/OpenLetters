@@ -79,26 +79,27 @@ fun LetterDetailView(
                 DropdownMenu(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
                 ) {
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.edit)) },
-                        onClick = onEditClicked
+                        onClick = onEditClicked,
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.create_reminder)) },
-                        onClick = onCreateReminderClicked
+                        onClick = onCreateReminderClicked,
                     )
                 }
-            }
+            },
         )
 
-        when(state) {
-            is LetterDetailState.Detail -> LetterDetail(
-                modifier = Modifier.padding(),
-                state = state,
-                onImageClick = onImageClick,
-            )
+        when (state) {
+            is LetterDetailState.Detail ->
+                LetterDetail(
+                    modifier = Modifier.padding(),
+                    state = state,
+                    onImageClick = onImageClick,
+                )
             LetterDetailState.Loading -> Loading()
             LetterDetailState.NotFound -> LetterNotFound()
         }
@@ -114,37 +115,40 @@ fun LetterDetail(
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(.95f)
-                .align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier
+                    .fillMaxWidth(.95f)
+                    .align(Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(.5f),
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("From: ")
-                    }
+                text =
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("From: ")
+                        }
 
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                        append(state.letter.sender ?: "Unknown")
-                    }
-                },
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                            append(state.letter.sender ?: "Unknown")
+                        }
+                    },
                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
             )
             Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("To: ")
-                    }
+                text =
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("To: ")
+                        }
 
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                        append(state.letter.recipient ?: "Unknown")
-                    }
-                },
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                            append(state.letter.recipient ?: "Unknown")
+                        }
+                    },
                 fontSize = MaterialTheme.typography.labelMedium.fontSize,
             )
         }
@@ -153,7 +157,7 @@ fun LetterDetail(
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                contentPadding = PaddingValues(start = 8.dp, end = 64.dp)
+                contentPadding = PaddingValues(start = 8.dp, end = 64.dp),
             ) {
                 items(
                     items = state.categories,
@@ -191,7 +195,10 @@ private fun Loading() {
 }
 
 @Composable
-private fun LetterDetailPreview(darkTheme: Boolean, state: LetterDetailState) {
+private fun LetterDetailPreview(
+    darkTheme: Boolean,
+    state: LetterDetailState,
+) {
     OpenLettersTheme(darkTheme) {
         Surface {
             LetterDetailView(
@@ -211,13 +218,15 @@ private fun LetterDetailPreview(darkTheme: Boolean, state: LetterDetailState) {
 private fun LetterDetailLight() {
     LetterDetailPreview(
         darkTheme = false,
-        state = LetterDetailState.Detail(
-            letter = mockLetter(),
-            documents = emptyMap(),
-            categories = listOf(CategoryId.random(), CategoryId.random(), CategoryId.random())
-                .mapIndexed { index, categoryId -> mockCategory(id = categoryId, label = "Category $index") },
-            threads = emptyList(),
-        ),
+        state =
+            LetterDetailState.Detail(
+                letter = mockLetter(),
+                documents = emptyMap(),
+                categories =
+                    listOf(CategoryId.random(), CategoryId.random(), CategoryId.random())
+                        .mapIndexed { index, categoryId -> mockCategory(id = categoryId, label = "Category $index") },
+                threads = emptyList(),
+            ),
     )
 }
 

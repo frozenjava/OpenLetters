@@ -46,7 +46,7 @@ fun ScanAppBar(
                 TextButton(onClick = { showLeaveConfirmation = false }) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 
@@ -64,17 +64,17 @@ fun ScanAppBar(
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "back"
+                    contentDescription = "back",
                 )
             }
         },
         actions = {
             TextButton(
                 onClick = onSaveClicked,
-                enabled = isSavable
+                enabled = isSavable,
             ) {
                 Text("Save")
             }
-        }
+        },
     )
 }

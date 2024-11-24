@@ -5,12 +5,8 @@ import net.frozendevelopment.openletters.data.sqldelight.OpenLettersDB
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
-import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.util.DocumentManagerType
-import net.frozendevelopment.openletters.util.TextExtractorType
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class CreateLetterUseCase(
     private val documentManager: DocumentManagerType,
@@ -39,9 +35,10 @@ class CreateLetterUseCase(
             )
 
             // find currently existing documents for this letter
-            val existingDocuments = database.documentQueries.documentsForLetter(letterId)
-                .executeAsList()
-                .map { it.id }
+            val existingDocuments =
+                database.documentQueries.documentsForLetter(letterId)
+                    .executeAsList()
+                    .map { it.id }
 
             // remove all documents that are not in the new `documents` map
             for (documentId in existingDocuments) {
@@ -63,8 +60,9 @@ class CreateLetterUseCase(
             }
 
             // find existing categories for the letter
-            val existingCategories = database.letterQueries.categoriesForLetter(letterId)
-                .executeAsList()
+            val existingCategories =
+                database.letterQueries.categoriesForLetter(letterId)
+                    .executeAsList()
 
             // remove all categories that are not in the new `categories` list
             for (categoryId in existingCategories) {

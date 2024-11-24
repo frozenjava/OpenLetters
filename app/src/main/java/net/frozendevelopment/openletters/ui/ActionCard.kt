@@ -26,24 +26,28 @@ fun ActionCard(
     val haptic = LocalHapticFeedback.current
 
     CompositionLocalProvider(
-        LocalContentColor provides colors.contentColor
+        LocalContentColor provides colors.contentColor,
     ) {
         Box(
-            modifier = modifier
-                .minimumInteractiveComponentSize()
-                .background(
-                    color = colors.containerColor,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { onClick() },
-                        onLongPress = onLongClick?.let {{
-                            it()
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        }}
+            modifier =
+                modifier
+                    .minimumInteractiveComponentSize()
+                    .background(
+                        color = colors.containerColor,
+                        shape = MaterialTheme.shapes.medium,
                     )
-                }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { onClick() },
+                            onLongPress =
+                                onLongClick?.let {
+                                    {
+                                        it()
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    }
+                                },
+                        )
+                    },
         ) {
             content()
         }

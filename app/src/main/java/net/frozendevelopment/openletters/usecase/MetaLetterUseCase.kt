@@ -1,8 +1,6 @@
 package net.frozendevelopment.openletters.usecase
 
 import androidx.compose.ui.graphics.Color
-import kotlinx.coroutines.coroutineScope
-import net.frozendevelopment.openletters.data.sqldelight.LetterInfo
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import java.time.LocalDateTime
@@ -18,15 +16,17 @@ data class MetaLetter(
 )
 
 class MetaLetterUseCase(
-    private val queries: LetterQueries
+    private val queries: LetterQueries,
 ) {
     operator fun invoke(id: LetterId): MetaLetter? {
-        val letterInfo = queries.letterInfo(id)
-            .executeAsOneOrNull() ?: return null
+        val letterInfo =
+            queries.letterInfo(id)
+                .executeAsOneOrNull() ?: return null
 
-        val colors = queries
-            .categoryColorsForLetter(letterInfo.id)
-            .executeAsList()
+        val colors =
+            queries
+                .categoryColorsForLetter(letterInfo.id)
+                .executeAsList()
 
         return MetaLetter(
             id = letterInfo.id,
@@ -35,7 +35,7 @@ class MetaLetterUseCase(
             body = letterInfo.body,
             created = letterInfo.created,
             lastModified = letterInfo.lastModified,
-            categoryColors = colors
+            categoryColors = colors,
         )
     }
 }

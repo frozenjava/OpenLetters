@@ -14,7 +14,7 @@ data class ReminderWithDetails(
     val createdAt: LocalDateTime,
     val lastModified: LocalDateTime,
     val notificationId: Int,
-    val letters: List<LetterId>
+    val letters: List<LetterId>,
 )
 
 class ReminderWithDetailsUseCase(
@@ -23,9 +23,10 @@ class ReminderWithDetailsUseCase(
     operator fun invoke(reminderId: ReminderId): ReminderWithDetails? {
         val reminder = reminderQueries.reminderDetail(reminderId).executeAsOneOrNull() ?: return null
 
-        val letterIds = reminder.letterIds?.split(",")
-            ?.map { LetterId(it.trim()) }
-            ?: emptyList()
+        val letterIds =
+            reminder.letterIds?.split(",")
+                ?.map { LetterId(it.trim()) }
+                ?: emptyList()
 
         return ReminderWithDetails(
             id = reminder.id,
@@ -36,7 +37,7 @@ class ReminderWithDetailsUseCase(
             createdAt = reminder.created,
             lastModified = reminder.lastModified,
             notificationId = reminder.notificationId.toInt(),
-            letters = letterIds
+            letters = letterIds,
         )
     }
 }

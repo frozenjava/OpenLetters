@@ -1,7 +1,6 @@
 package net.frozendevelopment.openletters.feature.settings
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,9 +15,7 @@ import org.koin.androidx.compose.koinViewModel
 @Serializable
 data object SettingsDestination
 
-fun NavGraphBuilder.settings(
-    navController: NavController,
-) {
+fun NavGraphBuilder.settings(navController: NavController) {
     composable<SettingsDestination> {
         val viewModel: SettingsViewModel = koinViewModel()
         val state by viewModel.stateFlow.collectAsStateWithLifecycle()
@@ -30,7 +27,7 @@ fun NavGraphBuilder.settings(
                 onBackClicked = { navController.popBackStack() },
                 onThemeChanged = viewModel::setTheme,
                 onColorVariantChanged = viewModel::setVariant,
-                onViewSourceClicked = { navController.openUrl("https://github.com/frozenjava/OpenLetters") }
+                onViewSourceClicked = { navController.openUrl("https://github.com/frozenjava/OpenLetters") },
             )
         }
     }

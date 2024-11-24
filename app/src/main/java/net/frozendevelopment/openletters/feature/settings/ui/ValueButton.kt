@@ -1,7 +1,10 @@
 package net.frozendevelopment.openletters.feature.settings.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
@@ -18,9 +21,10 @@ internal fun ValueButton(
     rightContent: @Composable () -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .padding(8.dp)
-            .clickable { onClick() },
+        modifier =
+            modifier
+                .padding(8.dp)
+                .clickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

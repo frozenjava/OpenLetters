@@ -3,9 +3,7 @@ package net.frozendevelopment.openletters.migration
 import androidx.compose.ui.graphics.Color
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class InitialCategoriesMigration(
     private val categoryQueries: net.frozendevelopment.openletters.data.sqldelight.CategoryQueries,

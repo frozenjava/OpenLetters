@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -44,10 +44,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
-import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.openAppSettings
 import net.frozendevelopment.openletters.ui.components.FormAppBar
 import net.frozendevelopment.openletters.ui.components.LetterCell
@@ -93,9 +91,10 @@ fun ReminderFormView(
                 color = MaterialTheme.colorScheme.errorContainer,
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -145,17 +144,18 @@ fun ReminderFormView(
                         IconButton(onClick = { openDialog(ReminderFormState.Dialog.DATE) }) {
                             Icon(
                                 imageVector = Icons.Default.DateRange,
-                                contentDescription = stringResource(R.string.select_date)
+                                contentDescription = stringResource(R.string.select_date),
                             )
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth(.95f)
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                openDialog(ReminderFormState.Dialog.DATE)
-                            }
-                        }
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(.95f)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    openDialog(ReminderFormState.Dialog.DATE)
+                                }
+                            },
                 )
             }
 
@@ -177,17 +177,18 @@ fun ReminderFormView(
                         IconButton(onClick = { openDialog(ReminderFormState.Dialog.TIME) }) {
                             Icon(
                                 imageVector = Icons.Default.AccessTime,
-                                contentDescription = stringResource(R.string.select_time)
+                                contentDescription = stringResource(R.string.select_time),
                             )
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth(.95f)
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                openDialog(ReminderFormState.Dialog.TIME)
-                            }
-                        }
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(.95f)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    openDialog(ReminderFormState.Dialog.TIME)
+                                }
+                            },
                 )
             }
 
@@ -208,9 +209,10 @@ fun ReminderFormView(
             if (state.selectedLetters.isNotEmpty()) {
                 item {
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth(.95f)
-                            .padding(vertical = 16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(.95f)
+                                .padding(vertical = 16.dp),
                         text = stringResource(R.string.tag_letters),
                         style = MaterialTheme.typography.labelLarge,
                     )
@@ -218,12 +220,12 @@ fun ReminderFormView(
 
                 items(
                     items = state.selectedLetters,
-                    key = { it.value }
+                    key = { it.value },
                 ) {
                     LetterCell(
                         modifier = Modifier.fillMaxWidth(.95f),
                         id = it,
-                        onClick = { onLetterClicked(it) }
+                        onClick = { onLetterClicked(it) },
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -232,7 +234,7 @@ fun ReminderFormView(
                 item {
                     Button(
                         modifier = Modifier.fillMaxWidth(.95f),
-                        onClick = { openDialog(ReminderFormState.Dialog.LETTERS) }
+                        onClick = { openDialog(ReminderFormState.Dialog.LETTERS) },
                     ) {
                         Text(stringResource(R.string.tag_additional_letters))
                     }
@@ -245,7 +247,7 @@ fun ReminderFormView(
                 item {
                     Button(
                         modifier = Modifier.fillMaxWidth(.95f),
-                        onClick = { openDialog(ReminderFormState.Dialog.LETTERS) }
+                        onClick = { openDialog(ReminderFormState.Dialog.LETTERS) },
                     ) {
                         Text(stringResource(R.string.tag_letters))
                     }
@@ -263,7 +265,7 @@ fun ReminderFormView(
                     onDateSelected(it)
                 }
                 focusManager.clearFocus()
-            }
+            },
         ) {
             openDialog(null)
             focusManager.clearFocus()
@@ -289,7 +291,7 @@ fun ReminderFormView(
             letters = state.letters,
             selectedLetters = state.selectedLetters,
             onDismissRequest = { openDialog(null) },
-            toggleLetterSelect = toggleLetterSelect
+            toggleLetterSelect = toggleLetterSelect,
         )
     }
 }
@@ -317,18 +319,19 @@ private fun DatePickerDialog(
             showModeToggle = false,
             title = {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text("Select a Date")
                     Button(onClick = { onDoneClicked(datePickerState.selectedDateMillis) }) {
                         Text("Done")
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -348,14 +351,15 @@ private fun TimePickerDialog(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("Select a Time")
                 Button(onClick = { onDoneClicked(timePickerState.hour, timePickerState.minute) }) {
@@ -385,15 +389,16 @@ private fun SelectLetterDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(top = 28.dp, bottom = 168.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(.75f)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(.75f),
         ) {
             item {
                 Column {
                     Text(
                         "Tap to select or deselect a letter",
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
@@ -403,7 +408,7 @@ private fun SelectLetterDialog(
                 SelectCell(
                     modifier = Modifier.fillMaxWidth(.95f),
                     isSelected = isSelected,
-                    onClick = { toggleLetterSelect(it) }
+                    onClick = { toggleLetterSelect(it) },
                 ) {
                     LetterCell(id = it, onClick = { toggleLetterSelect(it) })
                 }
@@ -411,10 +416,11 @@ private fun SelectLetterDialog(
         }
 
         Button(
-            modifier = Modifier
-                .fillMaxWidth(.95f)
-                .align(Alignment.CenterHorizontally),
-            onClick = onDismissRequest
+            modifier =
+                Modifier
+                    .fillMaxWidth(.95f)
+                    .align(Alignment.CenterHorizontally),
+            onClick = onDismissRequest,
         ) {
             Text("Done")
         }
@@ -422,7 +428,10 @@ private fun SelectLetterDialog(
 }
 
 @Composable
-private fun ReminderFormPreview(darkTheme: Boolean, state: ReminderFormState) {
+private fun ReminderFormPreview(
+    darkTheme: Boolean,
+    state: ReminderFormState,
+) {
     OpenLettersTheme(darkTheme = darkTheme) {
         Surface {
             ReminderFormView(
@@ -447,7 +456,7 @@ private fun ReminderFormPreview(darkTheme: Boolean, state: ReminderFormState) {
 private fun BlankFormLight() {
     ReminderFormPreview(
         darkTheme = false,
-        state = ReminderFormState()
+        state = ReminderFormState(),
     )
 }
 
@@ -456,7 +465,7 @@ private fun BlankFormLight() {
 private fun BlankFormDark() {
     ReminderFormPreview(
         darkTheme = true,
-        state = ReminderFormState()
+        state = ReminderFormState(),
     )
 }
 
@@ -465,7 +474,7 @@ private fun BlankFormDark() {
 private fun DateSelectorLight() {
     ReminderFormPreview(
         darkTheme = false,
-        state = ReminderFormState(shownDialog = ReminderFormState.Dialog.DATE)
+        state = ReminderFormState(shownDialog = ReminderFormState.Dialog.DATE),
     )
 }
 
@@ -474,6 +483,6 @@ private fun DateSelectorLight() {
 private fun DateSelectorDark() {
     ReminderFormPreview(
         darkTheme = true,
-        state = ReminderFormState(shownDialog = ReminderFormState.Dialog.DATE)
+        state = ReminderFormState(shownDialog = ReminderFormState.Dialog.DATE),
     )
 }
