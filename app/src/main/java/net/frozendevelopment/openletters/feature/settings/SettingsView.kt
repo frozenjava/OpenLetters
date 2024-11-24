@@ -124,7 +124,7 @@ fun SettingsView(
 
         Text(
             modifier = Modifier.navigationBarsPadding(),
-            text = "Open Letters version 1.0.0",
+            text = "Open Letters version ${state.appVersion}",
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Light
         )
@@ -180,7 +180,7 @@ private fun SettingsPreview(darkTheme: Boolean) {
         Surface {
             SettingsView(
                 modifier = Modifier.fillMaxSize(),
-                state = SettingsState(),
+                state = SettingsState("0.0.0"),
                 onBackClicked = {},
                 onThemeChanged = {},
                 onColorVariantChanged = {},
