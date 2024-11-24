@@ -51,12 +51,7 @@ We welcome contributions from the open-source community. To contribute:
 ## Open-Core Model
 This project follows an *open-core* model:
 
-- The base functionality of Open Letters is open-source and freely available under the MIT License. This includes features like OCR text extraction, letter categorization, reminders, and local data storage without any ads or analytics.
+- The base functionality of Open Letters is open-source and freely available under the GPL License. This includes features like OCR text extraction, letter categorization, reminders, and local data storage without any ads or analytics.
 - The version of the app on the Google Play Store may include paid features, ads, analytics, and other premium services. These additional features are not included in the open-source version of the app.
 
 The open-source version provides the core features necessary to digitize and organize your letters, while the Play Store version may offer enhanced functionality for users who prefer a paid experience.
-
-## License
-The base code of Open Letters is released under the MIT License. You are free to use, modify, and distribute the code as long as you comply with the terms of the license.
-However, if you plan to distribute the app (either as-is or modified), you are not allowed to monetize the app by selling paid features, including ads or analytics, unless you have explicit permission from the original author (you).
-The Play Store version may contain paid features, ads, and analytics, which are not part of the open-source distribution.
