@@ -30,6 +30,7 @@ import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 fun ScanLetterView(
     modifier: Modifier = Modifier,
     state: ScanState,
+    canNavigateBack: Boolean,
     setSender: (String) -> Unit,
     setRecipient: (String) -> Unit,
     toggleCategory: (Category) -> Unit,
@@ -48,6 +49,7 @@ fun ScanLetterView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ScanAppBar(
+            canNavigateBack = canNavigateBack,
             canLeaveSafely = state.canLeaveSafely,
             isSavable = state.isSavable,
             onSaveClicked = onSaveClicked,
@@ -128,6 +130,7 @@ private fun ScanFormViewPreview() {
     OpenLettersTheme {
         Surface {
             ScanLetterView(
+                canNavigateBack = false,
                 state = ScanState(),
                 toggleCategory = {},
                 setSender = {},

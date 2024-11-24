@@ -143,7 +143,7 @@ class ReminderFormViewModel(
         update { copy(
             hasNotificationPermission = hasNotificationPermission,
             letters = searchLetters(""),
-            selectedLetters = preselectedLetters,
+            selectedLetters = (preselectedLetters + selectedLetters).distinct(),
         )}
 
         if (isEditing) {

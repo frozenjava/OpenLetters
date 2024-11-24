@@ -276,15 +276,20 @@ class ScanViewModel(
     }
 
     private fun searchSendersAndRecipients(query: String): List<String> {
-        return try {
-            letterQueries
-                .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
-                .executeAsList() + letterQueries.searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+        try {
+            val recipients = letterQueries
+                .searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
                 .executeAsList()
+
+            val senders = letterQueries
+                .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                .executeAsList()
+
+            return (recipients + senders)
                 .filter { it.isNotBlank() }
-                .distinct()
+                .distinctBy { it.trim().lowercase() }
         } catch (e: Exception) {
-            emptyList()
+            return emptyList()
         }
     }
 

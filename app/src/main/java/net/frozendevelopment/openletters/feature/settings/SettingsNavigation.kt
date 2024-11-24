@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
+import net.frozendevelopment.openletters.extensions.openUrl
 import org.koin.androidx.compose.koinViewModel
 
 @Serializable
@@ -17,7 +18,6 @@ data object SettingsDestination
 
 fun NavGraphBuilder.settings(
     navController: NavController,
-    drawerState: DrawerState,
 ) {
     composable<SettingsDestination> {
         val viewModel: SettingsViewModel = koinViewModel()
@@ -30,7 +30,7 @@ fun NavGraphBuilder.settings(
                 onBackClicked = { navController.popBackStack() },
                 onThemeChanged = viewModel::setTheme,
                 onColorVariantChanged = viewModel::setVariant,
-                onViewSourceClicked = {}
+                onViewSourceClicked = { navController.openUrl("https://github.com/frozenjava/OpenLetters") }
             )
         }
     }

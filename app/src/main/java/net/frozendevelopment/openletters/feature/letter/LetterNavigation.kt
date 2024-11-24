@@ -165,6 +165,7 @@ fun NavGraphBuilder.letters(
                     .statusBarsPadding()
                     .navigationBarsPadding(),
                 state = state,
+                canNavigateBack = destination.canNavigateBack,
                 toggleCategory = viewModel::toggleCategory,
                 setSender = viewModel::setSender,
                 setRecipient = viewModel::setRecipient,
@@ -209,7 +210,17 @@ fun NavGraphBuilder.letters(
                     coroutineScope.launch(Dispatchers.IO) {
                         if (viewModel.save()) {
                             withContext(Dispatchers.Main) {
-                                navController.navigateUp()
+                                if (destination.canNavigateBack) {
+                                    navController.navigateUp()
+                                } else {
+                                    navController.navigate(LetterListDestination) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
                             }
                         }
                     }

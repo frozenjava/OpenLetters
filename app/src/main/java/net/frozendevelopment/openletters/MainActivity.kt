@@ -26,12 +26,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
+import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.extensions.newRoot
 import net.frozendevelopment.openletters.feature.category.categories
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryDestination
 import net.frozendevelopment.openletters.feature.letter.letters
 import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
+import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import net.frozendevelopment.openletters.feature.reminder.reminders
@@ -48,6 +50,7 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
     private val themeManager: ThemeManagerType by inject()
+    private val letterQueries: LetterQueries by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +112,10 @@ class MainActivity : ComponentActivity() {
                         ) {
                             NavHost(
                                 navController = navHostController,
-                                startDestination = LetterListDestination,
+                                startDestination = if (letterQueries.hasLetters().executeAsOne() == 1L)
+                                    LetterListDestination
+                                else
+                                    ScanLetterDestination(canNavigateBack = false),
                                 enterTransition = { navigationEnterTransition() },
                                 exitTransition = { navigationExitTransition() },
                                 popEnterTransition = { navigationPopEnterTransition() },
@@ -118,7 +124,7 @@ class MainActivity : ComponentActivity() {
                                 categories(navHostController, drawerState)
                                 letters(navHostController, drawerState)
                                 reminders(navHostController, drawerState)
-                                settings(navHostController, drawerState)
+                                settings(navHostController)
                             }
                         }
                     }

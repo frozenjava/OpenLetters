@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanAppBar(
+    canNavigateBack: Boolean,
     canLeaveSafely: Boolean,
     isSavable: Boolean,
     onBackClicked: () -> Unit,
@@ -27,7 +28,7 @@ fun ScanAppBar(
 ) {
     var showLeaveConfirmation: Boolean by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = !canLeaveSafely) {
+    BackHandler(enabled = !canLeaveSafely && canNavigateBack) {
         showLeaveConfirmation = true
     }
 
@@ -52,6 +53,8 @@ fun ScanAppBar(
     CenterAlignedTopAppBar(
         title = { Text(text = "Import Letter") },
         navigationIcon = {
+            if (!canNavigateBack) return@CenterAlignedTopAppBar
+
             IconButton(onClick = {
                 if (canLeaveSafely) {
                     onBackClicked()

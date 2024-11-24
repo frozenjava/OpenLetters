@@ -9,6 +9,7 @@ import kotlin.reflect.typeOf
 @Serializable
 data class ScanLetterDestination(
     val letterId: LetterId? = null,
+    val canNavigateBack: Boolean = true,
 ) {
     companion object {
         val typeMap = mapOf(
