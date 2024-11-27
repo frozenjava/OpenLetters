@@ -18,7 +18,6 @@ import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormViewM
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListViewModel
 import net.frozendevelopment.openletters.feature.settings.SettingsViewModel
 import net.frozendevelopment.openletters.usecase.AcknowledgeReminderUseCase
-import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
 import net.frozendevelopment.openletters.usecase.DeleteLetterUseCase
 import net.frozendevelopment.openletters.usecase.DeleteReminderUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
@@ -26,6 +25,7 @@ import net.frozendevelopment.openletters.usecase.ReminderWithDetailsUseCase
 import net.frozendevelopment.openletters.usecase.SaveCategoryOrderUseCase
 import net.frozendevelopment.openletters.usecase.SearchLettersUseCase
 import net.frozendevelopment.openletters.usecase.UpsertCategoryUseCase
+import net.frozendevelopment.openletters.usecase.UpsertLetterUseCase
 import net.frozendevelopment.openletters.usecase.UpsertReminderUseCase
 import net.frozendevelopment.openletters.util.TextExtractorType
 import net.frozendevelopment.openletters.util.ThemeManagerType
@@ -55,7 +55,7 @@ class FeatureKoin {
         @InjectedParam letterToEdit: LetterId?,
         letterQueries: LetterQueries,
         textExtractor: TextExtractorType,
-        createLetter: CreateLetterUseCase,
+        createLetter: UpsertLetterUseCase,
         categoryQueries: CategoryQueries,
         letterWithDetailsUseCase: LetterWithDetailsUseCase,
     ) = ScanViewModel(

@@ -8,7 +8,7 @@ import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.util.DocumentManagerType
 import java.time.LocalDateTime
 
-class CreateLetterUseCase(
+class UpsertLetterUseCase(
     private val documentManager: DocumentManagerType,
     private val database: OpenLettersDB,
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
@@ -36,7 +36,8 @@ class CreateLetterUseCase(
 
             // find currently existing documents for this letter
             val existingDocuments =
-                database.documentQueries.documentsForLetter(letterId)
+                database.documentQueries
+                    .documentsForLetter(letterId)
                     .executeAsList()
                     .map { it.id }
 
@@ -61,7 +62,8 @@ class CreateLetterUseCase(
 
             // find existing categories for the letter
             val existingCategories =
-                database.letterQueries.categoriesForLetter(letterId)
+                database.letterQueries
+                    .categoriesForLetter(letterId)
                     .executeAsList()
 
             // remove all categories that are not in the new `categories` list

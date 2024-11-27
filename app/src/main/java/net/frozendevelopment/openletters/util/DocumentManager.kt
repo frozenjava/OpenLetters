@@ -9,16 +9,22 @@ import java.io.File
 interface DocumentManagerType {
     fun delete(documentId: DocumentId)
 
-    fun delete(documents: Collection<DocumentId>)
-
     fun persist(
         cacheUri: Uri,
         documentId: DocumentId,
     ): Uri
 
     fun get(documentId: DocumentId): Uri?
+}
 
-    fun get(documents: Collection<DocumentId>): List<Uri>
+fun DocumentManagerType.delete(documents: Collection<DocumentId>) {
+    for (document in documents) {
+        delete(document)
+    }
+}
+
+fun DocumentManagerType.get(documents: Collection<DocumentId>): List<Uri> {
+    return documents.mapNotNull { get(it) }
 }
 
 class DocumentManager(
@@ -37,12 +43,6 @@ class DocumentManager(
 
     override fun delete(documentId: DocumentId) {
         documentId.file?.delete()
-    }
-
-    override fun delete(documents: Collection<DocumentId>) {
-        for (document in documents) {
-            delete(document)
-        }
     }
 
     @Throws(IllegalStateException::class)
@@ -75,9 +75,5 @@ class DocumentManager(
         } else {
             null
         }
-    }
-
-    override fun get(documents: Collection<DocumentId>): List<Uri> {
-        return documents.mapNotNull { get(it) }
     }
 }

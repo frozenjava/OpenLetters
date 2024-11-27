@@ -24,12 +24,12 @@ fun mockLetter(
         """.trimIndent(),
     body: String =
         """
-        We've been trying to reach you about your cars extended warranty. Please call us a 867-5309.
-        We've been trying to reach you about your cars extended warranty. Please call us a 867-5309.
-        We've been trying to reach you about your cars extended warranty. Please call us a 867-5309.
-        We've been trying to reach you about your cars extended warranty. Please call us a 867-5309.
-        We've been trying to reach you about your cars extended warranty. Please call us a 867-5309.
-        We've been trying to reach you about your cars extended warranty. Please call us a 867-5309.
+        We've been trying to reach you about your cars extended warranty. Please call us at 867-5309.
+        We've been trying to reach you about your cars extended warranty. Please call us at 867-5309.
+        We've been trying to reach you about your cars extended warranty. Please call us at 867-5309.
+        We've been trying to reach you about your cars extended warranty. Please call us at 867-5309.
+        We've been trying to reach you about your cars extended warranty. Please call us at 867-5309.
+        We've been trying to reach you about your cars extended warranty. Please call us at 867-5309.
         """.trimIndent(),
     created: LocalDateTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
     lastModified: LocalDateTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),

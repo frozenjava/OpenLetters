@@ -23,8 +23,8 @@ import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.extensions.sanitizeForSearch
-import net.frozendevelopment.openletters.usecase.CreateLetterUseCase
 import net.frozendevelopment.openletters.usecase.LetterWithDetailsUseCase
+import net.frozendevelopment.openletters.usecase.UpsertLetterUseCase
 import net.frozendevelopment.openletters.util.StatefulViewModel
 import net.frozendevelopment.openletters.util.TextExtractorType
 import java.io.File
@@ -63,7 +63,7 @@ class ScanViewModel(
     letterToEdit: LetterId?,
     private val letterQueries: LetterQueries,
     private val textExtractor: TextExtractorType,
-    private val createLetter: CreateLetterUseCase,
+    private val createLetter: UpsertLetterUseCase,
     private val letterWithDetails: LetterWithDetailsUseCase,
     private val categoryQueries: CategoryQueries,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,

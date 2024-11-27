@@ -16,7 +16,7 @@ class UseCaseKoin {
     fun createLetterUseCase(
         documentManager: DocumentManagerType,
         database: OpenLettersDB,
-    ): CreateLetterUseCase = CreateLetterUseCase(documentManager, database)
+    ): UpsertLetterUseCase = UpsertLetterUseCase(documentManager, database)
 
     @Factory
     fun metaLetterUseCase(letterQueries: LetterQueries): MetaLetterUseCase = MetaLetterUseCase(queries = letterQueries)
