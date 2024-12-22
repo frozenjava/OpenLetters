@@ -1,11 +1,13 @@
 package net.frozendevelopment.openletters.usecase
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import java.time.LocalDateTime
 
-data class MetaLetter(
+@Immutable
+data class LetterCellModel(
     val id: LetterId,
     val sender: String?,
     val recipient: String?,
@@ -15,10 +17,10 @@ data class MetaLetter(
     val categoryColors: List<Color>,
 )
 
-class MetaLetterUseCase(
+class LetterCellUseCase(
     private val queries: LetterQueries,
 ) {
-    operator fun invoke(id: LetterId): MetaLetter? {
+    operator fun invoke(id: LetterId): LetterCellModel? {
         val letterInfo =
             queries.letterInfo(id)
                 .executeAsOneOrNull() ?: return null
@@ -28,7 +30,7 @@ class MetaLetterUseCase(
                 .categoryColorsForLetter(letterInfo.id)
                 .executeAsList()
 
-        return MetaLetter(
+        return LetterCellModel(
             id = letterInfo.id,
             sender = letterInfo.sender,
             recipient = letterInfo.recipient,

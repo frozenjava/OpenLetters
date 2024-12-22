@@ -42,7 +42,7 @@ import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.feature.letter.list.LetterListState
 import net.frozendevelopment.openletters.feature.letter.peek.LetterPeekMenu
 import net.frozendevelopment.openletters.ui.components.ActionLetterCell
-import net.frozendevelopment.openletters.usecase.MetaLetterUseCase
+import net.frozendevelopment.openletters.usecase.LetterCellUseCase
 import org.koin.compose.koinInject
 
 @Composable
@@ -58,7 +58,7 @@ fun LetterList(
     onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
     onCreateReminderClicked: (List<LetterId>) -> Unit,
     listState: LazyListState = rememberLazyListState(),
-    letterUseCase: MetaLetterUseCase = koinInject(),
+    letterUseCase: LetterCellUseCase = koinInject(),
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()

@@ -3,13 +3,13 @@ package net.frozendevelopment.openletters.usecase
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
-import net.frozendevelopment.openletters.feature.reminder.notification.ReminderNotification
+import net.frozendevelopment.openletters.feature.reminder.notification.ReminderNotificationType
 import java.time.LocalDateTime
 import java.time.ZoneId
 
 class UpsertReminderUseCase(
     private val reminderQueries: ReminderQueries,
-    private val reminderNotification: ReminderNotification,
+    private val reminderNotification: ReminderNotificationType,
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
 ) {
     operator fun invoke(
@@ -29,6 +29,14 @@ class UpsertReminderUseCase(
         // if a reminder with the id already exists, then cancel the current scheduled notification
         // just in case the reminder date/time has changed. it will get rescheduled
         val existingReminder = reminderQueries.reminderDetail(reminderId).executeAsOneOrNull()
+
+        // the letters that are tagged to this reminder in the database
+        // we need this to diff the current `letters` and old list of letters
+        val taggedLetters =
+            existingReminder?.letterIds?.split(",")
+                ?.map { LetterId(it) }
+                ?.toSet() ?: emptySet()
+
         if (existingReminder != null) {
             reminderNotification.cancel(existingReminder.notificationId.toInt())
         }
@@ -46,8 +54,17 @@ class UpsertReminderUseCase(
                 notificationId = notificationId,
             )
 
-            for (letter in letters) {
+            // tag any new letters that are not in the already tagged list
+            for (letter in letters - taggedLetters) {
                 reminderQueries.tagLetter(
+                    letterId = letter,
+                    reminderId = reminderId,
+                )
+            }
+
+            // untag any letters that are not in the current list
+            for (letter in taggedLetters - letters) {
+                reminderQueries.untagLetter(
                     letterId = letter,
                     reminderId = reminderId,
                 )

@@ -7,7 +7,7 @@ import net.frozendevelopment.openletters.data.sqldelight.models.LetterId;
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId;
 
 CREATE TABLE letter (
-    id TEXT AS LetterId PRIMARY KEY NOT NULL ON CONFLICT REPLACE,
+    id TEXT AS LetterId PRIMARY KEY NOT NULL,
     sender TEXT,
     recipient TEXT,
     body TEXT,
@@ -22,7 +22,7 @@ CREATE TABLE document (
 );
 
 CREATE TABLE category (
-    id TEXT AS CategoryId PRIMARY KEY ,
+    id TEXT AS CategoryId PRIMARY KEY,
     label TEXT NOT NULL,
     color INTEGER AS Color NOT NULL DEFAULT 3318440,
     priority INTEGER NOT NULL DEFAULT 0,
@@ -69,7 +69,7 @@ CREATE VIRTUAL TABLE letterFTS USING fts5(
     created TEXT
 );
 
-CREATE TRIGGER launchAfterLetterInsert
+CREATE TRIGGER addLetterToFts
 AFTER INSERT ON letter
 BEGIN
     INSERT INTO letterFTS (id, sender, recipient, body, created)
@@ -82,7 +82,7 @@ BEGIN
     );
 END;
 
-CREATE TRIGGER launchAfterLetterUpdate
+CREATE TRIGGER updateLetterOnFts
 AFTER UPDATE ON letter
 BEGIN
     UPDATE letterFTS SET
@@ -90,4 +90,10 @@ BEGIN
         recipient = new.recipient,
         body = new.body
     WHERE id = new.id;
+END;
+
+CREATE TRIGGER deleteLetterFromFts
+AFTER DELETE ON letter
+BEGIN
+    DELETE FROM letterFTS WHERE id = old.id;
 END;

@@ -14,11 +14,29 @@ import net.frozendevelopment.openletters.DEEP_LINK_URI
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.REMINDERS_CHANNEL_ID
 
+interface ReminderNotificationType {
+    fun send(
+        title: String,
+        description: String?,
+        reminderId: String,
+    )
+
+    fun schedule(
+        title: String,
+        content: String?,
+        notificationId: Int,
+        reminderId: String,
+        notifyAtMillis: Long,
+    )
+
+    fun cancel(notificationId: Int)
+}
+
 class ReminderNotification(
     private val context: Context,
     private val notificationManager: NotificationManager = context.getSystemService(NotificationManager::class.java) as NotificationManager,
     private val alarmManager: AlarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager,
-) {
+) : ReminderNotificationType {
     companion object {
         const val TITLE_KEY: String = "title"
         const val CONTENT_KEY: String = "content"
@@ -26,7 +44,7 @@ class ReminderNotification(
         const val REMINDER_ID_KEY: String = "reminderId"
     }
 
-    fun send(
+    override fun send(
         title: String,
         description: String?,
         reminderId: String,
@@ -68,7 +86,7 @@ class ReminderNotification(
         notificationManager.notify(1, notification)
     }
 
-    fun schedule(
+    override fun schedule(
         title: String,
         content: String?,
         notificationId: Int,
@@ -96,7 +114,7 @@ class ReminderNotification(
         )
     }
 
-    fun cancel(notificationId: Int) {
+    override fun cancel(notificationId: Int) {
         val intent = Intent(context.applicationContext, ReminderReceiver::class.java)
         val pendingIntent =
             PendingIntent.getBroadcast(

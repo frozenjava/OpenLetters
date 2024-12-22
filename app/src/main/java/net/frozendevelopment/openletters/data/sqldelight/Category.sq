@@ -12,7 +12,6 @@ DO UPDATE SET
     label = excluded.label,
     color = excluded.color,
     priority = excluded.priority,
-    created = excluded.created,
     lastModified = excluded.lastModified;
 
 delete:

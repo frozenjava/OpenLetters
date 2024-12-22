@@ -45,8 +45,8 @@ import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.extensions.dateString
 import net.frozendevelopment.openletters.ui.ActionCard
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
-import net.frozendevelopment.openletters.usecase.MetaLetter
-import net.frozendevelopment.openletters.usecase.MetaLetterUseCase
+import net.frozendevelopment.openletters.usecase.LetterCellModel
+import net.frozendevelopment.openletters.usecase.LetterCellUseCase
 import org.koin.compose.koinInject
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -59,7 +59,7 @@ fun ActionLetterCell(
     onLongClick: ((id: LetterId) -> Unit)? = null,
     onEditClick: (LetterId) -> Unit,
     onDeleteClick: (LetterId) -> Unit,
-    letterUseCase: MetaLetterUseCase = koinInject(),
+    letterUseCase: LetterCellUseCase = koinInject(),
 ) {
     // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
     val letter = letterUseCase(id) ?: return
@@ -131,7 +131,7 @@ fun LetterCell(
     id: LetterId,
     onClick: (LetterId) -> Unit,
     onLongClick: ((id: LetterId) -> Unit)? = null,
-    letterUseCase: MetaLetterUseCase = koinInject(),
+    letterUseCase: LetterCellUseCase = koinInject(),
 ) {
     // TODO: Lazily load this and show a loading placeholder or an error if it fails to load
     val letter = letterUseCase(id) ?: return
@@ -148,7 +148,7 @@ fun LetterCell(
 @Composable
 fun LetterCell(
     modifier: Modifier = Modifier,
-    letter: MetaLetter,
+    letter: LetterCellModel,
     categoryColors: List<Color> = emptyList(),
     onClick: (LetterId) -> Unit,
     onLongClick: (() -> Unit)? = null,
@@ -248,7 +248,7 @@ fun LetterCell(
 @Composable
 private fun LetterCellPreview(
     darkTheme: Boolean,
-    letter: MetaLetter,
+    letter: LetterCellModel,
 ) {
     OpenLettersTheme(darkTheme) {
         Surface {
@@ -267,7 +267,7 @@ private fun LetterCellLightPreview() {
     LetterCellPreview(
         darkTheme = false,
         letter =
-            MetaLetter(
+            LetterCellModel(
                 id = LetterId.random(),
                 sender =
                     """
@@ -298,7 +298,7 @@ private fun LetterCellDarkPreview() {
     LetterCellPreview(
         darkTheme = true,
         letter =
-            MetaLetter(
+            LetterCellModel(
                 id = LetterId.random(),
                 sender =
                     """
@@ -329,7 +329,7 @@ private fun PoorlyFormattedAddressLightPreview() {
     LetterCellPreview(
         darkTheme = false,
         letter =
-            MetaLetter(
+            LetterCellModel(
                 id = LetterId.random(),
                 sender = " James Smith 123 Street Drive Town City, State",
                 recipient = "Jane Jones 4321 Circle Road Village, State",
@@ -350,7 +350,7 @@ private fun PoorlyFormattedAddressDarkPreview() {
     LetterCellPreview(
         darkTheme = true,
         letter =
-            MetaLetter(
+            LetterCellModel(
                 id = LetterId.random(),
                 sender = "James Smith 123 Street Drive Town City, State",
                 recipient = "Jane Jones 4321 Circle Road Village, State",

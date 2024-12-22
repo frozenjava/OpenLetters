@@ -28,7 +28,6 @@ INSERT INTO reminder (id, title, description, scheduledFor, created, lastModifie
     title = :title,
     description = :description,
     scheduledFor = :scheduledFor,
-    created = :created,
     lastModified = :lastModified;
 
 delete:
@@ -38,6 +37,9 @@ tagLetter:
 INSERT INTO letterToReminder (letterId, reminderId) VALUES (
     :letterId, :reminderId
 );
+
+untagLetter:
+DELETE FROM letterToReminder WHERE letterId = :letterId AND reminderId = :reminderId;
 
 largestNotificationId:
    SELECT MAX(notificationId) FROM reminder LIMIT 1;

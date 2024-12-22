@@ -2,10 +2,12 @@ package net.frozendevelopment.openletters.usecase
 
 import android.content.Context
 import net.frozendevelopment.openletters.data.sqldelight.CategoryQueries
+import net.frozendevelopment.openletters.data.sqldelight.DocumentQueries
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.OpenLettersDB
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.feature.reminder.notification.ReminderNotification
+import net.frozendevelopment.openletters.feature.reminder.notification.ReminderNotificationType
 import net.frozendevelopment.openletters.util.DocumentManagerType
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
@@ -19,7 +21,7 @@ class UseCaseKoin {
     ): UpsertLetterUseCase = UpsertLetterUseCase(documentManager, database)
 
     @Factory
-    fun metaLetterUseCase(letterQueries: LetterQueries): MetaLetterUseCase = MetaLetterUseCase(queries = letterQueries)
+    fun metaLetterUseCase(letterQueries: LetterQueries): LetterCellUseCase = LetterCellUseCase(queries = letterQueries)
 
     @Factory
     fun upsertCategoryUseCase(categoryQueries: CategoryQueries) = UpsertCategoryUseCase(categoryQueries)
@@ -34,12 +36,12 @@ class UseCaseKoin {
     fun searchLettersUseCase(letterQueries: LetterQueries) = SearchLettersUseCase(letterQueries)
 
     @Factory
-    fun reminderNotification(context: Context) = ReminderNotification(context)
+    fun reminderNotification(context: Context): ReminderNotificationType = ReminderNotification(context)
 
     @Factory
     fun createReminderUseCase(
         reminderQueries: ReminderQueries,
-        reminderNotification: ReminderNotification,
+        reminderNotification: ReminderNotificationType,
     ) = UpsertReminderUseCase(reminderQueries, reminderNotification)
 
     @Factory
@@ -48,17 +50,25 @@ class UseCaseKoin {
     @Factory
     fun acknowledgeReminderUseCase(
         reminderQueries: ReminderQueries,
-        reminderNotification: ReminderNotification,
+        reminderNotification: ReminderNotificationType,
     ) = AcknowledgeReminderUseCase(reminderQueries, reminderNotification)
 
     @Factory
     fun deleteReminderUseCase(
         reminderQueries: ReminderQueries,
-        reminderNotification: ReminderNotification,
+        reminderNotification: ReminderNotificationType,
     ) = DeleteReminderUseCase(reminderQueries, reminderNotification)
 
     @Factory
-    fun deleteLetterUseCase(letterQueries: LetterQueries) = DeleteLetterUseCase(letterQueries)
+    fun deleteLetterUseCase(
+        letterQueries: LetterQueries,
+        documentQueries: DocumentQueries,
+        documentManager: DocumentManagerType,
+    ) = DeleteLetterUseCase(
+        letterQueries = letterQueries,
+        documentQueries = documentQueries,
+        documentManager = documentManager,
+    )
 
     @Factory
     fun saveCategoryOrderUseCase(categoryQueries: CategoryQueries) = SaveCategoryOrderUseCase(categoryQueries)

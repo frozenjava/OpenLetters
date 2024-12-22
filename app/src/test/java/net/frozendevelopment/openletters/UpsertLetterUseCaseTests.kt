@@ -73,7 +73,14 @@ class UpsertLetterUseCaseTests {
     fun `upsertLetter should update an existing letter in the database`() {
         val database = testDatabase()
         val documentManager = DocumentManagerMock()
+        val created = LocalDateTime.ofEpochSecond(50, 0, ZoneOffset.UTC)
         val time = LocalDateTime.ofEpochSecond(1000, 0, ZoneOffset.UTC)
+        val createLetter =
+            UpsertLetterUseCase(
+                documentManager = documentManager,
+                database = database,
+                now = { created },
+            )
         val upsertLetter =
             UpsertLetterUseCase(
                 documentManager = documentManager,
@@ -93,7 +100,7 @@ class UpsertLetterUseCaseTests {
             lastModified = time,
         )
 
-        upsertLetter(
+        createLetter(
             sender = "Sender",
             recipient = "Recipient",
             transcript = "Transcript",
@@ -123,7 +130,7 @@ class UpsertLetterUseCaseTests {
                 sender = newSender,
                 recipient = newRecipient,
                 body = newTranscript,
-                created = time,
+                created = created,
                 lastModified = time,
                 documentIds = documentId.toString(),
                 categoryIds = categoryId.toString(),

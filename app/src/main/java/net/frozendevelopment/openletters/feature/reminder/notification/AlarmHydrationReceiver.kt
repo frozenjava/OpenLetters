@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class AlarmHydrationReceiver : BroadcastReceiver(), KoinComponent {
-    private val reminderNotification: ReminderNotification by inject()
+    private val reminderNotification: ReminderNotificationType by inject()
     private val reminderQueries: ReminderQueries by inject()
 
     override fun onReceive(

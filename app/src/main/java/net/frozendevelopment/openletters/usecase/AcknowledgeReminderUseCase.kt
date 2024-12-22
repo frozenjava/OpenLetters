@@ -2,11 +2,11 @@ package net.frozendevelopment.openletters.usecase
 
 import net.frozendevelopment.openletters.data.sqldelight.ReminderQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
-import net.frozendevelopment.openletters.feature.reminder.notification.ReminderNotification
+import net.frozendevelopment.openletters.feature.reminder.notification.ReminderNotificationType
 
 class AcknowledgeReminderUseCase(
     private val reminderQueries: ReminderQueries,
-    private val notification: ReminderNotification,
+    private val notification: ReminderNotificationType,
 ) {
     operator fun invoke(id: ReminderId) {
         reminderQueries.acknowledgeReminder(id)

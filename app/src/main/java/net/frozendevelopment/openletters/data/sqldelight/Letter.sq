@@ -10,7 +10,6 @@ INSERT INTO letter (id, sender, recipient, body, created, lastModified) VALUES (
     sender = excluded.sender,
     recipient = excluded.recipient,
     body = excluded.body,
-    created = excluded.created,
     lastModified = excluded.lastModified;
 
 deleteLetter:

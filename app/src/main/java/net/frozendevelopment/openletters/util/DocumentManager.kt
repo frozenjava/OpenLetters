@@ -2,6 +2,7 @@ package net.frozendevelopment.openletters.util
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import java.io.File
@@ -30,7 +31,8 @@ fun DocumentManagerType.get(documents: Collection<DocumentId>): List<Uri> {
 class DocumentManager(
     private val context: Context,
 ) : DocumentManagerType {
-    private val documentDirectory: File by lazy {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val documentDirectory: File by lazy {
         File(context.filesDir, "documents").also {
             if (!it.exists()) {
                 it.mkdirs()

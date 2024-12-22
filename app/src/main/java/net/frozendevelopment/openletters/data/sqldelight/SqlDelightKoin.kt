@@ -1,6 +1,7 @@
 package net.frozendevelopment.openletters.data.sqldelight
 
 import android.content.Context
+import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
@@ -22,17 +23,24 @@ import org.koin.core.annotation.Single
 @Module
 class SqlDelightKoin {
     @Single
-    fun openLettersDB(context: Context): OpenLettersDB {
-        val driver =
-            AndroidSqliteDriver(
-                schema = OpenLettersDB.Schema,
-                context = context,
-                name = "openletters.db",
-                factory = RequerySQLiteOpenHelperFactory(),
-            )
+    fun databaseDriver(context: Context): SqlDriver {
+        return AndroidSqliteDriver(
+            schema = OpenLettersDB.Schema,
+            context = context,
+            name = "openletters.db",
+            factory = RequerySQLiteOpenHelperFactory(),
+        )
+    }
+
+    @Single
+    fun openLettersDB(driver: SqlDriver): OpenLettersDB {
+        val appDriver =
+            driver.apply {
+                execute(null, "PRAGMA foreign_keys = ON;", 0)
+            }
 
         return OpenLettersDB(
-            driver = driver,
+            driver = appDriver,
             letterAdapter =
                 Letter.Adapter(
                     idAdapter = LetterId.adapter,
