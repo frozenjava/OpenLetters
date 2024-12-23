@@ -28,6 +28,7 @@ INSERT INTO reminder (id, title, description, scheduledFor, created, lastModifie
     title = :title,
     description = :description,
     scheduledFor = :scheduledFor,
+    notificationId = :notificationId,
     lastModified = :lastModified;
 
 delete:
@@ -43,6 +44,9 @@ DELETE FROM letterToReminder WHERE letterId = :letterId AND reminderId = :remind
 
 largestNotificationId:
    SELECT MAX(notificationId) FROM reminder LIMIT 1;
+
+reminder:
+SELECT * FROM reminder WHERE id = ?;
 
 reminderDetail:
 SELECT
@@ -70,10 +74,10 @@ notificationId:
 SELECT notificationId FROM reminder WHERE id = :reminderId;
 
 remindersForLetter:
-SELECT id FROM reminder
-WHERE id IN (
-    SELECT reminderId FROM letterToReminder WHERE letterId = :letterId
-);
+SELECT reminderId FROM letterToReminder WHERE letterId = ?;
+
+lettersForReminder:
+SELECT letterId FROM letterToReminder WHERE reminderId = ?;
 
 unacknowledgedReminders:
 SELECT * FROM reminder WHERE acknowledged = 0;
