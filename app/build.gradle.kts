@@ -47,6 +47,7 @@ android {
             dimension = "buildType"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            isDefault = true
         }
         create("production") {
             dimension = "buildType"
