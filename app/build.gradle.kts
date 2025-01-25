@@ -21,7 +21,7 @@ android {
         applicationId = "net.frozendevelopment.openletters"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        versionCode = Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER") ?: "1")
         versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -68,6 +68,12 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+tasks.register("printVersionName") {
+    doLast {
+        println(android.defaultConfig.versionName)
     }
 }
 

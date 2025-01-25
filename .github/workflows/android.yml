@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '*'
+    branches-ignore:
+      - 'main'
 
 jobs:
   build:
@@ -27,9 +29,4 @@ jobs:
       - name: Run unit tests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: test
-
-      - name: Build debug APK
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: assembleDebug
+          arguments: app:testDevelopmentDebugUnitTest
