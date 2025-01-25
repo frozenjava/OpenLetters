@@ -1,15 +1,15 @@
-# Open Letters
-**Open Letters** is an open-source Android application that enables users to digitize their physical mail by extracting text using OCR.
-The app makes your letters searchable, categorizable, and enables you to set reminders for important dates—all while keeping everything local on your phone. 
-**no personal data is ever shared**.
+![Open Letters](.assets/open-letters-banner.png)
+
+**Open Letters** is the open-source mail management app. Finally enabling you to digitize your physcial mail in a way that is privacy focused.
+**No personal data ever leaves your device.**
 
 ## Features
-- **OCR Text Extraction**: Digitize your physical mail and extract the text using OCR, making it searchable.
+- **OCR Text Extraction**: Digitize your physical mail and extract the text using on device OCR.
 - **Searchable Letters**: Quickly search through your digitized letters by the extracted text.
 - **Categorize Letters**: Organize your letters into categories such as "Bills," "Personal," "Subscriptions," etc.
 - **Custom Categories & Tags**: Add your own tags and categories to further organize your mail.
 - **Reminders for Important Dates**: Set reminders for key dates from your letters (e.g., payment due dates, appointments, deadlines).
-- **Local Storage & Privacy Focused**: All data is stored locally on your device, with no personal data being shared to any server.
+- **Local & Privacy Focused**: All data is stored locally on your device, with no personal data being shared to any server.
 
 ## Installation
 To install **Open Letters** on your Android device, follow these steps:
@@ -18,23 +18,11 @@ To install **Open Letters** on your Android device, follow these steps:
    ```bash
    git clone https://github.com/frozenjava/openletters.git
    ```
-
 2. Open the project in **Android Studio**.
-
 3. Build the project and run it on an Android device or emulator.
+   - NOTE: This will use the `development` product flavor by default. This allows you to have the production and development versions on the same device.
 
 Alternatively, *(SOON)* you can download the APK directly from the [releases page](https://github.com/frozenjava/open-letters/releases) and install it manually.
-
-## Usage
-1. **Digitize Mail**: Open the app and use the built-in camera functionality to scan your letter. The app will automatically extract the text using OCR.
-
-2. **Organize Your Letters**: After scanning, you can categorize your letter by selecting an existing category or creating a new one.
-
-3. **Search for Letters**: Use the search functionality to find letters by keyword, category, or tag.
-
-4. **Set Reminders**: If your letter contains important dates, the app will let you set reminders (e.g., payment due date, appointment, etc.) to ensure you never miss a deadline.
-
-5. **View Letters**: Tap on any letter in your library to view its content and details.
 
 ## Privacy
 All data is stored **locally on your device** and is not sent to any external servers. OpenLetters does not collect any personal information. Your mail stays completely private.
