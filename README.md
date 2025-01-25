@@ -1,7 +1,9 @@
 ![Open Letters](.assets/open-letters-banner.png)
 
-**Open Letters** is the open-source mail management app. Finally enabling you to digitize your physcial mail in a way that is privacy focused.
+Open Letters is the privacy first, open-source mail management app. Enabling you to digitize, organize, and search your physical mail.
 **No personal data ever leaves your device.**
+
+Currently only available for Android but planning on creating an iOS version using kotlin multiplatform.
 
 ## Features
 - **OCR Text Extraction**: Digitize your physical mail and extract the text using on device OCR.
