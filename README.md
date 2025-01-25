@@ -30,7 +30,7 @@ Alternatively, *(SOON)* you can download the APK directly from the [releases pag
 
 ## Privacy
 All data is stored **locally on your device** and is not sent to any external servers. OpenLetters does not collect any personal information. Your mail stays completely private.
-The Play Store version may include analytics and crash reporting but the base open-source version never will. Personal is never collected in the open source or Play Store version of the app.
+The Play Store version may include analytics and crash reporting but the Github version never will. Personal data is never collected in the Github or Play Store version of the app.
 
 ## Contributing
 We welcome contributions from the open-source community. To contribute:
