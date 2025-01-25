@@ -3,7 +3,7 @@
 Open Letters is the privacy first, open-source mail management app. Enabling you to digitize, organize, and search your physical mail.
 **No personal data ever leaves your device.**
 
-Currently only available for Android but planning on creating an iOS version using kotlin multiplatform.
+**This should be treated as an alpha and is not yet available on the Playstore**
 
 ## Features
 - **OCR Text Extraction**: Digitize your physical mail and extract the text using on device OCR.
@@ -16,7 +16,7 @@ Currently only available for Android but planning on creating an iOS version usi
 ![App Images](.assets/features.png)
 
 ## Installation
-To install **Open Letters** on your Android device, follow these steps:
+To install Open Letters on your Android device, follow these steps:
 
 1. Clone or download the repository to your local machine:
    ```bash
