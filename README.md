@@ -13,6 +13,8 @@ Currently only available for Android but planning on creating an iOS version usi
 - **Reminders for Important Dates**: Set reminders for key dates from your letters (e.g., payment due dates, appointments, deadlines).
 - **Local & Privacy Focused**: All data is stored locally on your device, with no personal data being shared to any server.
 
+![App Images](.assets/features.png)
+
 ## Installation
 To install **Open Letters** on your Android device, follow these steps:
 
