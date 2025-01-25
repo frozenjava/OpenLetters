@@ -1,14 +1,15 @@
 [versions]
-agp = "8.7.3"
+agp = "8.8.0"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.9.3"
-composeBom = "2024.11.00"
-navigationCommonKtx = "2.8.4"
+activityCompose = "1.10.0"
+composeBom = "2025.01.00"
+navigationCommonKtx = "2.8.5"
+splashscreen = "1.0.1"
 ksp = "2.0.21-1.0.26"
 koin = "4.0.0"
 koin-annotations = "1.4.0"
@@ -22,8 +23,8 @@ colorpicker = "1.1.2"
 serialization = "1.7.1"
 adaptiveAndroid = "1.0.0"
 coreAnimation = "1.0.0"
-uiTextGoogleFonts = "1.7.5"
-datastoreCoreAndroid = "1.1.1"
+uiTextGoogleFonts = "1.7.6"
+datastoreCoreAndroid = "1.1.2"
 ktlint = "12.1.1"
 robolectric = "4.14"
 mockk = "1.13.13"
@@ -51,6 +52,7 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 androidx-navigation = { group = "androidx.navigation", name = "navigation-compose" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 androidx-test-core = { group = "androidx.test", name = "core", version = "1.6.1" }
 
 androidx-workmanager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager"}

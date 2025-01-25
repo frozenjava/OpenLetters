@@ -142,7 +142,6 @@ class FeatureKoin {
         application: Application,
         themeManager: ThemeManagerType,
     ) = SettingsViewModel(
-        appVersion = application.packageManager.getPackageInfo(application.packageName, 0).versionName ?: "0.0.0",
         themeManager = themeManager,
     )
 }

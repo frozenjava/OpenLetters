@@ -10,7 +10,6 @@ import net.frozendevelopment.openletters.util.ThemeManagerType
 
 @Immutable
 data class SettingsState(
-    val appVersion: String,
     val appTheme: AppTheme = AppTheme.OPEN_LETTERS,
     val themeVariant: ColorPalette = ColorPalette.SYSTEM,
 ) {
@@ -22,9 +21,8 @@ data class SettingsState(
 }
 
 class SettingsViewModel(
-    private val appVersion: String,
     private val themeManager: ThemeManagerType,
-) : StatefulViewModel<SettingsState>(SettingsState(appVersion)) {
+) : StatefulViewModel<SettingsState>(SettingsState()) {
     override fun load() {
         viewModelScope.launch {
             themeManager.current.collect { (theme, variant) ->

@@ -12,6 +12,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,7 +57,7 @@ fun SearchBar(
         modifier =
             modifier
                 .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     shape = MaterialTheme.shapes.medium,
                 ),
     ) {
@@ -72,14 +73,14 @@ fun SearchBar(
             singleLine = true,
             value = searchTerms,
             onValueChange = onSearchChanged,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.onSecondaryContainer),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSecondaryContainer),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onPrimaryContainer),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
             keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         ) { innerTextField ->
             val placeHolderText =
                 listOf(
-                    "Tap to search your mail",
+                    "Tap to search for letters",
                     "\"Electric bill\"",
                     "\"123 Street Drive\"",
                     "\"Happy Birthday\"",

@@ -2,6 +2,8 @@ package net.frozendevelopment.openletters.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -15,12 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 
 @Composable
-fun MailNavDrawer(
+fun LettersNavDrawer(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     goToMail: () -> Unit,
     goToManageCategories: () -> Unit,
@@ -60,15 +64,15 @@ private fun DrawerContent(
 ) {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            text = "Your Mail",
+            text = stringResource(R.string.letters),
             style = MaterialTheme.typography.titleMedium,
         )
 
         NavigationDrawerItem(
-            label = { Text("Mail Box") },
+            label = { Text(stringResource(R.string.letter_box)) },
             selected = false,
             onClick = goToMail,
         )
@@ -76,18 +80,18 @@ private fun DrawerContent(
         HorizontalDivider()
 
         Text(
-            text = "Categories",
+            text = stringResource(R.string.categories),
             style = MaterialTheme.typography.titleMedium,
         )
 
         NavigationDrawerItem(
-            label = { Text("Manage Categories") },
+            label = { Text(stringResource(R.string.manage_categories)) },
             selected = false,
             onClick = goToManageCategories,
         )
 
         NavigationDrawerItem(
-            label = { Text("Create Category") },
+            label = { Text(stringResource(R.string.create_category)) },
             selected = false,
             onClick = goToCreateCategory,
         )
@@ -95,18 +99,18 @@ private fun DrawerContent(
         HorizontalDivider()
 
         Text(
-            text = "Reminders",
+            text = stringResource(R.string.reminders),
             style = MaterialTheme.typography.titleMedium,
         )
 
         NavigationDrawerItem(
-            label = { Text("Manage Reminders") },
+            label = { Text(stringResource(R.string.manage_reminders)) },
             selected = false,
             onClick = goToReminders,
         )
 
         NavigationDrawerItem(
-            label = { Text("Create Reminder") },
+            label = { Text(stringResource(R.string.create_reminder)) },
             selected = false,
             onClick = goToCreateReminder,
         )
@@ -114,10 +118,14 @@ private fun DrawerContent(
         HorizontalDivider()
 
         NavigationDrawerItem(
-            label = { Text("Settings") },
+            label = { Text(stringResource(R.string.settings)) },
             selected = false,
             onClick = goToSettings,
         )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        VersionStamp(modifier = Modifier.fillMaxWidth())
     }
 }
 

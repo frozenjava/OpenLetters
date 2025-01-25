@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.DragIndicator
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,21 +45,26 @@ fun CategoryRow(
 ) {
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
+    ButtonDefaults.buttonColors()
+
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
             icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete") },
-            title = { Text(text = "Delete Category \"${category.label}\"") },
+            title = { Text(text = "Delete Category") },
             text = {
                 Text(
-                    text = "Are you sure you want to delete this category? This will not delete any letters associated with this category.",
+                    text = "This will not delete any letters associated with this category. Do you want wish to continue?",
                 )
             },
             confirmButton = {
-                Button(onClick = {
-                    onDeleteClicked(category.id)
-                    showDeleteConfirmation = false
-                }) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    onClick = {
+                        onDeleteClicked(category.id)
+                        showDeleteConfirmation = false
+                    },
+                ) {
                     Text("Delete")
                 }
             },

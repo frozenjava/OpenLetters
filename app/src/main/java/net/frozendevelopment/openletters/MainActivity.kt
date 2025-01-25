@@ -21,6 +21,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -43,7 +44,7 @@ import net.frozendevelopment.openletters.ui.animation.navigationEnterTransition
 import net.frozendevelopment.openletters.ui.animation.navigationExitTransition
 import net.frozendevelopment.openletters.ui.animation.navigationPopEnterTransition
 import net.frozendevelopment.openletters.ui.animation.navigationPopExitTransition
-import net.frozendevelopment.openletters.ui.components.MailNavDrawer
+import net.frozendevelopment.openletters.ui.components.LettersNavDrawer
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import net.frozendevelopment.openletters.util.ThemeManagerType
 import org.koin.android.ext.android.inject
@@ -53,6 +54,8 @@ class MainActivity : ComponentActivity() {
     private val letterQueries: LetterQueries by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
@@ -73,7 +76,7 @@ class MainActivity : ComponentActivity() {
                     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
 
-                MailNavDrawer(
+                LettersNavDrawer(
                     drawerState = drawerState,
                     goToMail = {
                         coroutineScope.launch { drawerState.close() }

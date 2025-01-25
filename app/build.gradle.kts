@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.navigation.common.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
+    implementation(libs.androidx.splashscreen)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)

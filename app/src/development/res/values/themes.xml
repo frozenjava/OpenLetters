@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.OpenLetters" parent="android:Theme.Material.Light.NoActionBar" />
     <style name="Theme.OpenLetters.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenBackground">#009688</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.OpenLetters</item>
     </style>
