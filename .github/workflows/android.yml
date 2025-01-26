@@ -2,8 +2,6 @@ name: OpenLetters-Android
 
 on:
   push:
-    branches:
-      - '*'
     branches-ignore:
       - 'main'
 
