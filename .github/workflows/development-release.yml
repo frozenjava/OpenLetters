@@ -64,10 +64,8 @@ jobs:
         run: |
           echo "current directory: "
           pwd
-          echo "items: "
-          ls
-          echo "app/development/release"
-          ls app/development/release
+          echo "app/"
+          ls app/
           echo "app/build/outputs/apk/development/release/"
           ls app/build/outputs/apk/development/release/
           
