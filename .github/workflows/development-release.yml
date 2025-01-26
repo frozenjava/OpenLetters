@@ -50,6 +50,7 @@ jobs:
         run: chmod +x ./gradlew && echo "VERSION_NAME=$(./gradlew printVersionName -q)" >> $GITHUB_ENV
 
       - name: Create GitHub Release
+        id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: v${{ env.VERSION_NAME }}-${{ github.run_number }}-development
