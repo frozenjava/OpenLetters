@@ -34,7 +34,7 @@ jobs:
 
       - name: Decode and prepare keystore
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > release-key.jks
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > keystore.jks
 
       - name: Build Release Artifacts
         uses: gradle/gradle-build-action@v2
