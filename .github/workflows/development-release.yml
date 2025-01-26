@@ -52,7 +52,7 @@ jobs:
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: v${{ env.VERSION_NAME }}-development
+          tag_name: v${{ env.VERSION_NAME }}-${{ github.run_number }}-development
           release_name: ${{ env.VERSION_NAME }}-${{ github.run_number }}-development
           draft: false
           prerelease: true
