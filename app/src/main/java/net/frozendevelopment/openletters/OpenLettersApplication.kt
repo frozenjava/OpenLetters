@@ -18,7 +18,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
 
-class OpenLettersApplication : Application(), KoinComponent {
+class OpenLettersApplication :
+    Application(),
+    KoinComponent {
     override fun onCreate() {
         super.onCreate()
 

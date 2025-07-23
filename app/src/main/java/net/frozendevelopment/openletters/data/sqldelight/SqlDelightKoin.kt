@@ -23,14 +23,13 @@ import org.koin.core.annotation.Single
 @Module
 class SqlDelightKoin {
     @Single
-    fun databaseDriver(context: Context): SqlDriver {
-        return AndroidSqliteDriver(
+    fun databaseDriver(context: Context): SqlDriver =
+        AndroidSqliteDriver(
             schema = OpenLettersDB.Schema,
             context = context,
             name = "openletters.db",
             factory = RequerySQLiteOpenHelperFactory(),
         )
-    }
 
     @Single
     fun openLettersDB(driver: SqlDriver): OpenLettersDB {

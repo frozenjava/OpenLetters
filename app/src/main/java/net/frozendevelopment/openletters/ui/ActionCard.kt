@@ -35,8 +35,7 @@ fun ActionCard(
                     .background(
                         color = colors.containerColor,
                         shape = MaterialTheme.shapes.medium,
-                    )
-                    .pointerInput(Unit) {
+                    ).pointerInput(Unit) {
                         detectTapGestures(
                             onTap = { onClick() },
                             onLongPress =

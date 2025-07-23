@@ -13,17 +13,11 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "us
 @Module
 class UtilKoin {
     @Factory
-    fun textExtractor(application: Application): TextExtractorType {
-        return TextExtractor(application)
-    }
+    fun textExtractor(application: Application): TextExtractorType = TextExtractor(application)
 
     @Factory
-    fun documentManager(application: Application): DocumentManagerType {
-        return DocumentManager(application)
-    }
+    fun documentManager(application: Application): DocumentManagerType = DocumentManager(application)
 
     @Factory
-    fun themeManager(application: Application): ThemeManagerType {
-        return ThemeManager(datastore = application.dataStore)
-    }
+    fun themeManager(application: Application): ThemeManagerType = ThemeManager(datastore = application.dataStore)
 }

@@ -24,20 +24,17 @@ val NullableLetterIdNavType =
         override fun get(
             bundle: Bundle,
             key: String,
-        ): LetterId? {
-            return bundle.getString(key).let {
+        ): LetterId? =
+            bundle.getString(key).let {
                 if (it == null) null else LetterId(it)
             }
-        }
 
         override fun parseValue(value: String): LetterId? {
             if (value.isBlank()) return null
             return LetterId(value)
         }
 
-        override fun serializeAsValue(value: LetterId?): String {
-            return value?.value ?: ""
-        }
+        override fun serializeAsValue(value: LetterId?): String = value?.value ?: ""
 
         override fun put(
             bundle: Bundle,

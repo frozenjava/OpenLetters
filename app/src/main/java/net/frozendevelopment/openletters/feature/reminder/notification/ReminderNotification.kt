@@ -56,7 +56,8 @@ class ReminderNotification(
             )
 
         val notification =
-            NotificationCompat.Builder(context, REMINDERS_CHANNEL_ID)
+            NotificationCompat
+                .Builder(context, REMINDERS_CHANNEL_ID)
                 .setContentText(context.getString(R.string.app_name))
                 .setContentTitle(title)
                 .setSmallIcon(android.R.drawable.ic_popup_reminder)
@@ -65,7 +66,8 @@ class ReminderNotification(
 //            ))
                 .setPriority(NotificationManager.IMPORTANCE_HIGH)
                 .setStyle(
-                    NotificationCompat.BigTextStyle()
+                    NotificationCompat
+                        .BigTextStyle()
                         .bigText(description ?: "No information available"),
                 )
 //            .setStyle(
@@ -79,8 +81,7 @@ class ReminderNotification(
                         openReminderIntent,
                         FLAG_CANCEL_CURRENT or FLAG_IMMUTABLE,
                     ),
-                )
-                .setAutoCancel(true)
+                ).setAutoCancel(true)
                 .build()
 
         notificationManager.notify(1, notification)

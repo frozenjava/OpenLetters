@@ -5,11 +5,7 @@ import androidx.compose.ui.graphics.toArgb
 import app.cash.sqldelight.ColumnAdapter
 
 object ColorAdapter : ColumnAdapter<Color, Long> {
-    override fun decode(databaseValue: Long): Color {
-        return Color(databaseValue).copy(1f)
-    }
+    override fun decode(databaseValue: Long): Color = Color(databaseValue).copy(1f)
 
-    override fun encode(value: Color): Long {
-        return value.toArgb().toLong()
-    }
+    override fun encode(value: Color): Long = value.toArgb().toLong()
 }

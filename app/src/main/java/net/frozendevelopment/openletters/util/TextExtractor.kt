@@ -31,11 +31,11 @@ class TextExtractor(
                     return@suspendCancellableCoroutine
                 }
 
-            textRecognizer.process(image)
+            textRecognizer
+                .process(image)
                 .addOnSuccessListener { visionText ->
                     continuation.resume(visionText.text)
-                }
-                .addOnFailureListener { e ->
+                }.addOnFailureListener { e ->
                     continuation.resumeWithException(e)
                 }
         }

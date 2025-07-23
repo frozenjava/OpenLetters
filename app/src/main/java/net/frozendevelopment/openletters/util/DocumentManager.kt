@@ -24,9 +24,7 @@ fun DocumentManagerType.delete(documents: Collection<DocumentId>) {
     }
 }
 
-fun DocumentManagerType.get(documents: Collection<DocumentId>): List<Uri> {
-    return documents.mapNotNull { get(it) }
-}
+fun DocumentManagerType.get(documents: Collection<DocumentId>): List<Uri> = documents.mapNotNull { get(it) }
 
 class DocumentManager(
     private val context: Context,

@@ -18,7 +18,9 @@ sealed interface CategoryFormMode : Parcelable {
 
     @Serializable
     @Parcelize
-    data class Edit(val id: CategoryId) : CategoryFormMode
+    data class Edit(
+        val id: CategoryId,
+    ) : CategoryFormMode
 }
 
 @Serializable
@@ -31,22 +33,17 @@ val CategoryFormModeType =
         override fun get(
             bundle: Bundle,
             key: String,
-        ): CategoryFormMode? {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ): CategoryFormMode? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getParcelable(key, CategoryFormMode::class.java)
             } else {
                 @Suppress("DEPRECATION")
                 bundle.getParcelable(key)
             }
-        }
 
-        override fun parseValue(value: String): CategoryFormMode {
-            return Json.decodeFromString(value)
-        }
+        override fun parseValue(value: String): CategoryFormMode = Json.decodeFromString(value)
 
-        override fun serializeAsValue(value: CategoryFormMode): String {
-            return Json.encodeToString(value)
-        }
+        override fun serializeAsValue(value: CategoryFormMode): String = Json.encodeToString(value)
 
         override fun put(
             bundle: Bundle,

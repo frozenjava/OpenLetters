@@ -129,8 +129,7 @@ fun SwipeCell(
                     .shadow(
                         elevation = if (offsetX.value != 0f) 1.dp else 0.dp,
                         shape = MaterialTheme.shapes.medium,
-                    )
-                    .onGloballyPositioned { coordinates ->
+                    ).onGloballyPositioned { coordinates ->
                         cellHeight = with(localDensity) { coordinates.size.height.toDp() }
                         cellWidth = with(localDensity) { coordinates.size.width.toDp() }
                     },

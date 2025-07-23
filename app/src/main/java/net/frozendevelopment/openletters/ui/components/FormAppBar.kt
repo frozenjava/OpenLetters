@@ -17,6 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
+import net.frozendevelopment.openletters.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,16 +38,16 @@ fun FormAppBar(
     if (showLeaveConfirmation) {
         AlertDialog(
             onDismissRequest = { showLeaveConfirmation = false },
-            title = { Text(text = "Leave without saving?") },
-            text = { Text("If you leave without saving, your changes will be lost.") },
+            title = { Text(text = stringResource(R.string.leave_without_saving)) },
+            text = { Text(stringResource(R.string.unsaved_changes_warning)) },
             confirmButton = {
                 Button(onClick = onBackClicked) {
-                    Text("Leave")
+                    Text(stringResource(R.string.leave))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLeaveConfirmation = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         )
@@ -63,7 +65,7 @@ fun FormAppBar(
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "back",
+                    contentDescription = stringResource(R.string.back_button),
                 )
             }
         },
@@ -72,7 +74,7 @@ fun FormAppBar(
                 onClick = onSaveClicked,
                 enabled = isSavable,
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
 
             actions?.invoke(this)

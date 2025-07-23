@@ -47,7 +47,8 @@ class LetterListViewModel(
 ) : StatefulViewModel<LetterListState>(LetterListState()) {
     init {
         viewModelScope.launch(ioDispatcher) {
-            letterQueries.hasLetters()
+            letterQueries
+                .hasLetters()
                 .asFlow()
                 .mapToOne(ioDispatcher)
                 .collect {

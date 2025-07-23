@@ -38,7 +38,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
@@ -172,11 +172,11 @@ fun LetterCell(
                     text =
                         buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("From: ")
+                                append(stringResource(R.string.from))
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                                append(letter.sender ?: "Unknown")
+                                append(letter.sender ?: stringResource(R.string.unknown))
                             }
                         },
                     fontSize = MaterialTheme.typography.labelMedium.fontSize,
@@ -191,11 +191,11 @@ fun LetterCell(
                     text =
                         buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("To: ")
+                                append(stringResource(R.string.to))
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                                append(letter.recipient ?: "Unknown")
+                                append(letter.recipient ?: stringResource(R.string.unknown))
                             }
                         },
                     fontSize = MaterialTheme.typography.labelMedium.fontSize,
@@ -205,7 +205,7 @@ fun LetterCell(
             }
 
             Text(
-                letter.body ?: "Nothing to show",
+                letter.body ?: stringResource(R.string.nothing_to_show),
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -219,7 +219,7 @@ fun LetterCell(
                     text =
                         buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Created: ")
+                                append(stringResource(R.string.created))
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
@@ -246,11 +246,8 @@ fun LetterCell(
 }
 
 @Composable
-private fun LetterCellPreview(
-    darkTheme: Boolean,
-    letter: LetterCellModel,
-) {
-    OpenLettersTheme(darkTheme) {
+private fun LetterCellPreview(letter: LetterCellModel) {
+    OpenLettersTheme {
         Surface {
             LetterCell(
                 modifier = Modifier.fillMaxWidth(),
@@ -262,10 +259,9 @@ private fun LetterCellPreview(
 }
 
 @Composable
-@Preview
-private fun LetterCellLightPreview() {
+@PreviewLightDark
+private fun LetterCell() {
     LetterCellPreview(
-        darkTheme = false,
         letter =
             LetterCellModel(
                 id = LetterId.random(),
@@ -293,66 +289,13 @@ private fun LetterCellLightPreview() {
 }
 
 @Composable
-@Preview
-private fun LetterCellDarkPreview() {
+@PreviewLightDark
+private fun PoorlyFormattedAddress() {
     LetterCellPreview(
-        darkTheme = true,
-        letter =
-            LetterCellModel(
-                id = LetterId.random(),
-                sender =
-                    """
-                    James Smith
-                    123 Street Drive
-                    Town City, State
-                    """.trimIndent(),
-                recipient =
-                    """
-                    Jane Jones
-                    4321 Circle Road
-                    Village, State
-                    """.trimIndent(),
-                body =
-                    """
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    """.trimIndent(),
-                created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                categoryColors = listOf(Color.Cyan, Color.Gray, Color.Yellow),
-            ),
-    )
-}
-
-@Composable
-@Preview
-private fun PoorlyFormattedAddressLightPreview() {
-    LetterCellPreview(
-        darkTheme = false,
         letter =
             LetterCellModel(
                 id = LetterId.random(),
                 sender = " James Smith 123 Street Drive Town City, State",
-                recipient = "Jane Jones 4321 Circle Road Village, State",
-                body =
-                    """
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    """.trimIndent(),
-                created = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                lastModified = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                categoryColors = listOf(Color.Cyan, Color.Gray, Color.Yellow),
-            ),
-    )
-}
-
-@Composable
-@Preview
-private fun PoorlyFormattedAddressDarkPreview() {
-    LetterCellPreview(
-        darkTheme = true,
-        letter =
-            LetterCellModel(
-                id = LetterId.random(),
-                sender = "James Smith 123 Street Drive Town City, State",
                 recipient = "Jane Jones 4321 Circle Road Village, State",
                 body =
                     """

@@ -11,7 +11,8 @@ class AcknowledgeReminderUseCase(
     operator fun invoke(id: ReminderId) {
         reminderQueries.acknowledgeReminder(id)
         val notificationId =
-            reminderQueries.notificationId(id)
+            reminderQueries
+                .notificationId(id)
                 .executeAsOneOrNull()
                 ?.toInt() ?: return
 

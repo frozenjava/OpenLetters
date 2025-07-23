@@ -1,7 +1,7 @@
 package net.frozendevelopment.openletters.ui.theme
 
-import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -294,6 +294,7 @@ fun OpenLettersTheme(
     colorPalette: ColorPalette,
     content: @Composable () -> Unit,
 ) {
+    val activity = LocalActivity.current
     val context = LocalContext.current
 
     val darkTheme =
@@ -313,11 +314,10 @@ fun OpenLettersTheme(
             else -> if (darkTheme) darkScheme else lightScheme
         }
 
-//    LaunchedEffect(darkTheme) {
-    val window = (context as Activity).window
-    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-    insetsController.isAppearanceLightStatusBars = !darkTheme
-//    }
+    activity?.window?.let { window ->
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = !darkTheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,

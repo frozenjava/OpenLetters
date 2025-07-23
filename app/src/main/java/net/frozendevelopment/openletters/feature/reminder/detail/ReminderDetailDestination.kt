@@ -1,6 +1,6 @@
 package net.frozendevelopment.openletters.feature.reminder.detail
 
-import androidx.core.bundle.Bundle
+import android.os.Bundle
 import androidx.navigation.NavType
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
@@ -9,7 +9,9 @@ import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import kotlin.reflect.typeOf
 
 @Serializable
-data class ReminderDetailDestination(val reminderId: ReminderId) {
+data class ReminderDetailDestination(
+    val reminderId: ReminderId,
+) {
     companion object {
         val typeMap = mapOf(typeOf<ReminderId>() to ReminderIdNavType)
         val deepLinks =
@@ -27,19 +29,14 @@ val ReminderIdNavType =
         override fun get(
             bundle: Bundle,
             key: String,
-        ): ReminderId? {
-            return bundle.getString(key).let {
+        ): ReminderId? =
+            bundle.getString(key).let {
                 if (it == null) null else ReminderId(it)
             }
-        }
 
-        override fun parseValue(value: String): ReminderId {
-            return ReminderId(value)
-        }
+        override fun parseValue(value: String): ReminderId = ReminderId(value)
 
-        override fun serializeAsValue(value: ReminderId): String {
-            return value.value
-        }
+        override fun serializeAsValue(value: ReminderId): String = value.value
 
         override fun put(
             bundle: Bundle,

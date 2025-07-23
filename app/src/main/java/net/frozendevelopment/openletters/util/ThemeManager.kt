@@ -31,15 +31,16 @@ class ThemeManager(
     private val colorPaletteKey = stringPreferencesKey("color_palette")
 
     override val current: StateFlow<Pair<AppTheme, ColorPalette>> =
-        datastore.data.map { preferences ->
-            val themeName = preferences[themeKey]?.let { AppTheme.valueOf(it) } ?: AppTheme.OPEN_LETTERS
-            val colorPalette = preferences[colorPaletteKey]?.let { ColorPalette.valueOf(it) } ?: ColorPalette.SYSTEM
-            Pair(themeName, colorPalette)
-        }.stateIn(
-            coroutineScope,
-            SharingStarted.Eagerly,
-            Pair(AppTheme.OPEN_LETTERS, ColorPalette.SYSTEM),
-        )
+        datastore.data
+            .map { preferences ->
+                val themeName = preferences[themeKey]?.let { AppTheme.valueOf(it) } ?: AppTheme.OPEN_LETTERS
+                val colorPalette = preferences[colorPaletteKey]?.let { ColorPalette.valueOf(it) } ?: ColorPalette.SYSTEM
+                Pair(themeName, colorPalette)
+            }.stateIn(
+                coroutineScope,
+                SharingStarted.Eagerly,
+                Pair(AppTheme.OPEN_LETTERS, ColorPalette.SYSTEM),
+            )
 
     override suspend fun setTheme(theme: AppTheme) {
         datastore.edit { preferences ->

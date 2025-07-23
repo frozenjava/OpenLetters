@@ -25,14 +25,17 @@ class LetterWithDetailsUseCase(
         val letterDetail = database.letterQueries.letterDetail(id).executeAsOneOrNull() ?: return null
 
         val categoryIds =
-            letterDetail.categoryIds?.split(",")
+            letterDetail.categoryIds
+                ?.split(",")
                 ?.map { CategoryId(it.trim()) }
                 ?: emptyList()
 
         val categories = database.categoryQueries.categoriesByIds(categoryIds).executeAsList()
 
         val documents =
-            database.documentQueries.documentsForLetter(id).executeAsList()
+            database.documentQueries
+                .documentsForLetter(id)
+                .executeAsList()
                 .map { it.id }
                 .associateWith {
                     documentManager.get(it) ?: Uri.EMPTY

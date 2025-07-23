@@ -1,13 +1,15 @@
 package net.frozendevelopment.openletters.feature.letter.detail
 
 import android.net.Uri
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -18,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,20 +33,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.mock.mockCategory
 import net.frozendevelopment.openletters.data.mock.mockLetter
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
-import net.frozendevelopment.openletters.feature.letter.detail.ui.DocumentPager
+import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
+import net.frozendevelopment.openletters.extensions.dateString
+import net.frozendevelopment.openletters.ui.components.BrokenImageView
 import net.frozendevelopment.openletters.ui.components.CategoryPill
+import net.frozendevelopment.openletters.ui.components.LazyImageView
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,12 +65,12 @@ fun LetterDetailView(
 ) {
     Column(modifier = modifier) {
         CenterAlignedTopAppBar(
-            title = { Text("Letter") },
+            title = { Text(stringResource(R.string.letter)) },
             navigationIcon = {
                 IconButton(onClick = onBackClicked) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.back_button),
                     )
                 }
             },
@@ -73,7 +80,7 @@ fun LetterDetailView(
                 var expanded by remember { mutableStateOf(false) }
 
                 IconButton(onClick = { expanded = !expanded }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Actions")
+                    Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.actions))
                 }
 
                 DropdownMenu(
@@ -112,71 +119,137 @@ fun LetterDetail(
     state: LetterDetailState.Detail,
     onImageClick: (Uri) -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.Start,
+        contentPadding = PaddingValues(top = 16.dp, bottom = 128.dp),
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth(.95f)
-                    .align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(.5f),
-                text =
-                    buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("From: ")
-                        }
-
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                            append(state.letter.sender ?: "Unknown")
-                        }
-                    },
-                fontSize = MaterialTheme.typography.labelMedium.fontSize,
-            )
-            Text(
-                text =
-                    buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("To: ")
-                        }
-
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
-                            append(state.letter.recipient ?: "Unknown")
-                        }
-                    },
-                fontSize = MaterialTheme.typography.labelMedium.fontSize,
-            )
-        }
-
         if (state.categories.isNotEmpty()) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                contentPadding = PaddingValues(start = 8.dp, end = 64.dp),
-            ) {
-                items(
-                    items = state.categories,
-                    key = { it.id.value },
-                ) { category ->
-                    CategoryPill(
-                        category = category,
-                        isSelected = true,
-                    )
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    contentPadding = PaddingValues(start = 16.dp, end = 64.dp),
+                ) {
+                    items(
+                        items = state.categories,
+                        key = { it.id.value },
+                    ) { category ->
+                        CategoryPill(
+                            category = category,
+                            isSelected = true,
+                        )
+                    }
                 }
             }
         }
 
-        DocumentPager(
-            modifier = Modifier.fillMaxWidth(),
-            body = state.letter.body,
-            documents = state.documents,
-            onImageClick = onImageClick,
-        )
+        item {
+            Text(
+                text = stringResource(R.string.transcription),
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+
+            Text(
+                text = state.letter.body ?: stringResource(R.string.no_transcript_available),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 64.dp),
+            ) {
+                items(state.documents.keys.toList()) {
+                    val documentUri = state.documents[it]
+                    if (documentUri != null) {
+                        LazyImageView(
+                            modifier =
+                                Modifier
+                                    .size(128.dp)
+                                    .pointerInput(Unit) {
+                                        detectTapGestures(
+                                            onTap = { onImageClick(documentUri) },
+                                            onDoubleTap = { onImageClick(documentUri) },
+                                        )
+                                    },
+                            uri = documentUri,
+                        )
+                    } else {
+                        BrokenImageView(modifier = Modifier.size(128.dp))
+                    }
+                }
+            }
+        }
+
+        item { HorizontalDivider() }
+
+        item {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text(
+                    text =
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(stringResource(R.string.from))
+                            }
+
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                                append(state.letter.sender ?: stringResource(R.string.unknown))
+                            }
+                        },
+                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                )
+
+                Text(
+                    text =
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(stringResource(R.string.to))
+                            }
+
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                                append(state.letter.recipient ?: stringResource(R.string.unknown))
+                            }
+                        },
+                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                )
+
+                Text(
+                    text =
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(stringResource(R.string.created))
+                            }
+
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                                append(state.letter.created.dateString)
+                            }
+                        },
+                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                )
+
+                Text(
+                    text =
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append(stringResource(R.string.last_modified))
+                            }
+
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
+                                append(state.letter.created.dateString)
+                            }
+                        },
+                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                )
+            }
+        }
     }
 }
 
@@ -184,7 +257,7 @@ fun LetterDetail(
 private fun LetterNotFound() {
     Text(
         modifier = Modifier.fillMaxWidth(),
-        text = "Letter not found",
+        text = stringResource(R.string.letter_not_found),
         textAlign = TextAlign.Center,
     )
 }
@@ -195,11 +268,8 @@ private fun Loading() {
 }
 
 @Composable
-private fun LetterDetailPreview(
-    darkTheme: Boolean,
-    state: LetterDetailState,
-) {
-    OpenLettersTheme(darkTheme) {
+private fun LetterDetailPreview(state: LetterDetailState) {
+    OpenLettersTheme {
         Surface {
             LetterDetailView(
                 modifier = Modifier.fillMaxSize(),
@@ -214,14 +284,19 @@ private fun LetterDetailPreview(
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LetterDetailLight() {
+@PreviewLightDark
+private fun LetterDetail() {
     LetterDetailPreview(
-        darkTheme = false,
         state =
             LetterDetailState.Detail(
                 letter = mockLetter(),
-                documents = emptyMap(),
+                documents =
+                    mapOf(
+                        DocumentId.random() to null,
+                        DocumentId.random() to null,
+                        DocumentId.random() to null,
+                        DocumentId.random() to null,
+                    ),
                 categories =
                     listOf(CategoryId.random(), CategoryId.random(), CategoryId.random())
                         .mapIndexed { index, categoryId -> mockCategory(id = categoryId, label = "Category $index") },
@@ -231,46 +306,17 @@ private fun LetterDetailLight() {
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LetterDetailDark() {
+@PreviewLightDark
+private fun LetterLoadingPreview() {
     LetterDetailPreview(
-        darkTheme = true,
         state = LetterDetailState.Loading,
     )
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LetterLoadingLight() {
+@PreviewLightDark
+private fun LetterNotFoundPreview() {
     LetterDetailPreview(
-        darkTheme = false,
-        state = LetterDetailState.Loading,
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LetterLoadingDark() {
-    LetterDetailPreview(
-        darkTheme = true,
-        state = LetterDetailState.Loading,
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LetterNotFoundLight() {
-    LetterDetailPreview(
-        darkTheme = false,
-        state = LetterDetailState.NotFound,
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LetterNotFoundDark() {
-    LetterDetailPreview(
-        darkTheme = true,
         state = LetterDetailState.NotFound,
     )
 }

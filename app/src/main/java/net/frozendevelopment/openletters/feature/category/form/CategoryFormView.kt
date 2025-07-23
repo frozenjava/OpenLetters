@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -151,11 +151,8 @@ fun CategoryFormView(
 }
 
 @Composable
-private fun CategoryFormPreview(
-    darkTheme: Boolean,
-    state: CategoryFormState,
-) {
-    OpenLettersTheme(darkTheme) {
+private fun CategoryFormPreview(state: CategoryFormState) {
+    OpenLettersTheme {
         Surface {
             CategoryFormView(
                 state = state,
@@ -169,24 +166,9 @@ private fun CategoryFormPreview(
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun DarkPreview() {
+@PreviewLightDark
+private fun CategoryForm() {
     CategoryFormPreview(
-        darkTheme = true,
-        state =
-            CategoryFormState(
-                mode = CategoryFormMode.Create,
-                label = "",
-                color = Color(0xFF0F0FF0),
-            ),
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LightPreview() {
-    CategoryFormPreview(
-        darkTheme = false,
         state =
             CategoryFormState(
                 mode = CategoryFormMode.Create,

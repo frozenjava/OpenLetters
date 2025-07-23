@@ -24,7 +24,8 @@ class ReminderWithDetailsUseCase(
         val reminder = reminderQueries.reminderDetail(reminderId).executeAsOneOrNull() ?: return null
 
         val letterIds =
-            reminder.letterIds?.split(",")
+            reminder.letterIds
+                ?.split(",")
                 ?.map { LetterId(it.trim()) }
                 ?: emptyList()
 

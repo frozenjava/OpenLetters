@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
@@ -127,11 +127,8 @@ fun SearchBar(
 }
 
 @Composable
-private fun SearchBarPreview(
-    darkTheme: Boolean,
-    searchTerms: String,
-) {
-    OpenLettersTheme(darkTheme = darkTheme) {
+private fun SearchBarPreview(searchTerms: String) {
+    OpenLettersTheme {
         Surface {
             SearchBar(
                 searchTerms = searchTerms,
@@ -143,25 +140,13 @@ private fun SearchBarPreview(
 }
 
 @Composable
-@Preview
-private fun EmptySearchBarLight() {
-    SearchBarPreview(false, "")
+@PreviewLightDark
+private fun EmptySearchBar() {
+    SearchBarPreview("")
 }
 
 @Composable
-@Preview
-private fun EmptySearchBarDark() {
-    SearchBarPreview(true, "")
-}
-
-@Composable
-@Preview
-private fun FilledSearchBarLight() {
-    SearchBarPreview(false, "Some Search Terms")
-}
-
-@Composable
-@Preview
-private fun FilledSearchBarDark() {
-    SearchBarPreview(true, "Some Search Terms")
+@PreviewLightDark
+private fun FilledSearchBar() {
+    SearchBarPreview("Some Search Terms")
 }

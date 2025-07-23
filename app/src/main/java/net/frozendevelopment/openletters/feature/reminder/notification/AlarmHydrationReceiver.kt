@@ -9,7 +9,9 @@ import org.koin.core.component.inject
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class AlarmHydrationReceiver : BroadcastReceiver(), KoinComponent {
+class AlarmHydrationReceiver :
+    BroadcastReceiver(),
+    KoinComponent {
     private val reminderNotification: ReminderNotificationType by inject()
     private val reminderQueries: ReminderQueries by inject()
 
@@ -33,7 +35,8 @@ class AlarmHydrationReceiver : BroadcastReceiver(), KoinComponent {
             // Any alarm scheduled in the past will be sent immediately
             // to avoid this stagger the alarms by adding scheduling at (now + (1 + index) minutes))
             val notifyAtMillis =
-                LocalDateTime.now()
+                LocalDateTime
+                    .now()
                     .plusMinutes((1 + index).toLong())
                     .atZone(ZoneId.systemDefault())
                     .toEpochSecond() * 1000L

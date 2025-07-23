@@ -49,4 +49,19 @@
     <string name="category_tooltip">Organize your letters by tagging them with categories like spam, bill, important, or any custom categories you create. This helps you keep track of different types of letters and find what you need quickly and efficiently.</string>
     <string name="reminder_tooltip">Set up reminders to receive notifications for important tasks, like bill due dates or calls you need to make. You can also attach specific letters your reminders, keeping all related information in one place and ensuring you stay organized and efficient.</string>
     <string name="letter_tooltip">Tap here to get started importing your letters! You\'ll do this by taking pictures of your envelopes and letters. We handle the rest for you locally on your phone.</string>
+    <string name="letter">Letter</string>
+    <string name="back_button">Back</string>
+    <string name="actions">Actions</string>
+    <string name="transcription">Transcription</string>
+    <string name="no_transcript_available">No transcript available</string>
+    <string name="from">From: </string>
+    <string name="to">To: </string>
+    <string name="unknown">Unknown</string>
+    <string name="created">Created: </string>
+    <string name="last_modified">Last Modified: </string>
+    <string name="letter_not_found">Letter not found</string>
+    <string name="leave_without_saving">Leave without saving?</string>
+    <string name="unsaved_changes_warning">If you leave without saving, your changes will be lost.</string>
+    <string name="leave">Leave</string>
+    <string name="nothing_to_show">Nothing to show</string>
 </resources>

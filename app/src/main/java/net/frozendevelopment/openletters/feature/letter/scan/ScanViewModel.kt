@@ -109,7 +109,8 @@ class ScanViewModel(
         collectionObserver?.cancel()
         collectionObserver =
             viewModelScope.launch {
-                categoryQueries.allCategories()
+                categoryQueries
+                    .allCategories()
                     .asFlow()
                     .mapToList(ioDispatcher)
                     .collectLatest { categories ->
@@ -118,19 +119,20 @@ class ScanViewModel(
             }
     }
 
-    fun getScanner(pageLimit: Int = 0): GmsDocumentScanner {
-        return GmsDocumentScanning.getClient(
-            GmsDocumentScannerOptions.Builder().apply {
-                setGalleryImportAllowed(false)
-                setResultFormats(RESULT_FORMAT_JPEG)
-                setScannerMode(SCANNER_MODE_FULL)
+    fun getScanner(pageLimit: Int = 0): GmsDocumentScanner =
+        GmsDocumentScanning.getClient(
+            GmsDocumentScannerOptions
+                .Builder()
+                .apply {
+                    setGalleryImportAllowed(false)
+                    setResultFormats(RESULT_FORMAT_JPEG)
+                    setScannerMode(SCANNER_MODE_FULL)
 
-                if (pageLimit > 0) {
-                    setPageLimit(pageLimit)
-                }
-            }.build(),
+                    if (pageLimit > 0) {
+                        setPageLimit(pageLimit)
+                    }
+                }.build(),
         )
-    }
 
     fun importScannedDocuments(scanResult: GmsDocumentScanningResult?) {
         viewModelScope.launch(ioDispatcher) {

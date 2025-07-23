@@ -89,23 +89,20 @@ fun ImageView(
                                 offset = Offset.Zero
                             },
                         )
-                    }
-                    .pointerInput(Unit) {
+                    }.pointerInput(Unit) {
                         detectTransformGestures(
                             onGesture = { centroid, pan, zoomChange, _ ->
                                 offset = offset.new(centroid, pan, zoom, zoomChange, size)
                                 zoom = maxOf(1f, zoom * zoomChange)
                             },
                         )
-                    }
-                    .graphicsLayer {
+                    }.graphicsLayer {
                         translationX = -offset.x * zoom
                         translationY = -offset.y * zoom
                         scaleX = zoom
                         scaleY = zoom
                         transformOrigin = TransformOrigin(0f, 0f)
-                    }
-                    .aspectRatio(1f),
+                    }.aspectRatio(1f),
         )
 
         TextButton(

@@ -51,7 +51,9 @@ import net.frozendevelopment.openletters.feature.category.manage.ui.EmptyCategor
 @Serializable
 object ManageCategoryDestination
 
-private data class DraggableItem(val index: Int)
+private data class DraggableItem(
+    val index: Int,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,7 +196,8 @@ fun ManageCategoryView(
                         style = MaterialTheme.typography.labelLarge,
                         textAlign = TextAlign.Center,
                         modifier =
-                            Modifier.fillMaxWidth()
+                            Modifier
+                                .fillMaxWidth()
                                 .padding(bottom = 8.dp),
                     )
                 }

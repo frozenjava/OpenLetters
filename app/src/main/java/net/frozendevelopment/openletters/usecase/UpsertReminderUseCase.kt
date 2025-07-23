@@ -23,7 +23,8 @@ class UpsertReminderUseCase(
             (
                 reminderQueries
                     .largestNotificationId()
-                    .executeAsOneOrNull()?.MAX ?: 0
+                    .executeAsOneOrNull()
+                    ?.MAX ?: 0
             ) + 1
 
         // if a reminder with the id already exists, then cancel the current scheduled notification
@@ -33,7 +34,9 @@ class UpsertReminderUseCase(
         // the letters that are tagged to this reminder in the database
         // we need this to diff the current `letters` and old list of letters
         val taggedLetters =
-            existingReminder?.letterIds?.split(",")
+            existingReminder
+                ?.letterIds
+                ?.split(",")
                 ?.map { LetterId(it) }
                 ?.toSet() ?: emptySet()
 

@@ -23,11 +23,23 @@ class ReminderNotificationMock : ReminderNotificationType {
     var cancelArgs: List<CancelArgs> = emptyList()
         private set
 
-    data class SendArgs(val title: String, val description: String?, val reminderId: String)
+    data class SendArgs(
+        val title: String,
+        val description: String?,
+        val reminderId: String,
+    )
 
-    data class ScheduleArgs(val title: String, val content: String?, val notificationId: Int, val reminderId: String, val notifyAtMillis: Long)
+    data class ScheduleArgs(
+        val title: String,
+        val content: String?,
+        val notificationId: Int,
+        val reminderId: String,
+        val notifyAtMillis: Long,
+    )
 
-    data class CancelArgs(val notificationId: Int)
+    data class CancelArgs(
+        val notificationId: Int,
+    )
 
     override fun send(
         title: String,

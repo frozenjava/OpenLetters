@@ -24,7 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.feature.settings.ui.DropDownButton
 import net.frozendevelopment.openletters.ui.components.VersionStamp
@@ -120,8 +120,8 @@ private val AppTheme.label: String
         )
 
 @Composable
-private fun SettingsPreview(darkTheme: Boolean) {
-    OpenLettersTheme(darkTheme = darkTheme) {
+private fun SettingsPreview() {
+    OpenLettersTheme {
         Surface {
             SettingsView(
                 modifier = Modifier.fillMaxSize(),
@@ -136,13 +136,7 @@ private fun SettingsPreview(darkTheme: Boolean) {
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun SettingsLightPreview() {
-    SettingsPreview(darkTheme = false)
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun SettingsDarkPreview() {
-    SettingsPreview(darkTheme = true)
+@PreviewLightDark
+private fun Settings() {
+    SettingsPreview()
 }

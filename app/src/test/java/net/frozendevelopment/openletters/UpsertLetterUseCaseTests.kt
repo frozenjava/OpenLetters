@@ -304,7 +304,13 @@ class UpsertLetterUseCaseTests {
         val remainingCategories = database.letterQueries.categoriesForLetter(testId).executeAsList()
 
         Assert.assertFalse(remainingCategories.contains(categoryId2))
-        Assert.assertEquals(1, database.letterQueries.categoriesForLetter(testId).executeAsList().size)
+        Assert.assertEquals(
+            1,
+            database.letterQueries
+                .categoriesForLetter(testId)
+                .executeAsList()
+                .size,
+        )
     }
 
     @Test

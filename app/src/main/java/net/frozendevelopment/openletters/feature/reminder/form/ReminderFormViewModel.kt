@@ -38,7 +38,8 @@ data class ReminderFormState(
     val shownDialog: Dialog? = null,
     val dateError: String = "",
     val selectedDate: LocalDateTime =
-        LocalDate.now()
+        LocalDate
+            .now()
             .plusDays(1)
             .atTime(9, 0),
 ) {
@@ -211,7 +212,8 @@ class ReminderFormViewModel(
             val instant = Instant.ofEpochMilli(dateInMillis)
 
             val dateUTC =
-                LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
+                LocalDateTime
+                    .ofInstant(instant, ZoneId.of("UTC"))
                     .withHour(state.selectedDate.hour)
                     .withMinute(state.selectedDate.minute)
 

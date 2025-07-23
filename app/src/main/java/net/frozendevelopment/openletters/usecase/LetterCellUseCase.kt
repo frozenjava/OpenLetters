@@ -22,7 +22,8 @@ class LetterCellUseCase(
 ) {
     operator fun invoke(id: LetterId): LetterCellModel? {
         val letterInfo =
-            queries.letterInfo(id)
+            queries
+                .letterInfo(id)
                 .executeAsOneOrNull() ?: return null
 
         val colors =

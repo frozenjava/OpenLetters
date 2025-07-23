@@ -164,8 +164,7 @@ fun CategoryPill(
                 .background(
                     color = color,
                     shape = ButtonDefaults.shape,
-                )
-                .clip(ButtonDefaults.shape)
+                ).clip(ButtonDefaults.shape)
                 .padding(ButtonDefaults.ContentPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,

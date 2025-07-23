@@ -30,7 +30,8 @@ fun FilterBar(
     ) {
         SearchBar(
             modifier =
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp),
             searchTerms = searchTerms,
             onSearchChanged = onSearchChanged,
@@ -39,7 +40,8 @@ fun FilterBar(
 
         CategorySelector(
             modifier =
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .padding(bottom = 16.dp),
             selectedCategoryId = selectedCategoryId,
             categories = categories,

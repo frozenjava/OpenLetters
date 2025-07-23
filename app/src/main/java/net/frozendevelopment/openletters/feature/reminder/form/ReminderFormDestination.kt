@@ -28,20 +28,17 @@ val NullableReminderIdNavType =
         override fun get(
             bundle: Bundle,
             key: String,
-        ): ReminderId? {
-            return bundle.getString(key).let {
+        ): ReminderId? =
+            bundle.getString(key).let {
                 if (it == null) null else ReminderId(it)
             }
-        }
 
         override fun parseValue(value: String): ReminderId? {
             if (value.isBlank()) return null
             return ReminderId(value)
         }
 
-        override fun serializeAsValue(value: ReminderId?): String {
-            return value?.value ?: ""
-        }
+        override fun serializeAsValue(value: ReminderId?): String = value?.value ?: ""
 
         override fun put(
             bundle: Bundle,
@@ -58,17 +55,11 @@ val LetterListNavType =
         override fun get(
             bundle: Bundle,
             key: String,
-        ): List<LetterId> {
-            return bundle.getStringArrayList(key)?.map { LetterId(it) } ?: emptyList()
-        }
+        ): List<LetterId> = bundle.getStringArrayList(key)?.map { LetterId(it) } ?: emptyList()
 
-        override fun parseValue(value: String): List<LetterId> {
-            return Json.decodeFromString(value)
-        }
+        override fun parseValue(value: String): List<LetterId> = Json.decodeFromString(value)
 
-        override fun serializeAsValue(value: List<LetterId>): String {
-            return Json.encodeToString(value)
-        }
+        override fun serializeAsValue(value: List<LetterId>): String = Json.encodeToString(value)
 
         override fun put(
             bundle: Bundle,

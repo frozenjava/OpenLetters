@@ -9,7 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
@@ -61,11 +61,8 @@ fun LetterListView(
 }
 
 @Composable
-private fun LetterListPreview(
-    darkTheme: Boolean,
-    state: LetterListState,
-) {
-    OpenLettersTheme(darkTheme = darkTheme) {
+private fun LetterListPreview(state: LetterListState) {
+    OpenLettersTheme {
         Surface(
             modifier =
                 Modifier
@@ -89,37 +86,17 @@ private fun LetterListPreview(
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun EmptyPreviewLight() {
+@PreviewLightDark
+private fun EmptyPreview() {
     LetterListPreview(
-        darkTheme = false,
         state = LetterListState(showEmptyListView = true, isLoading = false),
     )
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun EmptyPreviewDark() {
+@PreviewLightDark
+private fun LoadingPreview() {
     LetterListPreview(
-        darkTheme = true,
-        state = LetterListState(showEmptyListView = true, isLoading = false),
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun LoadingPreviewLight() {
-    LetterListPreview(
-        darkTheme = false,
-        state = LetterListState(isLoading = true),
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun LoadingPreviewDark() {
-    LetterListPreview(
-        darkTheme = true,
         state = LetterListState(isLoading = true),
     )
 }

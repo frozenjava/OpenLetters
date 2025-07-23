@@ -11,13 +11,12 @@ class AppMigrationKoin {
     fun appMigrator(
         appMigrationQueries: AppMigrationQueries,
         categoryQueries: CategoryQueries,
-    ): AppMigrator {
-        return AppMigrator(
+    ): AppMigrator =
+        AppMigrator(
             appMigrationQueries = appMigrationQueries,
             migrations =
                 listOf(
                     InitialCategoriesMigration(categoryQueries),
                 ),
         )
-    }
 }

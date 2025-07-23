@@ -12,30 +12,26 @@ import androidx.navigation.NavBackStackEntry
 
 private const val DURATION = 100
 
-fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationEnterTransition(): EnterTransition {
-    return slideIntoContainer(
+fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationEnterTransition(): EnterTransition =
+    slideIntoContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Start,
         animationSpec = tween(DURATION),
     )
-}
 
-fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationExitTransition(): ExitTransition {
-    return scaleOut(
+fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationExitTransition(): ExitTransition =
+    scaleOut(
         targetScale = .95f,
         animationSpec = tween(DURATION),
     ) + fadeOut(targetAlpha = .5f, animationSpec = tween(DURATION))
-}
 
-fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationPopEnterTransition(): EnterTransition {
-    return scaleIn(
+fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationPopEnterTransition(): EnterTransition =
+    scaleIn(
         initialScale = .95f,
         animationSpec = tween(DURATION),
     ) + fadeIn(initialAlpha = .5f, animationSpec = tween(DURATION))
-}
 
-fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationPopExitTransition(): ExitTransition {
-    return slideOutOfContainer(
+fun AnimatedContentTransitionScope<NavBackStackEntry>.navigationPopExitTransition(): ExitTransition =
+    slideOutOfContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.End,
         animationSpec = tween(DURATION),
     ) + scaleOut(targetScale = 1.05f, animationSpec = tween(DURATION))
-}

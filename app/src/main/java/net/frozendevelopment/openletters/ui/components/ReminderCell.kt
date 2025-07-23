@@ -208,8 +208,7 @@ private fun ReminderCell(
                     .background(
                         color = containerColor,
                         shape = MaterialTheme.shapes.medium,
-                    )
-                    .pointerInput(Unit) {
+                    ).pointerInput(Unit) {
                         detectTapGestures(
                             onTap = { onClick() },
                             onLongPress = onLongClick?.let { { it() } },

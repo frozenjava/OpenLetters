@@ -33,7 +33,8 @@ fun ScanCard(
     ) {
         Row(
             modifier =
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,

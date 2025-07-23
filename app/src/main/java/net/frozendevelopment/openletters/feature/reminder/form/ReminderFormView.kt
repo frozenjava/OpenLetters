@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
@@ -428,11 +428,8 @@ private fun SelectLetterDialog(
 }
 
 @Composable
-private fun ReminderFormPreview(
-    darkTheme: Boolean,
-    state: ReminderFormState,
-) {
-    OpenLettersTheme(darkTheme = darkTheme) {
+private fun ReminderFormPreview(state: ReminderFormState) {
+    OpenLettersTheme {
         Surface {
             ReminderFormView(
                 modifier = Modifier.fillMaxSize(),
@@ -452,37 +449,17 @@ private fun ReminderFormPreview(
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun BlankFormLight() {
+@PreviewLightDark
+private fun BlankForm() {
     ReminderFormPreview(
-        darkTheme = false,
         state = ReminderFormState(),
     )
 }
 
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun BlankFormDark() {
+@PreviewLightDark
+private fun DateSelector() {
     ReminderFormPreview(
-        darkTheme = true,
-        state = ReminderFormState(),
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun DateSelectorLight() {
-    ReminderFormPreview(
-        darkTheme = false,
-        state = ReminderFormState(shownDialog = ReminderFormState.Dialog.DATE),
-    )
-}
-
-@Composable
-@Preview(showBackground = true, showSystemUi = true)
-private fun DateSelectorDark() {
-    ReminderFormPreview(
-        darkTheme = true,
         state = ReminderFormState(shownDialog = ReminderFormState.Dialog.DATE),
     )
 }

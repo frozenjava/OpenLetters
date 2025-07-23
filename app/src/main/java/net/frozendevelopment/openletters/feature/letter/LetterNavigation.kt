@@ -180,11 +180,12 @@ fun NavGraphBuilder.letters(
                 openLetterScanner = {
                     val activity = context as? Activity
                     if (activity != null) {
-                        viewModel.getScanner().getStartScanIntent(activity)
+                        viewModel
+                            .getScanner()
+                            .getStartScanIntent(activity)
                             .addOnSuccessListener { intentSender ->
                                 letterScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                            }
-                            .addOnFailureListener {
+                            }.addOnFailureListener {
                                 Log.e("ScanNavigation", "Scanner failed to load")
                             }
                     }
@@ -192,11 +193,12 @@ fun NavGraphBuilder.letters(
                 openSenderScanner = {
                     val activity = context as? Activity
                     if (activity != null) {
-                        viewModel.getScanner(pageLimit = 1).getStartScanIntent(activity)
+                        viewModel
+                            .getScanner(pageLimit = 1)
+                            .getStartScanIntent(activity)
                             .addOnSuccessListener { intentSender ->
                                 senderScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                            }
-                            .addOnFailureListener {
+                            }.addOnFailureListener {
                                 Log.e("ScanNavigation", "Scanner failed to load")
                             }
                     }
@@ -204,11 +206,12 @@ fun NavGraphBuilder.letters(
                 openRecipientScanner = {
                     val activity = context as? Activity
                     if (activity != null) {
-                        viewModel.getScanner(pageLimit = 1).getStartScanIntent(activity)
+                        viewModel
+                            .getScanner(pageLimit = 1)
+                            .getStartScanIntent(activity)
                             .addOnSuccessListener { intentSender ->
                                 recipientScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                            }
-                            .addOnFailureListener {
+                            }.addOnFailureListener {
                                 Log.e("ScanNavigation", "Scanner failed to load")
                             }
                     }

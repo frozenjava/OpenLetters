@@ -14,7 +14,5 @@ class WorkKoin {
         context: Context,
         @Provided parameters: WorkerParameters,
         appMigrator: AppMigrator,
-    ): AppMigrationWorker {
-        return AppMigrationWorker(context, parameters, appMigrator)
-    }
+    ): AppMigrationWorker = AppMigrationWorker(context, parameters, appMigrator)
 }
