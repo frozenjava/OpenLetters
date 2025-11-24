@@ -82,111 +82,110 @@ data class ScanLetterDestination(
 ) : NavKey
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.scanLetterNavigation() =
-    navigation<ScanLetterDestination> { route ->
-        val navigator = LocalNavigator.current
-        val coroutineScope = rememberCoroutineScope()
-        val context = LocalContext.current
-        val viewModel: ScanViewModel = koinViewModel { parametersOf(route.letterId) }
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
+    val navigator = LocalNavigator.current
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val viewModel: ScanViewModel = koinViewModel { parametersOf(route.letterId) }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        val letterScanLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                    viewModel.importScannedDocuments(scanResult)
-                }
+    val letterScanLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                viewModel.importScannedDocuments(scanResult)
             }
+        }
 
-        val senderScanLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                    viewModel.importScannedSender(scanResult)
-                }
+    val senderScanLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                viewModel.importScannedSender(scanResult)
             }
+        }
 
-        val recipientScanLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
-                    viewModel.importScannedRecipient(scanResult)
-                }
+    val recipientScanLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                viewModel.importScannedRecipient(scanResult)
             }
+        }
 
-        Surface {
-            ScanLetterView(
-                modifier =
-                    Modifier
-                        .statusBarsPadding()
-                        .navigationBarsPadding(),
-                state = state,
-                canNavigateBack = route.canNavigateBack,
-                toggleCategory = viewModel::toggleCategory,
-                setSender = viewModel::setSender,
-                setRecipient = viewModel::setRecipient,
-                setTranscript = viewModel::setTranscript,
-                openLetterScanner = {
-                    val activity = context as? Activity
-                    if (activity != null) {
-                        viewModel
-                            .getScanner()
-                            .getStartScanIntent(activity)
-                            .addOnSuccessListener { intentSender ->
-                                letterScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                            }.addOnFailureListener {
-                                Log.e("ScanNavigation", "Scanner failed to load")
-                            }
-                    }
-                },
-                openSenderScanner = {
-                    val activity = context as? Activity
-                    if (activity != null) {
-                        viewModel
-                            .getScanner(pageLimit = 1)
-                            .getStartScanIntent(activity)
-                            .addOnSuccessListener { intentSender ->
-                                senderScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                            }.addOnFailureListener {
-                                Log.e("ScanNavigation", "Scanner failed to load")
-                            }
-                    }
-                },
-                openRecipientScanner = {
-                    val activity = context as? Activity
-                    if (activity != null) {
-                        viewModel
-                            .getScanner(pageLimit = 1)
-                            .getStartScanIntent(activity)
-                            .addOnSuccessListener { intentSender ->
-                                recipientScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                            }.addOnFailureListener {
-                                Log.e("ScanNavigation", "Scanner failed to load")
-                            }
-                    }
-                },
-                onSaveClicked = {
-                    coroutineScope.launch(Dispatchers.IO) {
-                        if (viewModel.save()) {
-                            withContext(Dispatchers.Main) {
-                                if (route.canNavigateBack) {
-                                    navigator.pop()
-                                } else {
-                                    navigator.navigate { backStack ->
-                                        backStack.add(0, LetterListDestination)
-                                        backStack.removeLastOrNull()
-                                    }
+    Surface {
+        ScanLetterView(
+            modifier =
+                Modifier
+                    .statusBarsPadding()
+                    .navigationBarsPadding(),
+            state = state,
+            canNavigateBack = route.canNavigateBack,
+            toggleCategory = viewModel::toggleCategory,
+            setSender = viewModel::setSender,
+            setRecipient = viewModel::setRecipient,
+            setTranscript = viewModel::setTranscript,
+            openLetterScanner = {
+                val activity = context as? Activity
+                if (activity != null) {
+                    viewModel
+                        .getScanner()
+                        .getStartScanIntent(activity)
+                        .addOnSuccessListener { intentSender ->
+                            letterScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                        }.addOnFailureListener {
+                            Log.e("ScanNavigation", "Scanner failed to load")
+                        }
+                }
+            },
+            openSenderScanner = {
+                val activity = context as? Activity
+                if (activity != null) {
+                    viewModel
+                        .getScanner(pageLimit = 1)
+                        .getStartScanIntent(activity)
+                        .addOnSuccessListener { intentSender ->
+                            senderScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                        }.addOnFailureListener {
+                            Log.e("ScanNavigation", "Scanner failed to load")
+                        }
+                }
+            },
+            openRecipientScanner = {
+                val activity = context as? Activity
+                if (activity != null) {
+                    viewModel
+                        .getScanner(pageLimit = 1)
+                        .getStartScanIntent(activity)
+                        .addOnSuccessListener { intentSender ->
+                            recipientScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                        }.addOnFailureListener {
+                            Log.e("ScanNavigation", "Scanner failed to load")
+                        }
+                }
+            },
+            onSaveClicked = {
+                coroutineScope.launch(Dispatchers.IO) {
+                    if (viewModel.save()) {
+                        withContext(Dispatchers.Main) {
+                            if (route.canNavigateBack) {
+                                navigator.pop()
+                            } else {
+                                navigator.navigate { backStack ->
+                                    backStack.add(0, LetterListDestination)
+                                    backStack.removeLastOrNull()
                                 }
                             }
                         }
                     }
-                },
-                onBackClicked = navigator::pop,
-                onDeleteDocumentClicked = viewModel::removeDocument,
-                onCreateCategoryClicked = { navigator.navigate(CategoryFormDestination(CategoryFormDestination.Mode.Create)) },
-            )
-        }
+                }
+            },
+            onBackClicked = navigator::pop,
+            onDeleteDocumentClicked = viewModel::removeDocument,
+            onCreateCategoryClicked = { navigator.navigate(CategoryFormDestination(CategoryFormDestination.Mode.Create)) },
+        )
     }
+}
 
 @Composable
 fun ScanLetterView(

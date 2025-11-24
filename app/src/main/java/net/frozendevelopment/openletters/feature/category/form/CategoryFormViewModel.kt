@@ -56,15 +56,13 @@ class CategoryFormViewModel(
         }
     }
 
-    fun setLabel(label: String) =
-        viewModelScope.launch {
-            update { copy(label = label) }
-        }
+    fun setLabel(label: String) = viewModelScope.launch {
+        update { copy(label = label) }
+    }
 
-    fun setColor(color: Color) =
-        viewModelScope.launch {
-            update { copy(color = color) }
-        }
+    fun setColor(color: Color) = viewModelScope.launch {
+        update { copy(color = color) }
+    }
 
     suspend fun save() {
         upsertCategoryUseCase(

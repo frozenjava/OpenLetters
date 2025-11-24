@@ -47,19 +47,18 @@ data class ImageDestination(
 ) : NavKey
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.imageViewNavigation() =
-    navigation<ImageDestination> { route ->
-        Surface(
-            color = Color.Black,
-            contentColor = Color.White,
-        ) {
-            ImageView(
-                modifier = Modifier.fillMaxSize(),
-                uri = route.uri.toUri(),
-                onBackClick = {},
-            )
-        }
+fun Module.imageViewNavigation() = navigation<ImageDestination> { route ->
+    Surface(
+        color = Color.Black,
+        contentColor = Color.White,
+    ) {
+        ImageView(
+            modifier = Modifier.fillMaxSize(),
+            uri = route.uri.toUri(),
+            onBackClick = {},
+        )
     }
+}
 
 @Composable
 fun ImageView(
@@ -156,8 +155,7 @@ fun Offset.new(
 fun Offset.fromDoubleTap(
     zoom: Float,
     size: IntSize,
-): Offset =
-    Offset(
-        x.coerceIn(0f, (size.width / zoom) * (zoom - 1f)),
-        y.coerceIn(0f, (size.height / zoom) * (zoom - 1f)),
-    )
+): Offset = Offset(
+    x.coerceIn(0f, (size.width / zoom) * (zoom - 1f)),
+    y.coerceIn(0f, (size.height / zoom) * (zoom - 1f)),
+)

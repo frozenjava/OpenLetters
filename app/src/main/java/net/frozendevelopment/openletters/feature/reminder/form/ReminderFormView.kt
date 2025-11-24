@@ -81,50 +81,49 @@ data class ReminderFormDestination(
 ) : NavKey
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.reminderFormNavigation() =
-    navigation<ReminderFormDestination> { route ->
-        val navigator = LocalNavigator.current
-        val coroutineScope = rememberCoroutineScope()
-        val viewModel =
-            koinViewModel<ReminderFormViewModel> {
-                parametersOf(route.reminderId, route.preselectedLetters)
-            }
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-
-        val notificationPermissionResultLauncher =
-            rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.RequestPermission(),
-                onResult = viewModel::handlePermissionResult,
-            )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
-            LaunchedEffect(Unit) {
-                notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
+fun Module.reminderFormNavigation() = navigation<ReminderFormDestination> { route ->
+    val navigator = LocalNavigator.current
+    val coroutineScope = rememberCoroutineScope()
+    val viewModel =
+        koinViewModel<ReminderFormViewModel> {
+            parametersOf(route.reminderId, route.preselectedLetters)
         }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        Surface {
-            ReminderFormView(
-                modifier = Modifier.fillMaxSize(),
-                state = state,
-                onTitleChanged = viewModel::setTitle,
-                onDescriptionChanged = viewModel::setDescription,
-                onDateSelected = viewModel::selectDate,
-                onTimeSelected = viewModel::selectTime,
-                toggleLetterSelect = viewModel::toggleLetterSelect,
-                onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
-                openDialog = viewModel::openDialog,
-                onBackClicked = navigator::pop,
-                onSaveClicked = {
-                    coroutineScope.launch {
-                        if (viewModel.save()) {
-                            navigator.pop()
-                        }
-                    }
-                },
-            )
+    val notificationPermissionResultLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = viewModel::handlePermissionResult,
+        )
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
+        LaunchedEffect(Unit) {
+            notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
+
+    Surface {
+        ReminderFormView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onTitleChanged = viewModel::setTitle,
+            onDescriptionChanged = viewModel::setDescription,
+            onDateSelected = viewModel::selectDate,
+            onTimeSelected = viewModel::selectTime,
+            toggleLetterSelect = viewModel::toggleLetterSelect,
+            onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
+            openDialog = viewModel::openDialog,
+            onBackClicked = navigator::pop,
+            onSaveClicked = {
+                coroutineScope.launch {
+                    if (viewModel.save()) {
+                        navigator.pop()
+                    }
+                }
+            },
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

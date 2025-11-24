@@ -13,25 +13,24 @@ class SearchLettersUseCase(
         query: String,
         category: CategoryId? = null,
         limit: Long = Long.MAX_VALUE,
-    ): List<LetterId> =
-        if (query.isBlank()) {
+    ): List<LetterId> = if (query.isBlank()) {
+        letterQueries
+            .letterList(
+                categoryId = category,
+                limit = limit,
+            ).executeAsList()
+    } else {
+        try {
             letterQueries
-                .letterList(
+                .search(
                     categoryId = category,
+                    query = "${query.sanitizeForSearch()}*",
                     limit = limit,
                 ).executeAsList()
-        } else {
-            try {
-                letterQueries
-                    .search(
-                        categoryId = category,
-                        query = "${query.sanitizeForSearch()}*",
-                        limit = limit,
-                    ).executeAsList()
-            } catch (e: SQLiteException) {
-                // a user can crash the app by constructing a query that FTS doesnt like
-                // for example `*bob` will crash the app. An empty list is better than a crash
-                emptyList()
-            }
+        } catch (e: SQLiteException) {
+            // a user can crash the app by constructing a query that FTS doesnt like
+            // for example `*bob` will crash the app. An empty list is better than a crash
+            emptyList()
         }
+    }
 }

@@ -80,15 +80,14 @@ class ReminderDetailViewModel(
         }
     }
 
-    fun acknowledge() =
-        viewModelScope.launch {
-            acknowledgeReminder(reminderId)
-            update {
-                if (this is ReminderDetailState.Detail) {
-                    copy(isAcknowledged = true)
-                } else {
-                    this
-                }
+    fun acknowledge() = viewModelScope.launch {
+        acknowledgeReminder(reminderId)
+        update {
+            if (this is ReminderDetailState.Detail) {
+                copy(isAcknowledged = true)
+            } else {
+                this
             }
         }
+    }
 }

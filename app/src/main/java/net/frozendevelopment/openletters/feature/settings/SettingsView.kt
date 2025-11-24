@@ -44,23 +44,22 @@ import org.koin.dsl.navigation3.navigation
 data object SettingsDestination : NavKey
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.settingsNavigation() =
-    navigation<SettingsDestination> { route ->
-        val navigator = LocalNavigator.current
-        val viewModel: SettingsViewModel = koinViewModel()
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+fun Module.settingsNavigation() = navigation<SettingsDestination> { route ->
+    val navigator = LocalNavigator.current
+    val viewModel: SettingsViewModel = koinViewModel()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        Surface {
-            SettingsView(
-                modifier = Modifier.fillMaxSize(),
-                state = state,
-                onBackClicked = navigator::pop,
-                onThemeChanged = viewModel::setTheme,
-                onColorVariantChanged = viewModel::setVariant,
-                onViewSourceClicked = {}, // { navigator.openUrl("https://github.com/frozenjava/OpenLetters") },
-            )
-        }
+    Surface {
+        SettingsView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onBackClicked = navigator::pop,
+            onThemeChanged = viewModel::setTheme,
+            onColorVariantChanged = viewModel::setVariant,
+            onViewSourceClicked = {}, // { navigator.openUrl("https://github.com/frozenjava/OpenLetters") },
+        )
     }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

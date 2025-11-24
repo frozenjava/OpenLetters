@@ -31,11 +31,10 @@ class ManageCategoryViewModel(
         update { copy(categories = categories) }
     }
 
-    fun delete(category: CategoryId) =
-        viewModelScope.launch(ioDispatcher) {
-            categoryQueries.delete(category)
-            load()
-        }
+    fun delete(category: CategoryId) = viewModelScope.launch(ioDispatcher) {
+        categoryQueries.delete(category)
+        load()
+    }
 
     fun onMove(
         from: Int,
@@ -59,21 +58,19 @@ class ManageCategoryViewModel(
         }
     }
 
-    fun saveOrder() =
-        viewModelScope.launch(ioDispatcher) {
-            state.categories.forEachIndexed { index, category ->
-                saveCategoryOrder(category.id, index.toLong())
-            }
+    fun saveOrder() = viewModelScope.launch(ioDispatcher) {
+        state.categories.forEachIndexed { index, category ->
+            saveCategoryOrder(category.id, index.toLong())
         }
+    }
 
-    fun select(category: CategoryId?) =
-        viewModelScope.launch {
-            val selectedCategory =
-                if (category == state.selectedCategory) {
-                    null
-                } else {
-                    category
-                }
-            update { copy(selectedCategory = selectedCategory) }
-        }
+    fun select(category: CategoryId?) = viewModelScope.launch {
+        val selectedCategory =
+            if (category == state.selectedCategory) {
+                null
+            } else {
+                category
+            }
+        update { copy(selectedCategory = selectedCategory) }
+    }
 }

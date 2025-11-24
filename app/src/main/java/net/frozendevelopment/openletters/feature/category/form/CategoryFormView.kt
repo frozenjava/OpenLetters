@@ -69,28 +69,27 @@ data class CategoryFormDestination(
 }
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.categoryFormNavigation() =
-    navigation<CategoryFormDestination> { route ->
-        val navigator = LocalNavigator.current
-        val viewModel = koinViewModel<CategoryFormViewModel> { parametersOf(route.mode) }
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-        val coroutineScope = rememberCoroutineScope()
+fun Module.categoryFormNavigation() = navigation<CategoryFormDestination> { route ->
+    val navigator = LocalNavigator.current
+    val viewModel = koinViewModel<CategoryFormViewModel> { parametersOf(route.mode) }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
 
-        Surface {
-            CategoryFormView(
-                state = state,
-                onLabelChanged = viewModel::setLabel,
-                onColorChanged = viewModel::setColor,
-                onBackClicked = navigator::pop,
-                onSaveClicked = {
-                    coroutineScope.launch {
-                        viewModel.save()
-                        navigator.pop()
-                    }
-                },
-            )
-        }
+    Surface {
+        CategoryFormView(
+            state = state,
+            onLabelChanged = viewModel::setLabel,
+            onColorChanged = viewModel::setColor,
+            onBackClicked = navigator::pop,
+            onSaveClicked = {
+                coroutineScope.launch {
+                    viewModel.save()
+                    navigator.pop()
+                }
+            },
+        )
     }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

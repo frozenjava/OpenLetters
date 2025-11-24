@@ -31,15 +31,13 @@ class SettingsViewModel(
         }
     }
 
-    fun setTheme(theme: AppTheme) =
-        viewModelScope.launch {
-            themeManager.setTheme(theme)
-            update { copy(appTheme = theme) }
-        }
+    fun setTheme(theme: AppTheme) = viewModelScope.launch {
+        themeManager.setTheme(theme)
+        update { copy(appTheme = theme) }
+    }
 
-    fun setVariant(variant: ColorPalette) =
-        viewModelScope.launch {
-            themeManager.setVariant(variant)
-            update { copy(themeVariant = variant) }
-        }
+    fun setVariant(variant: ColorPalette) = viewModelScope.launch {
+        themeManager.setVariant(variant)
+        update { copy(themeVariant = variant) }
+    }
 }

@@ -36,22 +36,21 @@ import org.koin.dsl.module
 //    }
 // }
 
-val categoryKoinModule =
-    module {
-        categoryFormNavigation()
-        manageCategoryNavigation()
-        viewModel { (mode: CategoryFormDestination.Mode) ->
-            CategoryFormViewModel(
-                mode = mode,
-                upsertCategoryUseCase = get(),
-                categoryQueries = get(),
-            )
-        }
-
-        viewModel {
-            ManageCategoryViewModel(
-                saveCategoryOrder = get(),
-                categoryQueries = get(),
-            )
-        }
+val categoryKoinModule = module {
+    categoryFormNavigation()
+    manageCategoryNavigation()
+    viewModel { (mode: CategoryFormDestination.Mode) ->
+        CategoryFormViewModel(
+            mode = mode,
+            upsertCategoryUseCase = get(),
+            categoryQueries = get(),
+        )
     }
+
+    viewModel {
+        ManageCategoryViewModel(
+            saveCategoryOrder = get(),
+            categoryQueries = get(),
+        )
+    }
+}

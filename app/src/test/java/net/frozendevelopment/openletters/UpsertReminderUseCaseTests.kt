@@ -33,17 +33,16 @@ class UpsertReminderUseCaseTests {
         scheduledFor: LocalDateTime = LocalDateTime.ofEpochSecond(2000, 0, ZoneOffset.UTC),
         created: LocalDateTime = LocalDateTime.ofEpochSecond(500, 0, ZoneOffset.UTC),
         lastModified: LocalDateTime = LocalDateTime.ofEpochSecond(500, 0, ZoneOffset.UTC),
-    ): Reminder =
-        Reminder(
-            id = reminderId,
-            notificationId = notificationId,
-            title = title,
-            description = description,
-            scheduledFor = scheduledFor,
-            created = created,
-            acknowledged = acknowledged,
-            lastModified = lastModified,
-        )
+    ): Reminder = Reminder(
+        id = reminderId,
+        notificationId = notificationId,
+        title = title,
+        description = description,
+        scheduledFor = scheduledFor,
+        created = created,
+        acknowledged = acknowledged,
+        lastModified = lastModified,
+    )
 
     @Before
     fun setup() {

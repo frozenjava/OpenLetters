@@ -178,61 +178,57 @@ class ReminderFormViewModel(
         update { copy(hasNotificationPermission = granted) }
     }
 
-    fun setTitle(title: String) =
-        viewModelScope.launch {
-            update {
-                copy(
-                    title = title,
-                    titleError = if (title.length > 15 || title.isBlank()) "Title must be between 1 and 25 characters" else "",
-                )
-            }
+    fun setTitle(title: String) = viewModelScope.launch {
+        update {
+            copy(
+                title = title,
+                titleError = if (title.length > 15 || title.isBlank()) "Title must be between 1 and 25 characters" else "",
+            )
         }
+    }
 
-    fun setDescription(description: String) =
-        viewModelScope.launch {
-            update { copy(description = description) }
-        }
+    fun setDescription(description: String) = viewModelScope.launch {
+        update { copy(description = description) }
+    }
 
-    fun toggleLetterSelect(letterId: LetterId) =
-        viewModelScope.launch {
-            val letterSet =
-                state.selectedLetters.toMutableSet().let {
-                    if (state.selectedLetters.contains(letterId)) {
-                        it - letterId
-                    } else {
-                        it + letterId
-                    }
+    fun toggleLetterSelect(letterId: LetterId) = viewModelScope.launch {
+        val letterSet =
+            state.selectedLetters.toMutableSet().let {
+                if (state.selectedLetters.contains(letterId)) {
+                    it - letterId
+                } else {
+                    it + letterId
                 }
-
-            update { copy(selectedLetters = letterSet.toList()) }
-        }
-
-    fun selectDate(dateInMillis: Long) =
-        viewModelScope.launch {
-            val instant = Instant.ofEpochMilli(dateInMillis)
-
-            val dateUTC =
-                LocalDateTime
-                    .ofInstant(instant, ZoneId.of("UTC"))
-                    .withHour(state.selectedDate.hour)
-                    .withMinute(state.selectedDate.minute)
-
-            val dateLocal =
-                LocalDateTime.of(
-                    dateUTC.year,
-                    dateUTC.monthValue,
-                    dateUTC.dayOfMonth,
-                    dateUTC.hour,
-                    dateUTC.minute,
-                )
-
-            update {
-                copy(
-                    selectedDate = dateLocal,
-                    dateError = if (!dateLocal.isAfter(LocalDateTime.now())) "Date must be in the future" else "",
-                )
             }
+
+        update { copy(selectedLetters = letterSet.toList()) }
+    }
+
+    fun selectDate(dateInMillis: Long) = viewModelScope.launch {
+        val instant = Instant.ofEpochMilli(dateInMillis)
+
+        val dateUTC =
+            LocalDateTime
+                .ofInstant(instant, ZoneId.of("UTC"))
+                .withHour(state.selectedDate.hour)
+                .withMinute(state.selectedDate.minute)
+
+        val dateLocal =
+            LocalDateTime.of(
+                dateUTC.year,
+                dateUTC.monthValue,
+                dateUTC.dayOfMonth,
+                dateUTC.hour,
+                dateUTC.minute,
+            )
+
+        update {
+            copy(
+                selectedDate = dateLocal,
+                dateError = if (!dateLocal.isAfter(LocalDateTime.now())) "Date must be in the future" else "",
+            )
         }
+    }
 
     fun selectTime(
         hour: Int,
@@ -251,10 +247,9 @@ class ReminderFormViewModel(
         }
     }
 
-    fun openDialog(dialog: ReminderFormState.Dialog?) =
-        viewModelScope.launch {
-            update { copy(shownDialog = dialog) }
-        }
+    fun openDialog(dialog: ReminderFormState.Dialog?) = viewModelScope.launch {
+        update { copy(shownDialog = dialog) }
+    }
 
     fun save(): Boolean {
         if (!state.isSavable) return false

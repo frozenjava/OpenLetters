@@ -72,27 +72,26 @@ data class LetterDetailDestination(
 ) : NavKey
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.letterDetailNavigation() =
-    navigation<LetterDetailDestination> { route ->
-        val navigator = LocalNavigator.current
-        val viewModel: LetterDetailViewModel = koinViewModel { parametersOf(route.letterId) }
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+fun Module.letterDetailNavigation() = navigation<LetterDetailDestination> { route ->
+    val navigator = LocalNavigator.current
+    val viewModel: LetterDetailViewModel = koinViewModel { parametersOf(route.letterId) }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        Surface {
-            LetterDetailView(
-                modifier = Modifier.fillMaxSize(),
-                state = state,
-                onEditClicked = { navigator.navigate(ScanLetterDestination(route.letterId)) },
-                onCreateReminderClicked = {
-                    navigator.navigate(
-                        ReminderFormDestination(preselectedLetters = listOf(route.letterId)),
-                    )
-                },
-                onBackClicked = navigator::pop,
-                onImageClick = { uri -> navigator.navigate(ImageDestination(uri.toString())) },
-            )
-        }
+    Surface {
+        LetterDetailView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onEditClicked = { navigator.navigate(ScanLetterDestination(route.letterId)) },
+            onCreateReminderClicked = {
+                navigator.navigate(
+                    ReminderFormDestination(preselectedLetters = listOf(route.letterId)),
+                )
+            },
+            onBackClicked = navigator::pop,
+            onImageClick = { uri -> navigator.navigate(ImageDestination(uri.toString())) },
+        )
     }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

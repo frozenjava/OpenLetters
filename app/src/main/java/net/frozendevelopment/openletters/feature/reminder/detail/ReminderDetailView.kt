@@ -72,34 +72,33 @@ data class ReminderDetailDestination(
 }
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.reminderDetailNavigation() =
-    navigation<ReminderDetailDestination> { route ->
-        val navigator = LocalNavigator.current
-        val viewModel = koinViewModel<ReminderDetailViewModel> { parametersOf(route.reminderId) }
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+fun Module.reminderDetailNavigation() = navigation<ReminderDetailDestination> { route ->
+    val navigator = LocalNavigator.current
+    val viewModel = koinViewModel<ReminderDetailViewModel> { parametersOf(route.reminderId) }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-        val notificationPermissionResultLauncher =
-            rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.RequestPermission(),
-                onResult = viewModel::handlePermissionResult,
-            )
+    val notificationPermissionResultLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = viewModel::handlePermissionResult,
+        )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && (state as? ReminderDetailState.Detail)?.hasNotificationPermission == false) {
-            LaunchedEffect(Unit) {
-                notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-
-        Surface {
-            ReminderDetailScreen(
-                modifier = Modifier.fillMaxWidth(),
-                state = state,
-                onBackClicked = navigator::pop,
-                onAcknowledgeClicked = viewModel::acknowledge,
-                onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
-            )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && (state as? ReminderDetailState.Detail)?.hasNotificationPermission == false) {
+        LaunchedEffect(Unit) {
+            notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
+
+    Surface {
+        ReminderDetailScreen(
+            modifier = Modifier.fillMaxWidth(),
+            state = state,
+            onBackClicked = navigator::pop,
+            onAcknowledgeClicked = viewModel::acknowledge,
+            onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

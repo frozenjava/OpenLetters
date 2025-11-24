@@ -5,10 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -28,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
@@ -38,7 +35,8 @@ import net.frozendevelopment.openletters.feature.letter.list.LetterListDestinati
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import net.frozendevelopment.openletters.feature.settings.SettingsDestination
-import net.frozendevelopment.openletters.ui.animation.navigationEnterTransition
+import net.frozendevelopment.openletters.ui.animation.popTransitionSpec
+import net.frozendevelopment.openletters.ui.animation.pushTransitionSpec
 import net.frozendevelopment.openletters.ui.navigation.EntryProvider
 import net.frozendevelopment.openletters.ui.navigation.LettersNavDrawer
 import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
@@ -74,11 +72,14 @@ class MainActivity : ComponentActivity() {
             ) {
                 val coroutineScope = rememberCoroutineScope()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
-                val navigationState =
-                    rememberNavigationState(
+                val navigationState = rememberNavigationState(
+                    LetterListDestination,
+                    setOf(
                         LetterListDestination,
-                        setOf(LetterListDestination, ManageCategoryDestination, ReminderListDestination),
-                    )
+                        ManageCategoryDestination,
+                        ReminderListDestination,
+                    ),
+                )
                 val navigator = remember { Navigator(navigationState) }
                 val entryProvider: EntryProvider = koinEntryProvider()
 
@@ -133,30 +134,14 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         NavDisplay(
                                             entries = navigationState.toEntries(entryProvider),
+//                                            entryDecorators = listOf(
+//                                                rememberSaveableStateHolderNavEntryDecorator(),
+//                                                rememberViewModelStoreNavEntryDecorator()
+//                                            ),
                                             onBack = { navigator.pop() },
-                                            transitionSpec = { navigationEnterTransition() },
-                                            popTransitionSpec = {
-                                                // Slide in from left when navigating back
-                                                slideInHorizontally(
-                                                    initialOffsetX = { -it },
-                                                    animationSpec = tween(400),
-                                                ) togetherWith
-                                                    slideOutHorizontally(
-                                                        targetOffsetX = { it },
-                                                        animationSpec = tween(400),
-                                                    )
-                                            },
-                                            predictivePopTransitionSpec = {
-                                                // Slide in from left when navigating back
-                                                slideInHorizontally(
-                                                    initialOffsetX = { -it },
-                                                    animationSpec = tween(400),
-                                                ) togetherWith
-                                                    slideOutHorizontally(
-                                                        targetOffsetX = { it },
-                                                        animationSpec = tween(400),
-                                                    )
-                                            },
+                                            transitionSpec = { pushTransitionSpec() },
+                                            popTransitionSpec = { popTransitionSpec() },
+                                            predictivePopTransitionSpec = { popTransitionSpec() },
                                         )
                                     }
                                 }

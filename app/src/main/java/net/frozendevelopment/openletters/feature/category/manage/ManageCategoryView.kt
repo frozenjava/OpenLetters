@@ -1,5 +1,8 @@
 package net.frozendevelopment.openletters.feature.category.manage
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -45,9 +48,11 @@ import androidx.compose.ui.unit.offset
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
+import net.frozendevelopment.openletters.extensions.navigation
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ui.CategoryRow
 import net.frozendevelopment.openletters.feature.category.manage.ui.EmptyCategoryListCell
@@ -56,7 +61,6 @@ import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
-import org.koin.dsl.navigation3.navigation
 
 @Serializable
 object ManageCategoryDestination : NavKey
@@ -66,39 +70,46 @@ private data class DraggableItem(
 )
 
 @OptIn(KoinExperimentalAPI::class)
-fun Module.manageCategoryNavigation() =
-    navigation<ManageCategoryDestination> { route ->
-        val drawerState = LocalDrawerState.current
-        val navigator = LocalNavigator.current
-        val viewModel = koinViewModel<ManageCategoryViewModel>()
-        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-        val coroutineScope = rememberCoroutineScope()
+fun Module.manageCategoryNavigation() = navigation<ManageCategoryDestination>(
+    metadata = NavDisplay.transitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + NavDisplay.popTransitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + NavDisplay.predictivePopTransitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    },
+) { route ->
+    val drawerState = LocalDrawerState.current
+    val navigator = LocalNavigator.current
+    val viewModel = koinViewModel<ManageCategoryViewModel>()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
 
-        Surface {
-            ManageCategoryView(
-                state = state,
-                openNavigationDrawer = {
-                    coroutineScope.launch {
-                        drawerState.apply {
-                            if (isClosed) open() else close()
-                        }
+    Surface {
+        ManageCategoryView(
+            state = state,
+            openNavigationDrawer = {
+                coroutineScope.launch {
+                    drawerState.apply {
+                        if (isClosed) open() else close()
                     }
-                },
-                editCategoryClicked = { categoryId ->
-                    val mode =
-                        if (categoryId == null) {
-                            CategoryFormDestination.Mode.Create
-                        } else {
-                            CategoryFormDestination.Mode.Edit(categoryId)
-                        }
-                    navigator.navigate(CategoryFormDestination(mode = mode))
-                },
-                onDeleteClicked = viewModel::delete,
-                onMove = viewModel::onMove,
-                onMoveComplete = viewModel::saveOrder,
-            )
-        }
+                }
+            },
+            editCategoryClicked = { categoryId ->
+                val mode =
+                    if (categoryId == null) {
+                        CategoryFormDestination.Mode.Create
+                    } else {
+                        CategoryFormDestination.Mode.Edit(categoryId)
+                    }
+                navigator.navigate(CategoryFormDestination(mode = mode))
+            },
+            onDeleteClicked = viewModel::delete,
+            onMove = viewModel::onMove,
+            onMoveComplete = viewModel::saveOrder,
+        )
     }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
