@@ -10,17 +10,17 @@ plugins {
 }
 
 ksp {
-    arg("KOIN_CONFIG_CHECK", "true")
+    arg("KOIN_CONFIG_CHECK", "false")
 }
 
 android {
     namespace = "net.frozendevelopment.openletters"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "net.frozendevelopment.openletters"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER") ?: "1")
         versionName = "0.1.0"
 
@@ -120,8 +120,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons)
     implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.navigation)
-    implementation(libs.androidx.navigation.common.ktx)
+//    implementation(libs.androidx.navigation)
+//    implementation(libs.androidx.navigation.common.ktx)
+    implementation(libs.androidx.nav3.runtime)
+    implementation(libs.androidx.nav3.ui)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
     implementation(libs.androidx.splashscreen)
 
@@ -129,13 +131,15 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.workmanager)
-    implementation(libs.koin.compose.navigation)
+//    implementation(libs.koin.compose.navigation)
+    implementation(libs.koin.nav3)
+
     implementation(libs.androidx.adaptive.android)
     implementation(libs.androidx.core.animation)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.datastore.core.android)
-    compileOnly(libs.koin.annotations)
-    ksp(libs.koin.ksp)
+//    compileOnly(libs.koin.annotations)
+//    ksp(libs.koin.ksp)
 
     implementation(libs.sqldelight)
     implementation(libs.sqldelight.coroutines)

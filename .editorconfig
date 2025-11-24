@@ -1,0 +1,13 @@
+root = true
+
+[*.{kt,kts}]
+max_line_length = 160
+ktlint_code_style = ktlint_official
+ktlint_standard_chain-method-continuation = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_no-single-line-block-comment = disabled
+ktlint_standard_parameter-list-wrapping = enabled
+ktlint_standard_function-expression-body = disabled
+ktlint_function_naming_ignore_when_annotated_with = Composable,Preview,PreviewLightDark
+ktlint_function_signature_body_expression_wrapping = default

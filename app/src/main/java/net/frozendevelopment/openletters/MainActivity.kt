@@ -5,6 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -13,46 +17,47 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
-import net.frozendevelopment.openletters.extensions.newRoot
-import net.frozendevelopment.openletters.feature.category.categories
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryDestination
-import net.frozendevelopment.openletters.feature.letter.letters
 import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
-import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
-import net.frozendevelopment.openletters.feature.reminder.reminders
 import net.frozendevelopment.openletters.feature.settings.SettingsDestination
-import net.frozendevelopment.openletters.feature.settings.settings
 import net.frozendevelopment.openletters.ui.animation.navigationEnterTransition
-import net.frozendevelopment.openletters.ui.animation.navigationExitTransition
-import net.frozendevelopment.openletters.ui.animation.navigationPopEnterTransition
-import net.frozendevelopment.openletters.ui.animation.navigationPopExitTransition
-import net.frozendevelopment.openletters.ui.components.LettersNavDrawer
+import net.frozendevelopment.openletters.ui.navigation.EntryProvider
+import net.frozendevelopment.openletters.ui.navigation.LettersNavDrawer
+import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigationState
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
+import net.frozendevelopment.openletters.ui.navigation.Navigator
+import net.frozendevelopment.openletters.ui.navigation.koinEntryProvider
+import net.frozendevelopment.openletters.ui.navigation.rememberNavigationState
+import net.frozendevelopment.openletters.ui.navigation.toEntries
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import net.frozendevelopment.openletters.util.ThemeManagerType
 import org.koin.android.ext.android.inject
+import org.koin.core.annotation.KoinExperimentalAPI
 
 class MainActivity : ComponentActivity() {
     private val themeManager: ThemeManagerType by inject()
     private val letterQueries: LetterQueries by inject()
 
+    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -68,8 +73,14 @@ class MainActivity : ComponentActivity() {
                 colorPalette = currentTheme.second,
             ) {
                 val coroutineScope = rememberCoroutineScope()
-                val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                val navHostController = rememberNavController()
+                val drawerState = rememberDrawerState(DrawerValue.Closed)
+                val navigationState =
+                    rememberNavigationState(
+                        LetterListDestination,
+                        setOf(LetterListDestination, ManageCategoryDestination, ReminderListDestination),
+                    )
+                val navigator = remember { Navigator(navigationState) }
+                val entryProvider: EntryProvider = koinEntryProvider()
 
                 // lock the app to portrait for phone users
                 if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
@@ -80,27 +91,27 @@ class MainActivity : ComponentActivity() {
                     drawerState = drawerState,
                     goToMail = {
                         coroutineScope.launch { drawerState.close() }
-                        navHostController.newRoot(LetterListDestination)
+                        navigator.navigate(LetterListDestination)
                     },
                     goToManageCategories = {
                         coroutineScope.launch { drawerState.close() }
-                        navHostController.newRoot(ManageCategoryDestination)
+                        navigator.navigate(ManageCategoryDestination)
                     },
                     goToCreateCategory = {
                         coroutineScope.launch { drawerState.close() }
-                        navHostController.navigate(CategoryFormDestination())
+                        navigator.navigate(CategoryFormDestination())
                     },
                     goToReminders = {
                         coroutineScope.launch { drawerState.close() }
-                        navHostController.newRoot(ReminderListDestination)
+                        navigator.navigate(ReminderListDestination)
                     },
                     goToCreateReminder = {
                         coroutineScope.launch { drawerState.close() }
-                        navHostController.navigate(ReminderFormDestination())
+                        navigator.navigate(ReminderFormDestination())
                     },
                     goToSettings = {
                         coroutineScope.launch { drawerState.close() }
-                        navHostController.navigate(SettingsDestination)
+                        navigator.navigate(SettingsDestination)
                     },
                 ) {
                     Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
@@ -115,23 +126,40 @@ class MainActivity : ComponentActivity() {
                                         ),
                                     ),
                         ) {
-                            NavHost(
-                                navController = navHostController,
-                                startDestination =
-                                    if (letterQueries.hasLetters().executeAsOne() == 1L) {
-                                        LetterListDestination
-                                    } else {
-                                        ScanLetterDestination(canNavigateBack = false)
-                                    },
-                                enterTransition = { navigationEnterTransition() },
-                                exitTransition = { navigationExitTransition() },
-                                popEnterTransition = { navigationPopEnterTransition() },
-                                popExitTransition = { navigationPopExitTransition() },
-                            ) {
-                                categories(navHostController, drawerState)
-                                letters(navHostController, drawerState)
-                                reminders(navHostController, drawerState)
-                                settings(navHostController)
+                            CompositionLocalProvider(LocalDrawerState provides drawerState) {
+                                CompositionLocalProvider(LocalNavigationState provides navigationState) {
+                                    CompositionLocalProvider(
+                                        LocalNavigator provides navigator,
+                                    ) {
+                                        NavDisplay(
+                                            entries = navigationState.toEntries(entryProvider),
+                                            onBack = { navigator.pop() },
+                                            transitionSpec = { navigationEnterTransition() },
+                                            popTransitionSpec = {
+                                                // Slide in from left when navigating back
+                                                slideInHorizontally(
+                                                    initialOffsetX = { -it },
+                                                    animationSpec = tween(400),
+                                                ) togetherWith
+                                                    slideOutHorizontally(
+                                                        targetOffsetX = { it },
+                                                        animationSpec = tween(400),
+                                                    )
+                                            },
+                                            predictivePopTransitionSpec = {
+                                                // Slide in from left when navigating back
+                                                slideInHorizontally(
+                                                    initialOffsetX = { -it },
+                                                    animationSpec = tween(400),
+                                                ) togetherWith
+                                                    slideOutHorizontally(
+                                                        targetOffsetX = { it },
+                                                        animationSpec = tween(400),
+                                                    )
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

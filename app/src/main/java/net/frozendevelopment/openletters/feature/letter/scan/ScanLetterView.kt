@@ -1,6 +1,12 @@
 package net.frozendevelopment.openletters.feature.letter.scan
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +17,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -30,23 +38,155 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.migrations.Category
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
+import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
 import net.frozendevelopment.openletters.feature.letter.scan.ui.CategoryPicker
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScanAppBar
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScannableTextField
 import net.frozendevelopment.openletters.ui.components.BrokenImageView
 import net.frozendevelopment.openletters.ui.components.LazyImageView
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
+import org.koin.dsl.navigation3.navigation
 import java.time.LocalDateTime
+
+@Serializable
+data class ScanLetterDestination(
+    val letterId: LetterId? = null,
+    val canNavigateBack: Boolean = true,
+) : NavKey
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.scanLetterNavigation() =
+    navigation<ScanLetterDestination> { route ->
+        val navigator = LocalNavigator.current
+        val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
+        val viewModel: ScanViewModel = koinViewModel { parametersOf(route.letterId) }
+        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+        val letterScanLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    viewModel.importScannedDocuments(scanResult)
+                }
+            }
+
+        val senderScanLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    viewModel.importScannedSender(scanResult)
+                }
+            }
+
+        val recipientScanLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
+                    viewModel.importScannedRecipient(scanResult)
+                }
+            }
+
+        Surface {
+            ScanLetterView(
+                modifier =
+                    Modifier
+                        .statusBarsPadding()
+                        .navigationBarsPadding(),
+                state = state,
+                canNavigateBack = route.canNavigateBack,
+                toggleCategory = viewModel::toggleCategory,
+                setSender = viewModel::setSender,
+                setRecipient = viewModel::setRecipient,
+                setTranscript = viewModel::setTranscript,
+                openLetterScanner = {
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        viewModel
+                            .getScanner()
+                            .getStartScanIntent(activity)
+                            .addOnSuccessListener { intentSender ->
+                                letterScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                            }.addOnFailureListener {
+                                Log.e("ScanNavigation", "Scanner failed to load")
+                            }
+                    }
+                },
+                openSenderScanner = {
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        viewModel
+                            .getScanner(pageLimit = 1)
+                            .getStartScanIntent(activity)
+                            .addOnSuccessListener { intentSender ->
+                                senderScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                            }.addOnFailureListener {
+                                Log.e("ScanNavigation", "Scanner failed to load")
+                            }
+                    }
+                },
+                openRecipientScanner = {
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        viewModel
+                            .getScanner(pageLimit = 1)
+                            .getStartScanIntent(activity)
+                            .addOnSuccessListener { intentSender ->
+                                recipientScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                            }.addOnFailureListener {
+                                Log.e("ScanNavigation", "Scanner failed to load")
+                            }
+                    }
+                },
+                onSaveClicked = {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        if (viewModel.save()) {
+                            withContext(Dispatchers.Main) {
+                                if (route.canNavigateBack) {
+                                    navigator.pop()
+                                } else {
+                                    navigator.navigate { backStack ->
+                                        backStack.add(0, LetterListDestination)
+                                        backStack.removeLastOrNull()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                onBackClicked = navigator::pop,
+                onDeleteDocumentClicked = viewModel::removeDocument,
+                onCreateCategoryClicked = { navigator.navigate(CategoryFormDestination(CategoryFormDestination.Mode.Create)) },
+            )
+        }
+    }
 
 @Composable
 fun ScanLetterView(
@@ -329,7 +469,10 @@ private fun FilledOutScanForm() {
         ScanState(
             sender = "<NAME>",
             recipient = "<NAME>",
-            transcript = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            transcript =
+                """
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                """.trimIndent(),
             newDocuments =
                 mapOf(
                     DocumentId.random() to Uri.EMPTY,

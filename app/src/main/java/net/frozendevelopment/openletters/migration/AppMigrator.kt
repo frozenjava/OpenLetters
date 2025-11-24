@@ -10,7 +10,7 @@ interface AppMigration {
 
 class AppMigrator(
     private val migrations: List<AppMigration>,
-    private val appMigrationQueries: net.frozendevelopment.openletters.data.sqldelight.AppMigrationQueries,
+    private val appMigrationQueries: AppMigrationQueries,
 ) {
     fun migrate() {
         for (migration in migrations) {

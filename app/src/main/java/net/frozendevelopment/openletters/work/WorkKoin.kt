@@ -1,18 +1,20 @@
 package net.frozendevelopment.openletters.work
 
-import android.content.Context
-import androidx.work.WorkerParameters
-import net.frozendevelopment.openletters.migration.AppMigrator
-import org.koin.android.annotation.KoinWorker
-import org.koin.core.annotation.Module
-import org.koin.core.annotation.Provided
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.dsl.worker
+import org.koin.dsl.module
 
-@Module
-class WorkKoin {
-    @KoinWorker
-    fun appMigrationWorker(
-        context: Context,
-        @Provided parameters: WorkerParameters,
-        appMigrator: AppMigrator,
-    ): AppMigrationWorker = AppMigrationWorker(context, parameters, appMigrator)
-}
+// @Module
+// class WorkKoin {
+//    @KoinWorker
+//    fun appMigrationWorker(
+//        context: Context,
+//        @Provided parameters: WorkerParameters,
+//        appMigrator: AppMigrator,
+//    ): AppMigrationWorker = AppMigrationWorker(context, parameters, appMigrator)
+// }
+
+val workKoinModule =
+    module {
+        worker { AppMigrationWorker(androidContext(), get(), get()) }
+    }

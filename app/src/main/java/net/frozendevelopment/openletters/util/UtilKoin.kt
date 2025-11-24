@@ -5,19 +5,30 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import org.koin.core.annotation.Factory
-import org.koin.core.annotation.Module
+import org.koin.dsl.module
+// import org.koin.core.annotation.Factory
+// import org.koin.core.annotation.Module
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
 
-@Module
-class UtilKoin {
-    @Factory
-    fun textExtractor(application: Application): TextExtractorType = TextExtractor(application)
+// // @Module
+// class UtilKoin {
+//    // @Factory
+//    fun textExtractor(application: Application): TextExtractorType = TextExtractor(application)
+//
+//    // @Factory
+//    fun documentManager(application: Application): DocumentManagerType = DocumentManager(application)
+//
+//    // @Factory
+//    fun themeManager(application: Application): ThemeManagerType = ThemeManager(datastore = application.dataStore)
+// }
 
-    @Factory
-    fun documentManager(application: Application): DocumentManagerType = DocumentManager(application)
-
-    @Factory
-    fun themeManager(application: Application): ThemeManagerType = ThemeManager(datastore = application.dataStore)
-}
+val utilKoinModule =
+    module {
+        factory<TextExtractorType> { TextExtractor(get()) }
+        factory<DocumentManagerType> { DocumentManager(get()) }
+        factory<ThemeManagerType> {
+            val app: Application = get()
+            ThemeManager(datastore = app.dataStore)
+        }
+    }

@@ -1,6 +1,10 @@
 package net.frozendevelopment.openletters.feature.reminder.detail
 
+import android.Manifest
 import android.app.Activity
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,11 +44,62 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+import net.frozendevelopment.openletters.DEEP_LINK_URI
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.dateTimeString
 import net.frozendevelopment.openletters.extensions.openAppSettings
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.ui.components.LetterCell
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
+import org.koin.dsl.navigation3.navigation
+
+@Serializable
+data class ReminderDetailDestination(
+    val reminderId: ReminderId,
+) : NavKey {
+    companion object {
+        const val DEEP_LINK_PATTERN = "$DEEP_LINK_URI/reminder/{reminderId}"
+    }
+}
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.reminderDetailNavigation() =
+    navigation<ReminderDetailDestination> { route ->
+        val navigator = LocalNavigator.current
+        val viewModel = koinViewModel<ReminderDetailViewModel> { parametersOf(route.reminderId) }
+        val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+        val notificationPermissionResultLauncher =
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = viewModel::handlePermissionResult,
+            )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && (state as? ReminderDetailState.Detail)?.hasNotificationPermission == false) {
+            LaunchedEffect(Unit) {
+                notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+
+        Surface {
+            ReminderDetailScreen(
+                modifier = Modifier.fillMaxWidth(),
+                state = state,
+                onBackClicked = navigator::pop,
+                onAcknowledgeClicked = viewModel::acknowledge,
+                onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
+            )
+        }
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

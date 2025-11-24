@@ -1,13 +1,15 @@
 package net.frozendevelopment.openletters.feature.letter.image
 
-import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -21,23 +23,43 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.ui.components.LazyImageView
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 data class ImageDestination(
     val uri: String,
-)
+) : NavKey
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.imageViewNavigation() =
+    navigation<ImageDestination> { route ->
+        Surface(
+            color = Color.Black,
+            contentColor = Color.White,
+        ) {
+            ImageView(
+                modifier = Modifier.fillMaxSize(),
+                uri = route.uri.toUri(),
+                onBackClick = {},
+            )
+        }
+    }
 
 @Composable
 fun ImageView(
@@ -45,7 +67,7 @@ fun ImageView(
     uri: Uri,
     onBackClick: () -> Unit,
 ) {
-    val activity = LocalContext.current as? Activity
+    val activity = LocalActivity.current
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
     var offset by remember { mutableStateOf(Offset.Zero) }
