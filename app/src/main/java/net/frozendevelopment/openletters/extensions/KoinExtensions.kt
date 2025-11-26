@@ -17,7 +17,7 @@ import org.koin.core.module._singleInstanceFactory
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.ScopeDSL
-import org.koin.dsl.navigation3.navigation
+import net.frozendevelopment.openletters.extensions.navigation
 
 /**
  * Declares a scoped navigation entry within a Koin scope DSL.
@@ -45,15 +45,16 @@ import org.koin.dsl.navigation3.navigation
 @KoinExperimentalAPI
 @KoinDslMarker
 @OptIn(KoinInternalApi::class)
-inline fun <reified T : NavKey> ScopeDSL.navigation(
+inline fun <reified T : Any> ScopeDSL.navigation(
     metadata: Map<String, Any> = emptyMap(),
     noinline definition: @Composable Scope.(T) -> Unit,
 ): KoinDefinition<EntryProviderInstaller> {
     val def = _scopedInstanceFactory<EntryProviderInstaller>(named<T>(), {
-        val scope = this {
+        val scope = this
+        {
             entry<T>(
                 metadata = metadata,
-                content = { t -> definition(scope, t) },
+                content = { t -> definition(scope, t) }
             )
         }
     }, scopeQualifier)
@@ -92,16 +93,18 @@ inline fun <reified T : Any> Module.navigation(
     noinline definition: @Composable Scope.(T) -> Unit,
 ): KoinDefinition<EntryProviderInstaller> {
     val def = _singleInstanceFactory<EntryProviderInstaller>(named<T>(), {
-        val scope = this {
+        val scope = this
+        {
             entry<T>(
                 metadata = metadata,
-                content = { t -> definition(scope, t) },
+                content = { t -> definition(scope, t) }
             )
         }
     })
     indexPrimaryType(def)
     return KoinDefinition(this, def)
 }
+
 
 typealias EntryProvider = (NavKey) -> NavEntry<NavKey>
 

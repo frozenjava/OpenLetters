@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,6 +33,7 @@ import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
+import net.frozendevelopment.openletters.ui.navigation.ListDetailScene.Companion.listPane
 import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
@@ -41,11 +44,11 @@ import org.koin.core.module.Module
 @Serializable
 data object LetterListDestination : NavKey
 
-@OptIn(KoinExperimentalAPI::class)
+@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
 fun Module.letterListNavigation() = navigation<LetterListDestination>(
     metadata = NavDisplay.transitionSpec {
         EnterTransition.None togetherWith ExitTransition.None
-    },
+    } + SupportingPaneSceneStrategy.mainPane()
 ) { route ->
     val drawerState = LocalDrawerState.current
     val navigator = LocalNavigator.current

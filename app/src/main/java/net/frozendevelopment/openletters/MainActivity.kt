@@ -15,20 +15,31 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
+import androidx.compose.material3.adaptive.navigation3.rememberSupportingPaneSceneStrategy
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.scene.SceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
+import net.frozendevelopment.openletters.extensions.EntryProvider
+import net.frozendevelopment.openletters.extensions.koinEntryProvider
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ManageCategoryDestination
 import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
@@ -37,13 +48,12 @@ import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDesti
 import net.frozendevelopment.openletters.feature.settings.SettingsDestination
 import net.frozendevelopment.openletters.ui.animation.popTransitionSpec
 import net.frozendevelopment.openletters.ui.animation.pushTransitionSpec
-import net.frozendevelopment.openletters.ui.navigation.EntryProvider
 import net.frozendevelopment.openletters.ui.navigation.LettersNavDrawer
 import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigationState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.navigation.Navigator
-import net.frozendevelopment.openletters.ui.navigation.koinEntryProvider
+import net.frozendevelopment.openletters.ui.navigation.rememberListDetailSceneStrategy
 import net.frozendevelopment.openletters.ui.navigation.rememberNavigationState
 import net.frozendevelopment.openletters.ui.navigation.toEntries
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
@@ -55,7 +65,7 @@ class MainActivity : ComponentActivity() {
     private val themeManager: ThemeManagerType by inject()
     private val letterQueries: LetterQueries by inject()
 
-    @OptIn(KoinExperimentalAPI::class)
+    @OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3AdaptiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -65,28 +75,39 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val currentTheme by themeManager.current.collectAsStateWithLifecycle()
+            val listDetailSceneStrategy = rememberListDetailSceneStrategy<NavKey>()
+
+            val coroutineScope = rememberCoroutineScope()
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
+            val navigationState = rememberNavigationState(
+                LetterListDestination,
+                setOf(
+                    LetterListDestination,
+                    ManageCategoryDestination,
+                    ReminderListDestination,
+                ),
+            )
+            val navigator = remember { Navigator(navigationState) }
+            val entryProvider: EntryProvider = koinEntryProvider()
+
+            val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+            val directive = remember(windowAdaptiveInfo) {
+                calculatePaneScaffoldDirective(windowAdaptiveInfo)
+                    .copy(horizontalPartitionSpacerSize = 0.dp, verticalPartitionSpacerSize = 0.dp)
+            }
+
+            // Override the defaults so that the supporting pane can be dismissed by pressing back.
+            // See b/445826749
+            val supportingPaneStrategy = rememberSupportingPaneSceneStrategy<NavKey>(
+                backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
+                directive = directive
+            )
+
 
             OpenLettersTheme(
                 appTheme = currentTheme.first,
                 colorPalette = currentTheme.second,
             ) {
-                val coroutineScope = rememberCoroutineScope()
-                val drawerState = rememberDrawerState(DrawerValue.Closed)
-                val navigationState = rememberNavigationState(
-                    LetterListDestination,
-                    setOf(
-                        LetterListDestination,
-                        ManageCategoryDestination,
-                        ReminderListDestination,
-                    ),
-                )
-                val navigator = remember { Navigator(navigationState) }
-                val entryProvider: EntryProvider = koinEntryProvider()
-
-                // lock the app to portrait for phone users
-                if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                }
 
                 LettersNavDrawer(
                     drawerState = drawerState,
@@ -134,10 +155,7 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         NavDisplay(
                                             entries = navigationState.toEntries(entryProvider),
-//                                            entryDecorators = listOf(
-//                                                rememberSaveableStateHolderNavEntryDecorator(),
-//                                                rememberViewModelStoreNavEntryDecorator()
-//                                            ),
+                                            sceneStrategy = supportingPaneStrategy,
                                             onBack = { navigator.pop() },
                                             transitionSpec = { pushTransitionSpec() },
                                             popTransitionSpec = { popTransitionSpec() },

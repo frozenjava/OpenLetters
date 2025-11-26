@@ -38,7 +38,7 @@ import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
-import org.koin.dsl.navigation3.navigation
+import net.frozendevelopment.openletters.extensions.navigation
 
 @Serializable
 data object SettingsDestination : NavKey

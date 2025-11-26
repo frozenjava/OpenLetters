@@ -72,7 +72,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
-import org.koin.dsl.navigation3.navigation
+import net.frozendevelopment.openletters.extensions.navigation
 import java.time.LocalDateTime
 
 @Serializable
