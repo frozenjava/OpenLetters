@@ -25,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,13 +34,62 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.extensions.Random
 import net.frozendevelopment.openletters.extensions.contrastColor
 import net.frozendevelopment.openletters.ui.components.CategoryPill
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
+import org.koin.dsl.navigation3.navigation
+
+@Serializable
+data class CategoryFormDestination(
+    val mode: Mode = Mode.Create,
+) : NavKey {
+    sealed interface Mode {
+        @Serializable
+        data object Create : Mode
+
+        @Serializable
+        data class Edit(
+            val id: CategoryId,
+        ) : Mode
+    }
+}
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.categoryFormNavigation() = navigation<CategoryFormDestination> { route ->
+    val navigator = LocalNavigator.current
+    val viewModel = koinViewModel<CategoryFormViewModel> { parametersOf(route.mode) }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
+
+    Surface {
+        CategoryFormView(
+            state = state,
+            onLabelChanged = viewModel::setLabel,
+            onColorChanged = viewModel::setColor,
+            onBackClicked = navigator::onBackPressed,
+            onSaveClicked = {
+                coroutineScope.launch {
+                    viewModel.save()
+                    navigator.onBackPressed()
+                }
+            },
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -171,7 +221,7 @@ private fun CategoryForm() {
     CategoryFormPreview(
         state =
             CategoryFormState(
-                mode = CategoryFormMode.Create,
+                mode = CategoryFormDestination.Mode.Create,
                 label = "",
                 color = Color(0xFF0F0FF0),
             ),

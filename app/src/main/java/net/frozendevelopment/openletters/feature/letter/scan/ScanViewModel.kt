@@ -119,20 +119,19 @@ class ScanViewModel(
             }
     }
 
-    fun getScanner(pageLimit: Int = 0): GmsDocumentScanner =
-        GmsDocumentScanning.getClient(
-            GmsDocumentScannerOptions
-                .Builder()
-                .apply {
-                    setGalleryImportAllowed(false)
-                    setResultFormats(RESULT_FORMAT_JPEG)
-                    setScannerMode(SCANNER_MODE_FULL)
+    fun getScanner(pageLimit: Int = 0): GmsDocumentScanner = GmsDocumentScanning.getClient(
+        GmsDocumentScannerOptions
+            .Builder()
+            .apply {
+                setGalleryImportAllowed(false)
+                setResultFormats(RESULT_FORMAT_JPEG)
+                setScannerMode(SCANNER_MODE_FULL)
 
-                    if (pageLimit > 0) {
-                        setPageLimit(pageLimit)
-                    }
-                }.build(),
-        )
+                if (pageLimit > 0) {
+                    setPageLimit(pageLimit)
+                }
+            }.build(),
+    )
 
     fun importScannedDocuments(scanResult: GmsDocumentScanningResult?) {
         viewModelScope.launch(ioDispatcher) {
@@ -190,61 +189,56 @@ class ScanViewModel(
         }
     }
 
-    fun toggleCategory(category: Category) =
-        viewModelScope.launch {
-            val selectedCategories = state.selectedCategories.toMutableSet()
+    fun toggleCategory(category: Category) = viewModelScope.launch {
+        val selectedCategories = state.selectedCategories.toMutableSet()
 
-            if (selectedCategories.contains(category)) {
-                selectedCategories.remove(category)
-            } else {
-                selectedCategories.add(category)
-            }
-
-            update { copy(selectedCategories = selectedCategories) }
+        if (selectedCategories.contains(category)) {
+            selectedCategories.remove(category)
+        } else {
+            selectedCategories.add(category)
         }
 
-    fun setSender(sender: String) =
-        viewModelScope.launch {
-            update {
-                copy(
-                    sender = sender,
-                    possibleSenders = searchSendersAndRecipients(sender),
-                )
-            }
+        update { copy(selectedCategories = selectedCategories) }
+    }
+
+    fun setSender(sender: String) = viewModelScope.launch {
+        update {
+            copy(
+                sender = sender,
+                possibleSenders = searchSendersAndRecipients(sender),
+            )
+        }
+    }
+
+    fun setRecipient(recipient: String) = viewModelScope.launch {
+        update {
+            copy(
+                recipient = recipient,
+                possibleRecipients = searchSendersAndRecipients(recipient),
+            )
+        }
+    }
+
+    fun setTranscript(transcript: String) = viewModelScope.launch {
+        update { copy(transcript = transcript.takeIf { it.isNotBlank() }) }
+    }
+
+    fun removeDocument(documentId: DocumentId) = viewModelScope.launch {
+        update {
+            copy(
+                newDocuments =
+                    newDocuments
+                        .toMutableMap()
+                        .apply { remove(documentId) },
+                existingDocuments =
+                    existingDocuments
+                        .toMutableMap()
+                        .apply { remove(documentId) },
+            )
         }
 
-    fun setRecipient(recipient: String) =
-        viewModelScope.launch {
-            update {
-                copy(
-                    recipient = recipient,
-                    possibleRecipients = searchSendersAndRecipients(recipient),
-                )
-            }
-        }
-
-    fun setTranscript(transcript: String) =
-        viewModelScope.launch {
-            update { copy(transcript = transcript.takeIf { it.isNotBlank() }) }
-        }
-
-    fun removeDocument(documentId: DocumentId) =
-        viewModelScope.launch {
-            update {
-                copy(
-                    newDocuments =
-                        newDocuments
-                            .toMutableMap()
-                            .apply { remove(documentId) },
-                    existingDocuments =
-                        existingDocuments
-                            .toMutableMap()
-                            .apply { remove(documentId) },
-                )
-            }
-
-            rebuildTranscript()
-        }
+        rebuildTranscript()
+    }
 
     suspend fun save(): Boolean {
         update { copy(isBusy = true) }

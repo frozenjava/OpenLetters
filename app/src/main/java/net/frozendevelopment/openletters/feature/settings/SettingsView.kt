@@ -25,12 +25,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.feature.settings.ui.DropDownButton
 import net.frozendevelopment.openletters.ui.components.VersionStamp
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.AppTheme
 import net.frozendevelopment.openletters.ui.theme.ColorPalette
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
+
+@Serializable
+data object SettingsDestination : NavKey
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.settingsNavigation() = navigation<SettingsDestination> { route ->
+    val navigator = LocalNavigator.current
+    val viewModel: SettingsViewModel = koinViewModel()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+    Surface {
+        SettingsView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onBackClicked = navigator::onBackPressed,
+            onThemeChanged = viewModel::setTheme,
+            onColorVariantChanged = viewModel::setVariant,
+            onViewSourceClicked = { navigator.openUrl("https://github.com/frozenjava/OpenLetters") },
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

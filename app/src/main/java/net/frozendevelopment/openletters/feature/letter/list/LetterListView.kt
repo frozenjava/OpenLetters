@@ -6,21 +6,83 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.feature.letter.list.ui.EmptyListView
 import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
+import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
+import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
+import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
-data object LetterListDestination
+data object LetterListDestination : NavKey
+
+@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
+fun Module.letterListNavigation() = navigation<LetterListDestination>(
+    metadata = ListDetailSceneStrategy.listPane(LetterListDestination::class),
+) { route ->
+    val drawerState = LocalDrawerState.current
+    val navigator = LocalNavigator.current
+
+    val coroutineScope = rememberCoroutineScope()
+    val viewModel: LetterListViewModel = koinViewModel()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+    Surface {
+        LetterListView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onNavDrawerClicked = {
+                coroutineScope.launch {
+                    drawerState.apply {
+                        if (isClosed) open() else close()
+                    }
+                }
+            },
+            onScanClicked = { navigator.navigate(ScanLetterDestination()) },
+            toggleCategory = viewModel::toggleCategory,
+            setSearchTerms = viewModel::setSearchTerms,
+            openLetter = { id, edit ->
+                if (edit) {
+                    navigator.navigate(ScanLetterDestination(id))
+                } else {
+                    navigator.navigate(LetterDetailDestination(id))
+                }
+            },
+            onDeleteLetterClicked = viewModel::delete,
+            onReminderClicked = { id, edit ->
+                if (edit) {
+                    navigator.navigate(ReminderDetailDestination(id))
+                } else {
+                    navigator.navigate(ReminderDetailDestination(id))
+                }
+            },
+            onCreateReminderClicked = { navigator.navigate(ReminderFormDestination(preselectedLetters = it)) },
+        )
+    }
+}
 
 @Composable
 fun LetterListView(

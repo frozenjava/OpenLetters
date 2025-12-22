@@ -26,6 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,16 +44,59 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.mock.mockCategory
 import net.frozendevelopment.openletters.data.mock.mockLetter
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
+import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.extensions.dateString
+import net.frozendevelopment.openletters.feature.letter.image.ImageDestination
+import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
+import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
+import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.ui.components.BrokenImageView
 import net.frozendevelopment.openletters.ui.components.CategoryPill
 import net.frozendevelopment.openletters.ui.components.LazyImageView
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
+import org.koin.dsl.navigation3.navigation
+
+@Serializable
+data class LetterDetailDestination(
+    val letterId: LetterId,
+) : NavKey
+
+@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
+fun Module.letterDetailNavigation() = navigation<LetterDetailDestination>(
+    metadata = ListDetailSceneStrategy.detailPane(LetterListDestination::class),
+) { route ->
+    val navigator = LocalNavigator.current
+    val viewModel: LetterDetailViewModel = koinViewModel { parametersOf(route.letterId) }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+    Surface {
+        LetterDetailView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onEditClicked = { navigator.navigate(ScanLetterDestination(route.letterId)) },
+            onCreateReminderClicked = {
+                navigator.navigate(
+                    ReminderFormDestination(preselectedLetters = listOf(route.letterId)),
+                )
+            },
+            onBackClicked = { navigator.onBackPressed() },
+            onImageClick = { uri -> navigator.navigate(ImageDestination(uri.toString())) },
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

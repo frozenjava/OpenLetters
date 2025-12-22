@@ -1,6 +1,10 @@
 package net.frozendevelopment.openletters.feature.reminder.form
 
+import android.Manifest
 import android.app.Activity
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +39,9 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -44,16 +51,79 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
+import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.openAppSettings
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.ui.components.FormAppBar
 import net.frozendevelopment.openletters.ui.components.LetterCell
 import net.frozendevelopment.openletters.ui.components.SelectCell
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.core.parameter.parametersOf
+import org.koin.dsl.navigation3.navigation
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+@Serializable
+data class ReminderFormDestination(
+    val reminderId: ReminderId? = null,
+    val preselectedLetters: List<LetterId> = emptyList(),
+) : NavKey
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.reminderFormNavigation() = navigation<ReminderFormDestination> { route ->
+    val navigator = LocalNavigator.current
+    val coroutineScope = rememberCoroutineScope()
+    val viewModel =
+        koinViewModel<ReminderFormViewModel> {
+            parametersOf(route.reminderId, route.preselectedLetters)
+        }
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+    val notificationPermissionResultLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = viewModel::handlePermissionResult,
+        )
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
+        LaunchedEffect(Unit) {
+            notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    Surface {
+        ReminderFormView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            onTitleChanged = viewModel::setTitle,
+            onDescriptionChanged = viewModel::setDescription,
+            onDateSelected = viewModel::selectDate,
+            onTimeSelected = viewModel::selectTime,
+            toggleLetterSelect = viewModel::toggleLetterSelect,
+            onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
+            openDialog = viewModel::openDialog,
+            onBackClicked = navigator::onBackPressed,
+            onSaveClicked = {
+                coroutineScope.launch {
+                    if (viewModel.save()) {
+                        navigator.onBackPressed()
+                    }
+                }
+            },
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

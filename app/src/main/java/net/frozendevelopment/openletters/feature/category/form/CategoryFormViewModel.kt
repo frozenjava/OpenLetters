@@ -12,7 +12,7 @@ import net.frozendevelopment.openletters.util.StatefulViewModel
 
 @Immutable
 data class CategoryFormState(
-    private val mode: CategoryFormMode,
+    private val mode: CategoryFormDestination.Mode,
     val isBusy: Boolean = true,
     val label: String = "",
     val color: Color = Color.Random,
@@ -22,25 +22,25 @@ data class CategoryFormState(
     val title: String
         get() =
             when (mode) {
-                is CategoryFormMode.Create -> "Create Category"
-                is CategoryFormMode.Edit -> "Edit Category"
+                is CategoryFormDestination.Mode.Create -> "Create Category"
+                is CategoryFormDestination.Mode.Edit -> "Edit Category"
             }
 }
 
 class CategoryFormViewModel(
-    private val mode: CategoryFormMode,
+    private val mode: CategoryFormDestination.Mode,
     private val upsertCategoryUseCase: UpsertCategoryUseCase,
     private val categoryQueries: CategoryQueries,
 ) : StatefulViewModel<CategoryFormState>(CategoryFormState(mode)) {
     private val categoryId: CategoryId
         get() =
             when (mode) {
-                is CategoryFormMode.Create -> CategoryId.random()
-                is CategoryFormMode.Edit -> mode.id
+                is CategoryFormDestination.Mode.Create -> CategoryId.random()
+                is CategoryFormDestination.Mode.Edit -> mode.id
             }
 
     override fun load() {
-        if (mode is CategoryFormMode.Edit) {
+        if (mode is CategoryFormDestination.Mode.Edit) {
             val category = categoryQueries.get(mode.id).executeAsOneOrNull()
             if (category != null) {
                 update {
@@ -56,15 +56,13 @@ class CategoryFormViewModel(
         }
     }
 
-    fun setLabel(label: String) =
-        viewModelScope.launch {
-            update { copy(label = label) }
-        }
+    fun setLabel(label: String) = viewModelScope.launch {
+        update { copy(label = label) }
+    }
 
-    fun setColor(color: Color) =
-        viewModelScope.launch {
-            update { copy(color = color) }
-        }
+    fun setColor(color: Color) = viewModelScope.launch {
+        update { copy(color = color) }
+    }
 
     suspend fun save() {
         upsertCategoryUseCase(

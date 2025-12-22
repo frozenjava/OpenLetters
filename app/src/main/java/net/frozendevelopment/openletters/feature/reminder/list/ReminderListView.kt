@@ -1,6 +1,13 @@
 package net.frozendevelopment.openletters.feature.reminder.list
 
+import android.Manifest
 import android.app.Activity
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,26 +28,94 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.NavDisplay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.openAppSettings
+import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.feature.reminder.list.ui.EmptyReminderListCell
 import net.frozendevelopment.openletters.ui.components.ActionReminderCell
 import net.frozendevelopment.openletters.ui.components.ReminderPeekMenu
+import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
-object ReminderListDestination
+object ReminderListDestination : NavKey
+
+@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
+fun Module.reminderListNavigation() = navigation<ReminderListDestination>(
+    metadata = NavDisplay.transitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + NavDisplay.popTransitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + NavDisplay.predictivePopTransitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + ListDetailSceneStrategy.listPane(ReminderListDestination::class),
+) { route ->
+    val navigator = LocalNavigator.current
+    val drawerState = LocalDrawerState.current
+    val coroutineScope = rememberCoroutineScope()
+    val viewModel = koinViewModel<ReminderListViewModel>()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+
+    val notificationPermissionResultLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = viewModel::handlePermissionResult,
+        )
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
+        LaunchedEffect(Unit) {
+            notificationPermissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    Surface {
+        ReminderListView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            openNavigationDrawer = {
+                coroutineScope.launch {
+                    drawerState.apply {
+                        if (isClosed) open() else close()
+                    }
+                }
+            },
+            onReminderClicked = { id, edit ->
+                if (edit) {
+                    navigator.navigate(ReminderFormDestination(id))
+                } else {
+                    navigator.navigate(ReminderDetailDestination(id))
+                }
+            },
+            createReminderClicked = { navigator.navigate(ReminderFormDestination()) },
+            onDeleteReminderClicked = viewModel::delete,
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

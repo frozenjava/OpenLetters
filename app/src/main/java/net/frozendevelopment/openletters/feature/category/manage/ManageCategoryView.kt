@@ -1,5 +1,8 @@
 package net.frozendevelopment.openletters.feature.category.manage
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,18 +46,70 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
+import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ui.CategoryRow
 import net.frozendevelopment.openletters.feature.category.manage.ui.EmptyCategoryListCell
+import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
+import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
-object ManageCategoryDestination
+object ManageCategoryDestination : NavKey
 
 private data class DraggableItem(
     val index: Int,
 )
+
+@OptIn(KoinExperimentalAPI::class)
+fun Module.manageCategoryNavigation() = navigation<ManageCategoryDestination>(
+    metadata = NavDisplay.transitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + NavDisplay.popTransitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    } + NavDisplay.predictivePopTransitionSpec {
+        EnterTransition.None togetherWith ExitTransition.None
+    },
+) { route ->
+    val drawerState = LocalDrawerState.current
+    val navigator = LocalNavigator.current
+    val viewModel = koinViewModel<ManageCategoryViewModel>()
+    val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
+
+    Surface {
+        ManageCategoryView(
+            state = state,
+            openNavigationDrawer = {
+                coroutineScope.launch {
+                    drawerState.apply {
+                        if (isClosed) open() else close()
+                    }
+                }
+            },
+            editCategoryClicked = { categoryId ->
+                val mode =
+                    if (categoryId == null) {
+                        CategoryFormDestination.Mode.Create
+                    } else {
+                        CategoryFormDestination.Mode.Edit(categoryId)
+                    }
+                navigator.navigate(CategoryFormDestination(mode = mode))
+            },
+            onDeleteClicked = viewModel::delete,
+            onMove = viewModel::onMove,
+            onMoveComplete = viewModel::saveOrder,
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

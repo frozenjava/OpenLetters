@@ -98,28 +98,25 @@ class LetterListViewModel(
         }
     }
 
-    fun delete(id: LetterId) =
-        viewModelScope.launch {
-            deleteLetter(id)
-            load()
-        }
+    fun delete(id: LetterId) = viewModelScope.launch {
+        deleteLetter(id)
+        load()
+    }
 
-    fun toggleCategory(category: CategoryId?) =
-        viewModelScope.launch {
-            val toggleCategory =
-                if (category == state.selectedCategoryId) {
-                    null
-                } else {
-                    category
-                }
+    fun toggleCategory(category: CategoryId?) = viewModelScope.launch {
+        val toggleCategory =
+            if (category == state.selectedCategoryId) {
+                null
+            } else {
+                category
+            }
 
-            update { copy(selectedCategoryId = toggleCategory) }
-            load(categoryFilter = toggleCategory, searchTerms = state.searchTerms)
-        }
+        update { copy(selectedCategoryId = toggleCategory) }
+        load(categoryFilter = toggleCategory, searchTerms = state.searchTerms)
+    }
 
-    fun setSearchTerms(terms: String) =
-        viewModelScope.launch {
-            update { copy(searchTerms = terms) }
-            load(state.selectedCategoryId, searchTerms = terms)
-        }
+    fun setSearchTerms(terms: String) = viewModelScope.launch {
+        update { copy(searchTerms = terms) }
+        load(state.selectedCategoryId, searchTerms = terms)
+    }
 }

@@ -1,4 +1,4 @@
-package net.frozendevelopment.openletters.ui.components
+package net.frozendevelopment.openletters.ui.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,26 +6,27 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import net.frozendevelopment.openletters.R
-import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
+import net.frozendevelopment.openletters.ui.components.VersionStamp
+import net.frozendevelopment.openletters.ui.preview.PreviewContainer
+
+val LocalDrawerState = compositionLocalOf<DrawerState> { error("NavigationState not provided") }
 
 @Composable
 fun LettersNavDrawer(
-    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
+    drawerState: DrawerState = LocalDrawerState.current,
     goToMail: () -> Unit,
     goToManageCategories: () -> Unit,
     goToCreateCategory: () -> Unit,
@@ -129,19 +130,17 @@ private fun DrawerContent(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun MailNavDrawerPreview() {
-    OpenLettersTheme {
-        Surface {
-            DrawerContent(
-                goToMail = {},
-                goToManageCategories = {},
-                goToCreateCategory = {},
-                goToReminders = {},
-                goToCreateReminder = {},
-                goToSettings = {},
-            )
-        }
+    PreviewContainer {
+        DrawerContent(
+            goToMail = {},
+            goToManageCategories = {},
+            goToCreateCategory = {},
+            goToReminders = {},
+            goToCreateReminder = {},
+            goToSettings = {},
+        )
     }
 }
