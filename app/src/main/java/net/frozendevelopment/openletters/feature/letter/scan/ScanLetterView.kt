@@ -169,7 +169,7 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
                     if (viewModel.save()) {
                         withContext(Dispatchers.Main) {
                             if (route.canNavigateBack) {
-                                navigator.pop()
+                                navigator.onBackPressed()
                             } else {
                                 navigator.navigate { backStack ->
                                     backStack.add(0, LetterListDestination)
@@ -180,7 +180,7 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
                     }
                 }
             },
-            onBackClicked = navigator::pop,
+            onBackClicked = navigator::onBackPressed,
             onDeleteDocumentClicked = viewModel::removeDocument,
             onCreateCategoryClicked = { navigator.navigate(CategoryFormDestination(CategoryFormDestination.Mode.Create)) },
         )

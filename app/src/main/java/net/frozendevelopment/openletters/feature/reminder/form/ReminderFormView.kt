@@ -113,11 +113,11 @@ fun Module.reminderFormNavigation() = navigation<ReminderFormDestination> { rout
             toggleLetterSelect = viewModel::toggleLetterSelect,
             onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
             openDialog = viewModel::openDialog,
-            onBackClicked = navigator::pop,
+            onBackClicked = navigator::onBackPressed,
             onSaveClicked = {
                 coroutineScope.launch {
                     if (viewModel.save()) {
-                        navigator.pop()
+                        navigator.onBackPressed()
                     }
                 }
             },

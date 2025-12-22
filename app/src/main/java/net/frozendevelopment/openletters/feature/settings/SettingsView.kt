@@ -53,10 +53,10 @@ fun Module.settingsNavigation() = navigation<SettingsDestination> { route ->
         SettingsView(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            onBackClicked = navigator::pop,
+            onBackClicked = navigator::onBackPressed,
             onThemeChanged = viewModel::setTheme,
             onColorVariantChanged = viewModel::setVariant,
-            onViewSourceClicked = {}, // { navigator.openUrl("https://github.com/frozenjava/OpenLetters") },
+            onViewSourceClicked = { navigator.openUrl("https://github.com/frozenjava/OpenLetters") },
         )
     }
 }

@@ -1,6 +1,9 @@
 package net.frozendevelopment.openletters
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
@@ -85,7 +89,19 @@ class MainActivity : ComponentActivity() {
                 ReminderListDestination,
             ),
         )
-        val navigator = remember { Navigator(navigationState, onBackPressedDispatcher) }
+        val navigator = remember {
+            Navigator(
+                state = navigationState,
+                backPressedDispatcher = onBackPressedDispatcher,
+                openInBrowser = {
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, it.toUri()))
+                    } catch (_: ActivityNotFoundException) {
+                        Toast.makeText(this, "No browser found", Toast.LENGTH_SHORT).show()
+                    }
+                },
+            )
+        }
         val entryProvider: EntryProvider = koinEntryProvider()
 
         val windowAdaptiveInfo = currentWindowAdaptiveInfo()

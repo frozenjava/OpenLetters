@@ -98,7 +98,7 @@ fun Module.reminderDetailNavigation() = navigation<ReminderDetailDestination>(
         ReminderDetailScreen(
             modifier = Modifier.fillMaxWidth(),
             state = state,
-            onBackClicked = navigator::pop,
+            onBackClicked = navigator::onBackPressed,
             onAcknowledgeClicked = viewModel::acknowledge,
             onLetterClicked = { navigator.navigate(LetterDetailDestination(it)) },
         )

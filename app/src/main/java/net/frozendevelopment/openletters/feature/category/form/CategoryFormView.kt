@@ -80,11 +80,11 @@ fun Module.categoryFormNavigation() = navigation<CategoryFormDestination> { rout
             state = state,
             onLabelChanged = viewModel::setLabel,
             onColorChanged = viewModel::setColor,
-            onBackClicked = navigator::pop,
+            onBackClicked = navigator::onBackPressed,
             onSaveClicked = {
                 coroutineScope.launch {
                     viewModel.save()
-                    navigator.pop()
+                    navigator.onBackPressed()
                 }
             },
         )

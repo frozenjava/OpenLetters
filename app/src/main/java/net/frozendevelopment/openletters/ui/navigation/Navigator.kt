@@ -16,12 +16,15 @@ interface NavigatorType {
     fun pop()
 
     fun onBackPressed()
+
+    fun openUrl(url: String)
 }
 
 @Stable
 class Navigator(
     val state: NavigationState,
     val backPressedDispatcher: OnBackPressedDispatcher? = null,
+    val openInBrowser: (url: String) -> Unit = {},
 ) : NavigatorType {
     override fun navigate(route: NavKey) {
         if (route in state.backStacks.keys) {
@@ -53,6 +56,8 @@ class Navigator(
     override fun onBackPressed() {
         backPressedDispatcher?.onBackPressed()
     }
+
+    override fun openUrl(url: String) = openInBrowser(url)
 }
 
 class PreviewNavigator : NavigatorType {
@@ -63,4 +68,6 @@ class PreviewNavigator : NavigatorType {
     override fun pop() {}
 
     override fun onBackPressed() {}
+
+    override fun openUrl(url: String) {}
 }
