@@ -52,7 +52,6 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
-import net.frozendevelopment.openletters.extensions.navigation
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
 import net.frozendevelopment.openletters.feature.category.manage.ui.CategoryRow
 import net.frozendevelopment.openletters.feature.category.manage.ui.EmptyCategoryListCell
@@ -61,6 +60,7 @@ import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 object ManageCategoryDestination : NavKey

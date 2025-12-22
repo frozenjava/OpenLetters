@@ -27,7 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,21 +54,20 @@ import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.extensions.dateString
-import net.frozendevelopment.openletters.extensions.navigation
 import net.frozendevelopment.openletters.feature.letter.image.ImageDestination
+import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
 import net.frozendevelopment.openletters.ui.components.BrokenImageView
 import net.frozendevelopment.openletters.ui.components.CategoryPill
 import net.frozendevelopment.openletters.ui.components.LazyImageView
-import net.frozendevelopment.openletters.ui.navigation.ListDetailScene.Companion.detailPane
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
-
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 data class LetterDetailDestination(
@@ -77,7 +76,7 @@ data class LetterDetailDestination(
 
 @OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
 fun Module.letterDetailNavigation() = navigation<LetterDetailDestination>(
-    metadata = SupportingPaneSceneStrategy.supportingPane()
+    metadata = ListDetailSceneStrategy.detailPane(LetterListDestination::class),
 ) { route ->
     val navigator = LocalNavigator.current
     val viewModel: LetterDetailViewModel = koinViewModel { parametersOf(route.letterId) }
@@ -93,7 +92,7 @@ fun Module.letterDetailNavigation() = navigation<LetterDetailDestination>(
                     ReminderFormDestination(preselectedLetters = listOf(route.letterId)),
                 )
             },
-            onBackClicked = navigator::pop,
+            onBackClicked = { navigator.onBackPressed() },
             onImageClick = { uri -> navigator.navigate(ImageDestination(uri.toString())) },
         )
     }

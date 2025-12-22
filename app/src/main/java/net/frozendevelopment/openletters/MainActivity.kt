@@ -1,6 +1,5 @@
 package net.frozendevelopment.openletters
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,8 +18,9 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
-import androidx.compose.material3.adaptive.navigation3.rememberSupportingPaneSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,14 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.scene.SceneStrategy
-import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
-import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
-import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.extensions.EntryProvider
 import net.frozendevelopment.openletters.extensions.koinEntryProvider
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
@@ -53,7 +47,6 @@ import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigationState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.navigation.Navigator
-import net.frozendevelopment.openletters.ui.navigation.rememberListDetailSceneStrategy
 import net.frozendevelopment.openletters.ui.navigation.rememberNavigationState
 import net.frozendevelopment.openletters.ui.navigation.toEntries
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
@@ -63,7 +56,6 @@ import org.koin.core.annotation.KoinExperimentalAPI
 
 class MainActivity : ComponentActivity() {
     private val themeManager: ThemeManagerType by inject()
-    private val letterQueries: LetterQueries by inject()
 
     @OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalMaterial3AdaptiveApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,94 +66,95 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val currentTheme by themeManager.current.collectAsStateWithLifecycle()
-            val listDetailSceneStrategy = rememberListDetailSceneStrategy<NavKey>()
+            App()
+        }
+    }
 
-            val coroutineScope = rememberCoroutineScope()
-            val drawerState = rememberDrawerState(DrawerValue.Closed)
-            val navigationState = rememberNavigationState(
+    @OptIn(ExperimentalMaterial3AdaptiveApi::class)
+    @Composable
+    private fun App() {
+        val currentTheme by themeManager.current.collectAsStateWithLifecycle()
+
+        val coroutineScope = rememberCoroutineScope()
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val navigationState = rememberNavigationState(
+            LetterListDestination,
+            setOf(
                 LetterListDestination,
-                setOf(
-                    LetterListDestination,
-                    ManageCategoryDestination,
-                    ReminderListDestination,
-                ),
-            )
-            val navigator = remember { Navigator(navigationState) }
-            val entryProvider: EntryProvider = koinEntryProvider()
+                ManageCategoryDestination,
+                ReminderListDestination,
+            ),
+        )
+        val navigator = remember { Navigator(navigationState, onBackPressedDispatcher) }
+        val entryProvider: EntryProvider = koinEntryProvider()
 
-            val windowAdaptiveInfo = currentWindowAdaptiveInfo()
-            val directive = remember(windowAdaptiveInfo) {
-                calculatePaneScaffoldDirective(windowAdaptiveInfo)
-                    .copy(horizontalPartitionSpacerSize = 0.dp, verticalPartitionSpacerSize = 0.dp)
-            }
+        val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+        val directive = remember(windowAdaptiveInfo) {
+            calculatePaneScaffoldDirective(windowAdaptiveInfo)
+                .copy(horizontalPartitionSpacerSize = 0.dp, verticalPartitionSpacerSize = 0.dp)
+        }
 
-            // Override the defaults so that the supporting pane can be dismissed by pressing back.
-            // See b/445826749
-            val supportingPaneStrategy = rememberSupportingPaneSceneStrategy<NavKey>(
-                backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
-                directive = directive
-            )
+        val supportingPaneStrategy = rememberListDetailSceneStrategy<NavKey>(
+            backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
+            directive = directive,
+        )
 
-
-            OpenLettersTheme(
-                appTheme = currentTheme.first,
-                colorPalette = currentTheme.second,
+        OpenLettersTheme(
+            appTheme = currentTheme.first,
+            colorPalette = currentTheme.second,
+        ) {
+            LettersNavDrawer(
+                drawerState = drawerState,
+                goToMail = {
+                    coroutineScope.launch { drawerState.close() }
+                    navigator.navigate(LetterListDestination)
+                },
+                goToManageCategories = {
+                    coroutineScope.launch { drawerState.close() }
+                    navigator.navigate(ManageCategoryDestination)
+                },
+                goToCreateCategory = {
+                    coroutineScope.launch { drawerState.close() }
+                    navigator.navigate(CategoryFormDestination())
+                },
+                goToReminders = {
+                    coroutineScope.launch { drawerState.close() }
+                    navigator.navigate(ReminderListDestination)
+                },
+                goToCreateReminder = {
+                    coroutineScope.launch { drawerState.close() }
+                    navigator.navigate(ReminderFormDestination())
+                },
+                goToSettings = {
+                    coroutineScope.launch { drawerState.close() }
+                    navigator.navigate(SettingsDestination)
+                },
             ) {
-
-                LettersNavDrawer(
-                    drawerState = drawerState,
-                    goToMail = {
-                        coroutineScope.launch { drawerState.close() }
-                        navigator.navigate(LetterListDestination)
-                    },
-                    goToManageCategories = {
-                        coroutineScope.launch { drawerState.close() }
-                        navigator.navigate(ManageCategoryDestination)
-                    },
-                    goToCreateCategory = {
-                        coroutineScope.launch { drawerState.close() }
-                        navigator.navigate(CategoryFormDestination())
-                    },
-                    goToReminders = {
-                        coroutineScope.launch { drawerState.close() }
-                        navigator.navigate(ReminderListDestination)
-                    },
-                    goToCreateReminder = {
-                        coroutineScope.launch { drawerState.close() }
-                        navigator.navigate(ReminderFormDestination())
-                    },
-                    goToSettings = {
-                        coroutineScope.launch { drawerState.close() }
-                        navigator.navigate(SettingsDestination)
-                    },
-                ) {
-                    Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
-                        Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .statusBarsPadding()
-                                    .windowInsetsPadding(
-                                        WindowInsets.safeDrawing.only(
-                                            WindowInsetsSides.Horizontal,
-                                        ),
+                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding()
+                                .windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(
+                                        WindowInsetsSides.Horizontal,
                                     ),
-                        ) {
-                            CompositionLocalProvider(LocalDrawerState provides drawerState) {
-                                CompositionLocalProvider(LocalNavigationState provides navigationState) {
-                                    CompositionLocalProvider(
-                                        LocalNavigator provides navigator,
-                                    ) {
-                                        NavDisplay(
-                                            entries = navigationState.toEntries(entryProvider),
-                                            sceneStrategy = supportingPaneStrategy,
-                                            onBack = { navigator.pop() },
-                                            transitionSpec = { pushTransitionSpec() },
-                                            popTransitionSpec = { popTransitionSpec() },
-                                            predictivePopTransitionSpec = { popTransitionSpec() },
-                                        )
-                                    }
+                                ),
+                    ) {
+                        CompositionLocalProvider(LocalDrawerState provides drawerState) {
+                            CompositionLocalProvider(LocalNavigationState provides navigationState) {
+                                CompositionLocalProvider(
+                                    LocalNavigator provides navigator,
+                                ) {
+                                    NavDisplay(
+                                        entries = navigationState.toEntries(entryProvider),
+                                        sceneStrategy = supportingPaneStrategy,
+                                        onBack = { navigator.pop() },
+                                        transitionSpec = { pushTransitionSpec() },
+                                        popTransitionSpec = { popTransitionSpec() },
+                                        predictivePopTransitionSpec = { popTransitionSpec() },
+                                    )
                                 }
                             }
                         }

@@ -1,8 +1,5 @@
 package net.frozendevelopment.openletters.feature.letter.list
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,7 +7,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,35 +17,31 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
-import net.frozendevelopment.openletters.extensions.navigation
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.feature.letter.list.ui.EmptyListView
 import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
-import net.frozendevelopment.openletters.ui.navigation.ListDetailScene.Companion.listPane
 import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 data object LetterListDestination : NavKey
 
 @OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
 fun Module.letterListNavigation() = navigation<LetterListDestination>(
-    metadata = NavDisplay.transitionSpec {
-        EnterTransition.None togetherWith ExitTransition.None
-    } + SupportingPaneSceneStrategy.mainPane()
+    metadata = ListDetailSceneStrategy.listPane(LetterListDestination::class),
 ) { route ->
     val drawerState = LocalDrawerState.current
     val navigator = LocalNavigator.current

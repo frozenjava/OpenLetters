@@ -28,6 +28,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,13 +56,14 @@ import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.dateTimeString
 import net.frozendevelopment.openletters.extensions.openAppSettings
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.list.ReminderListDestination
 import net.frozendevelopment.openletters.ui.components.LetterCell
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
 import org.koin.core.parameter.parametersOf
-import net.frozendevelopment.openletters.extensions.navigation
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 data class ReminderDetailDestination(
@@ -71,8 +74,10 @@ data class ReminderDetailDestination(
     }
 }
 
-@OptIn(KoinExperimentalAPI::class)
-fun Module.reminderDetailNavigation() = navigation<ReminderDetailDestination> { route ->
+@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
+fun Module.reminderDetailNavigation() = navigation<ReminderDetailDestination>(
+    metadata = ListDetailSceneStrategy.detailPane(ReminderListDestination::class),
+) { route ->
     val navigator = LocalNavigator.current
     val viewModel = koinViewModel<ReminderDetailViewModel> { parametersOf(route.reminderId) }
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()

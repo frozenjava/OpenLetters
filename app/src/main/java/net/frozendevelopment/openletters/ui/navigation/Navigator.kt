@@ -1,5 +1,6 @@
 package net.frozendevelopment.openletters.ui.navigation
 
+import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation3.runtime.NavBackStack
@@ -14,12 +15,13 @@ interface NavigatorType {
 
     fun pop()
 
-    fun popUpTo(route: NavKey)
+    fun onBackPressed()
 }
 
 @Stable
 class Navigator(
     val state: NavigationState,
+    val backPressedDispatcher: OnBackPressedDispatcher? = null,
 ) : NavigatorType {
     override fun navigate(route: NavKey) {
         if (route in state.backStacks.keys) {
@@ -48,12 +50,8 @@ class Navigator(
         }
     }
 
-    override fun popUpTo(route: NavKey) {
-        val currentStack = state.backStacks[state.topLevelRoute] ?: error("No back stack for current route")
-        currentStack.indexOfLast { it == route }.takeIf { it != -1 }?.let { index ->
-            val itemsToRemove = currentStack.subList(index, currentStack.size)
-            currentStack.removeAll(itemsToRemove)
-        }
+    override fun onBackPressed() {
+        backPressedDispatcher?.onBackPressed()
     }
 }
 
@@ -64,5 +62,5 @@ class PreviewNavigator : NavigatorType {
 
     override fun pop() {}
 
-    override fun popUpTo(route: NavKey) {}
+    override fun onBackPressed() {}
 }

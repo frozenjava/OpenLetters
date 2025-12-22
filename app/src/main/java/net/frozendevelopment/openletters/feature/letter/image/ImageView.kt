@@ -39,7 +39,7 @@ import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.ui.components.LazyImageView
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
-import net.frozendevelopment.openletters.extensions.navigation
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 data class ImageDestination(

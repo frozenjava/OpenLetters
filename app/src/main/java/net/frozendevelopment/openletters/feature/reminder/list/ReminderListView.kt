@@ -28,6 +28,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,7 +49,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
-import net.frozendevelopment.openletters.extensions.navigation
 import net.frozendevelopment.openletters.extensions.openAppSettings
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
@@ -59,11 +60,12 @@ import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.module.Module
+import org.koin.dsl.navigation3.navigation
 
 @Serializable
 object ReminderListDestination : NavKey
 
-@OptIn(KoinExperimentalAPI::class)
+@OptIn(KoinExperimentalAPI::class, ExperimentalMaterial3AdaptiveApi::class)
 fun Module.reminderListNavigation() = navigation<ReminderListDestination>(
     metadata = NavDisplay.transitionSpec {
         EnterTransition.None togetherWith ExitTransition.None
@@ -71,7 +73,7 @@ fun Module.reminderListNavigation() = navigation<ReminderListDestination>(
         EnterTransition.None togetherWith ExitTransition.None
     } + NavDisplay.predictivePopTransitionSpec {
         EnterTransition.None togetherWith ExitTransition.None
-    },
+    } + ListDetailSceneStrategy.listPane(ReminderListDestination::class),
 ) { route ->
     val navigator = LocalNavigator.current
     val drawerState = LocalDrawerState.current
