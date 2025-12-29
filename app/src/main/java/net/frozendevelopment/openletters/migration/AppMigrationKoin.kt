@@ -2,6 +2,7 @@ package net.frozendevelopment.openletters.migration
 
 // import org.koin.core.annotation.Factory
 // import org.koin.core.annotation.Module
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 // // @Module
@@ -25,7 +26,9 @@ val appMigrationKoinModule =
         factory {
             AppMigrator(
                 appMigrationQueries = get(),
-                migrations = listOf(InitialCategoriesMigration(get())),
+                migrations = listOf(
+                    InitialCategoriesMigration(get(), androidContext()::getString),
+                ),
             )
         }
     }

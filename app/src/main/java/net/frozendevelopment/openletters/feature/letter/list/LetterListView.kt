@@ -1,9 +1,9 @@
 package net.frozendevelopment.openletters.feature.letter.list
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -11,7 +11,6 @@ import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import net.frozendevelopment.openletters.feature.letter.list.ui.LetterList
 import net.frozendevelopment.openletters.feature.letter.scan.ScanLetterDestination
 import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
 import net.frozendevelopment.openletters.feature.reminder.form.ReminderFormDestination
+import net.frozendevelopment.openletters.ui.components.ListCellLoader
 import net.frozendevelopment.openletters.ui.navigation.LocalDrawerState
 import net.frozendevelopment.openletters.ui.navigation.LocalNavigator
 import net.frozendevelopment.openletters.ui.theme.OpenLettersTheme
@@ -98,8 +98,14 @@ fun LetterListView(
     onCreateReminderClicked: (List<LetterId>) -> Unit,
 ) {
     if (state.isLoading) {
-        Box(contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+        Column(modifier = Modifier.fillMaxSize()) {
+            repeat(25) {
+                ListCellLoader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                )
+            }
         }
     } else if (state.showEmptyListView) {
         EmptyListView(

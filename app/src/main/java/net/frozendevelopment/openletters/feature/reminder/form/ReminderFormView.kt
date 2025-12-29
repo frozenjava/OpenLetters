@@ -60,6 +60,7 @@ import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.extensions.openAppSettings
 import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
+import net.frozendevelopment.openletters.feature.reminder.detail.ReminderDetailDestination
 import net.frozendevelopment.openletters.ui.components.FormAppBar
 import net.frozendevelopment.openletters.ui.components.LetterCell
 import net.frozendevelopment.openletters.ui.components.SelectCell
@@ -84,17 +85,16 @@ data class ReminderFormDestination(
 fun Module.reminderFormNavigation() = navigation<ReminderFormDestination> { route ->
     val navigator = LocalNavigator.current
     val coroutineScope = rememberCoroutineScope()
-    val viewModel =
-        koinViewModel<ReminderFormViewModel> {
-            parametersOf(route.reminderId, route.preselectedLetters)
-        }
+    val viewModel = koinViewModel<ReminderFormViewModel> {
+        parametersOf(route.reminderId, route.preselectedLetters)
+    }
+
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
 
-    val notificationPermissionResultLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = viewModel::handlePermissionResult,
-        )
+    val notificationPermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = viewModel::handlePermissionResult,
+    )
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !state.hasNotificationPermission) {
         LaunchedEffect(Unit) {
@@ -117,7 +117,7 @@ fun Module.reminderFormNavigation() = navigation<ReminderFormDestination> { rout
             onSaveClicked = {
                 coroutineScope.launch {
                     if (viewModel.save()) {
-                        navigator.onBackPressed()
+                        navigator.replace(route, ReminderDetailDestination(viewModel.reminderId))
                     }
                 }
             },
@@ -306,7 +306,7 @@ fun ReminderFormView(
                         modifier = Modifier.fillMaxWidth(.95f),
                         onClick = { openDialog(ReminderFormState.Dialog.LETTERS) },
                     ) {
-                        Text(stringResource(R.string.tag_additional_letters))
+                        Text(stringResource(R.string.tag_letters))
                     }
                 }
 

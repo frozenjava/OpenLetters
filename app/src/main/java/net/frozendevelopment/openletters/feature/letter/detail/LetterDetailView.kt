@@ -1,22 +1,26 @@
 package net.frozendevelopment.openletters.feature.letter.detail
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -86,7 +90,7 @@ fun Module.letterDetailNavigation() = navigation<LetterDetailDestination>(
         LetterDetailView(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            onEditClicked = { navigator.navigate(ScanLetterDestination(route.letterId)) },
+            onEditClicked = { navigator.replace(route, ScanLetterDestination(route.letterId)) },
             onCreateReminderClicked = {
                 navigator.navigate(
                     ReminderFormDestination(preselectedLetters = listOf(route.letterId)),
@@ -197,11 +201,13 @@ fun LetterDetail(
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
 
-            Text(
-                text = state.letter.body ?: stringResource(R.string.no_transcript_available),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
+            SelectionContainer {
+                Text(
+                    text = state.letter.body ?: stringResource(R.string.no_transcript_available),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
         }
 
         item {
@@ -236,63 +242,67 @@ fun LetterDetail(
         item {
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text(
-                    text =
-                        buildAnnotatedString {
+                SelectionContainer {
+                    Text(
+                        text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(R.string.from))
+                                append("${stringResource(R.string.from)} ")
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
                                 append(state.letter.sender ?: stringResource(R.string.unknown))
                             }
                         },
-                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                )
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                    )
+                }
 
-                Text(
-                    text =
-                        buildAnnotatedString {
+                SelectionContainer {
+                    Text(
+                        text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(R.string.to))
+                                append("${stringResource(R.string.to)} ")
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
                                 append(state.letter.recipient ?: stringResource(R.string.unknown))
                             }
                         },
-                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                )
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                    )
+                }
 
-                Text(
-                    text =
-                        buildAnnotatedString {
+                SelectionContainer {
+                    Text(
+                        text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(R.string.created))
+                                append("${stringResource(R.string.created)} ")
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
                                 append(state.letter.created.dateString)
                             }
                         },
-                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                )
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                    )
+                }
 
-                Text(
-                    text =
-                        buildAnnotatedString {
+                SelectionContainer {
+                    Text(
+                        text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append(stringResource(R.string.last_modified))
+                                append("${stringResource(R.string.last_modified)} ")
                             }
 
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Light)) {
                                 append(state.letter.created.dateString)
                             }
                         },
-                    fontSize = MaterialTheme.typography.labelMedium.fontSize,
-                )
+                        fontSize = MaterialTheme.typography.labelMedium.fontSize,
+                    )
+                }
             }
         }
     }
@@ -309,7 +319,19 @@ private fun LetterNotFound() {
 
 @Composable
 private fun Loading() {
-    CircularProgressIndicator()
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        repeat(5) { index ->
+            Box(
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(8.dp))
+                    .height(24.dp)
+                    .fillMaxWidth(1f - (index * .1f)),
+            )
+        }
+    }
 }
 
 @Composable

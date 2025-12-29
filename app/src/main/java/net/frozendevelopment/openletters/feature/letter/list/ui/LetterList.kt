@@ -1,10 +1,11 @@
 package net.frozendevelopment.openletters.feature.letter.list.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -21,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +34,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import kotlinx.coroutines.launch
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
@@ -62,7 +62,6 @@ fun LetterList(
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     var showLetterPeek by remember { mutableStateOf<LetterId?>(null) }
 
     showLetterPeek?.let {
@@ -76,21 +75,23 @@ fun LetterList(
         )
     }
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier,
         contentAlignment = Alignment.TopCenter,
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+        val isCompact = maxWidth < WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp
+
+        Row(modifier = Modifier.fillMaxSize()) {
+            // If the device is a tablet (wide form factor) then render the reminders in a column
+            // taking up 33% of the width
             if (
-                windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT &&
+                !isCompact &&
                 (state.urgentReminders.isNotEmpty() || state.upcomingReminders.isNotEmpty())
             ) {
                 ReminderColumn(
                     modifier = Modifier.fillMaxWidth(.33f),
                     urgentReminders = state.urgentReminders,
-                    upComingReminders = state.upcomingReminders,
+                    upcomingReminders = state.upcomingReminders,
                     onReminderClicked = onReminderClicked,
                 )
             }
@@ -98,15 +99,17 @@ fun LetterList(
             LazyColumn(
                 modifier =
                     Modifier
-                        .fillMaxSize()
+                        .weight(1f)
+                        .fillMaxHeight()
                         .imePadding(),
                 state = listState,
                 contentPadding = PaddingValues(bottom = 192.dp, top = 128.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                // if the device is a phone (narrow form factor) then display the reminders as a row for the first item in the list
                 if (
-                    windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT &&
+                    isCompact &&
                     state.urgentReminders.isNotEmpty()
                 ) {
                     reminderRow(
@@ -151,10 +154,9 @@ fun LetterList(
         }
 
         FilterBar(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .pointerInput(Unit) { /* Consume all touch events */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .pointerInput(Unit) { /* Consume all touch events */ },
             searchTerms = state.searchTerms,
             selectedCategoryId = state.selectedCategoryId,
             categories = state.categories,
@@ -176,10 +178,9 @@ fun LetterList(
         )
 
         FloatingActionButton(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(horizontal = 28.dp, vertical = 64.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(horizontal = 28.dp, vertical = 64.dp),
             onClick = onScanClicked,
         ) {
             Icon(imageVector = Icons.Outlined.DocumentScanner, contentDescription = "Import Mail")

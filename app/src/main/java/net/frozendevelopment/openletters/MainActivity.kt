@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
@@ -114,6 +115,10 @@ class MainActivity : ComponentActivity() {
             backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
             directive = directive,
         )
+
+        BackHandler(drawerState.isOpen) {
+            coroutineScope.launch { drawerState.close() }
+        }
 
         OpenLettersTheme(
             appTheme = currentTheme.first,

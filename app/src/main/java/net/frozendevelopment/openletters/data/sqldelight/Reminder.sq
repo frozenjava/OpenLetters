@@ -3,17 +3,17 @@ SELECT id FROM reminder ORDER BY scheduledFor DESC, title ASC;
 
 urgentReminders:
 SELECT id FROM reminder WHERE
---     (scheduledFor BETWEEN (strftime('%s','now', 'utc') - 86400) AND (strftime('%s','now', 'utc')) + 86400) AND acknowledged = 0 OR
-    scheduledFor <= strftime('%s','now', 'utc') AND acknowledged = 0
-ORDER BY scheduledFor ASC, created ASC;
+    (scheduledFor <= strftime('%s','now', 'utc') OR scheduledFor <= strftime('%s', 'now', '+48 hours'))
+    AND acknowledged = 0
+ORDER BY scheduledFor ASC, created DESC;
 
 upcomingReminders:
 SELECT id FROM reminder WHERE
-    (scheduledFor > (strftime('%s','now', 'utc'))) AND acknowledged = 0
-ORDER BY scheduledFor ASC, created ASC;
+    (scheduledFor > (strftime('%s', 'now', '+48 hours'))) AND acknowledged = 0
+ORDER BY scheduledFor ASC, created DESC;
 
 pastReminders:
-SELECT id FROM reminder WHERE acknowledged != 0 ORDER BY scheduledFor DESC, created DESC;
+SELECT id FROM reminder WHERE acknowledged = 1 ORDER BY scheduledFor DESC, created DESC;
 
 upsert:
 INSERT INTO reminder (id, title, description, scheduledFor, created, lastModified, notificationId) VALUES (

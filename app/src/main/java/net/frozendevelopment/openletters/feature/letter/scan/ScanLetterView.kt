@@ -1,9 +1,9 @@
 package net.frozendevelopment.openletters.feature.letter.scan
 
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,25 +25,32 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -60,6 +67,7 @@ import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.DocumentId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.feature.category.form.CategoryFormDestination
+import net.frozendevelopment.openletters.feature.letter.detail.LetterDetailDestination
 import net.frozendevelopment.openletters.feature.letter.list.LetterListDestination
 import net.frozendevelopment.openletters.feature.letter.scan.ui.CategoryPicker
 import net.frozendevelopment.openletters.feature.letter.scan.ui.ScanAppBar
@@ -85,9 +93,10 @@ data class ScanLetterDestination(
 fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
     val navigator = LocalNavigator.current
     val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val activity = LocalActivity.current
     val viewModel: ScanViewModel = koinViewModel { parametersOf(route.letterId) }
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
+    var openedScannerOnInitialization: Boolean = rememberSaveable { false }
 
     val letterScanLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
@@ -113,12 +122,26 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
             }
         }
 
+    // Open the scanner view if the letter is not being edited
+    if (route.letterId == null && !openedScannerOnInitialization) {
+        if (activity != null) {
+            openedScannerOnInitialization = true
+            viewModel
+                .getScanner()
+                .getStartScanIntent(activity)
+                .addOnSuccessListener { intentSender ->
+                    letterScanLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+                }.addOnFailureListener {
+                    Log.e("ScanNavigation", "Scanner failed to load")
+                }
+        }
+    }
+
     Surface {
         ScanLetterView(
-            modifier =
-                Modifier
-                    .statusBarsPadding()
-                    .navigationBarsPadding(),
+            modifier = Modifier
+                .statusBarsPadding()
+                .navigationBarsPadding(),
             state = state,
             canNavigateBack = route.canNavigateBack,
             toggleCategory = viewModel::toggleCategory,
@@ -126,7 +149,6 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
             setRecipient = viewModel::setRecipient,
             setTranscript = viewModel::setTranscript,
             openLetterScanner = {
-                val activity = context as? Activity
                 if (activity != null) {
                     viewModel
                         .getScanner()
@@ -139,7 +161,6 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
                 }
             },
             openSenderScanner = {
-                val activity = context as? Activity
                 if (activity != null) {
                     viewModel
                         .getScanner(pageLimit = 1)
@@ -152,7 +173,6 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
                 }
             },
             openRecipientScanner = {
-                val activity = context as? Activity
                 if (activity != null) {
                     viewModel
                         .getScanner(pageLimit = 1)
@@ -168,13 +188,17 @@ fun Module.scanLetterNavigation() = navigation<ScanLetterDestination> { route ->
                 coroutineScope.launch(Dispatchers.IO) {
                     if (viewModel.save()) {
                         withContext(Dispatchers.Main) {
-                            if (route.canNavigateBack) {
-                                navigator.onBackPressed()
-                            } else {
+                            if (!route.canNavigateBack) {
+                                // This happens if there is nothing on the backstack (fresh install)
+                                // We need to add the list destination as the first item in the stack
+                                // then add the detail and pop the form
                                 navigator.navigate { backStack ->
                                     backStack.add(0, LetterListDestination)
+                                    backStack.add(1, LetterDetailDestination(state.letterId))
                                     backStack.removeLastOrNull()
                                 }
+                            } else {
+                                navigator.replace(route, LetterDetailDestination(state.letterId))
                             }
                         }
                     }
@@ -211,8 +235,7 @@ fun ScanLetterView(
     ) {
         ScanAppBar(
             canNavigateBack = canNavigateBack,
-            canLeaveSafely = state.canLeaveSafely,
-            isSavable = state.isSavable,
+            state = state,
             onSaveClicked = onSaveClicked,
             onBackClicked = onBackClicked,
         )
@@ -244,30 +267,25 @@ fun ScanLetterView(
         )
 
         if (state.documents.isEmpty()) {
-            OutlinedCard(
-                onClick = openLetterScanner,
+            Column(
+                modifier = Modifier
+                    .weight(1f, fill = true)
+                    .fillMaxWidth(.95f)
+                    .clickable(onClick = openLetterScanner),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(
-                    modifier =
-                        Modifier
-                            .weight(1f, fill = true)
-                            .fillMaxWidth(.95f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Icon(
-                        modifier =
-                            Modifier
-                                .padding(16.dp)
-                                .size(64.dp),
-                        imageVector = Icons.Outlined.DocumentScanner,
-                        contentDescription = "Scan",
-                    )
-                    Text(
-                        text = "Scan Letter",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                }
+                Icon(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(64.dp),
+                    imageVector = Icons.Outlined.DocumentScanner,
+                    contentDescription = "Scan",
+                )
+                Text(
+                    text = "Scan Letter",
+                    style = MaterialTheme.typography.titleLarge,
+                )
             }
         } else {
             CategoryPicker(
@@ -281,7 +299,7 @@ fun ScanLetterView(
                 state = state,
                 openLetterScanner = openLetterScanner,
                 onDeleteDocumentClicked = onDeleteDocumentClicked,
-                onEditTranscript = setTranscript,
+                onSaveTranscript = setTranscript,
                 onImageClick = {
                     onSaveClicked()
                     onDeleteDocumentClicked(DocumentId.random())
@@ -291,15 +309,71 @@ fun ScanLetterView(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TranscriptAndDocuments(
     modifier: Modifier = Modifier,
     state: ScanState,
     openLetterScanner: () -> Unit,
     onDeleteDocumentClicked: (DocumentId) -> Unit,
-    onEditTranscript: (String) -> Unit,
+    onSaveTranscript: (String) -> Unit,
     onImageClick: (Uri) -> Unit,
 ) {
+    var showTranscriptEditor by remember { mutableStateOf(false) }
+    val transcriptEditorBottomSheetState = rememberModalBottomSheetState(true)
+
+    if (showTranscriptEditor) {
+        ModalBottomSheet(
+            onDismissRequest = { showTranscriptEditor = false },
+            sheetState = transcriptEditorBottomSheetState,
+            dragHandle = null,
+        ) {
+            val coroutineScope = rememberCoroutineScope()
+            var transcript by remember { mutableStateOf(state.transcript ?: "") }
+
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                transcriptEditorBottomSheetState.hide()
+                                showTranscriptEditor = false
+                            }
+                        },
+                    ) {
+                        Text(text = stringResource(R.string.cancel))
+                    }
+
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                onSaveTranscript(transcript)
+                                transcriptEditorBottomSheetState.hide()
+                                showTranscriptEditor = false
+                            }
+                        },
+                    ) {
+                        Text(text = stringResource(R.string.save))
+                    }
+                }
+
+                BasicTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = transcript,
+                    onValueChange = { transcript = it },
+                    minLines = 10,
+                    maxLines = 30,
+                )
+            }
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -307,23 +381,23 @@ private fun TranscriptAndDocuments(
     ) {
         item {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(16.dp),
+                        Modifier.weight(1f),
                     text = stringResource(R.string.transcription),
                     style = MaterialTheme.typography.titleLarge,
                 )
 
                 if (state.isCreatingTranscript) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
                 } else {
-                    IconButton({ onEditTranscript(state.transcript ?: "") }) {
+                    IconButton({ showTranscriptEditor = true }) {
                         Icon(
                             imageVector = Icons.Outlined.Edit,
                             contentDescription = "Scan",
@@ -347,11 +421,13 @@ private fun TranscriptAndDocuments(
                     }
                 }
             } else {
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = state.transcript ?: stringResource(R.string.no_transcript_available),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                SelectionContainer {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = state.transcript ?: stringResource(R.string.no_transcript_available),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             }
         }
 
@@ -368,10 +444,9 @@ private fun TranscriptAndDocuments(
                     if (documentUri != null) {
                         Box {
                             LazyImageView(
-                                modifier =
-                                    Modifier
-                                        .size(128.dp)
-                                        .clickable(onClick = { onImageClick(documentUri) }),
+                                modifier = Modifier
+                                    .size(128.dp)
+                                    .clickable(onClick = { onImageClick(documentUri) }),
                                 uri = documentUri,
                             )
                             IconButton(
@@ -403,27 +478,22 @@ private fun TranscriptAndDocuments(
                 }
 
                 item {
-                    OutlinedCard(
-                        modifier = Modifier.size(128.dp),
-                        onClick = openLetterScanner,
-                        colors =
-                            CardDefaults.outlinedCardColors(
-                                contentColor = MaterialTheme.colorScheme.primary,
-                            ),
+                    Box(
+                        modifier = Modifier
+                            .size(128.dp)
+                            .clickable(onClick = openLetterScanner),
                     ) {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Column(
-                                modifier = Modifier.align(Alignment.Center),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(64.dp),
-                                    imageVector = Icons.Outlined.DocumentScanner,
-                                    contentDescription = "Scan",
-                                )
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(64.dp),
+                                imageVector = Icons.Outlined.DocumentScanner,
+                                contentDescription = "Scan",
+                            )
 
-                                Text(text = "Add Document")
-                            }
+                            Text(text = "Add Document")
                         }
                     }
                 }

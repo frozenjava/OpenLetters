@@ -73,12 +73,11 @@ class LetterListViewModel(
                 category = categoryFilter,
             )
 
-        val urgentReminders =
-            if (searchTerms.isBlank() && categoryFilter == null) {
-                reminderQueries.urgentReminders().executeAsList()
-            } else {
-                emptyList()
-            }
+        val urgentReminders = if (searchTerms.isBlank() && categoryFilter == null) {
+            reminderQueries.urgentReminders().executeAsList()
+        } else {
+            emptyList()
+        }
 
         val upcomingReminders =
             if (searchTerms.isBlank() && categoryFilter == null) {

@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -41,6 +42,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.extensions.Random
 import net.frozendevelopment.openletters.extensions.contrastColor
@@ -106,6 +108,7 @@ fun CategoryFormView(
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CenterAlignedTopAppBar(
             title = { Text(text = state.title) },
@@ -133,10 +136,9 @@ fun CategoryFormView(
         }
 
         CategoryPill(
-            modifier =
-                Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
             color = state.color,
         ) {
             BasicTextField(
@@ -155,7 +157,7 @@ fun CategoryFormView(
             ) { innerTextField ->
                 if (state.label.isBlank() && !isFocused) {
                     Text(
-                        text = "Tap to type your label",
+                        text = stringResource(R.string.tap_to_type_your_label),
                         color = state.color.contrastColor,
                         style = MaterialTheme.typography.titleLarge,
                     )
@@ -167,36 +169,41 @@ fun CategoryFormView(
 
         HorizontalDivider()
 
+        HsvColorPicker(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            onColorChanged = { onColorChanged(it.color) },
+            controller = controller,
+            initialColor = state.color,
+        )
+
+        BrightnessSlider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(35.dp)
+                .padding(horizontal = 16.dp),
+            controller = controller,
+            borderRadius = 32.dp,
+        )
+
         TextButton(
-            modifier = Modifier.fillMaxWidth(.95f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .navigationBarsPadding(),
             onClick = {
                 val color = Color.Random
                 controller.selectByColor(color, true)
                 onColorChanged(color)
             },
         ) {
-            Text(text = "Randomize Color")
+            Text(
+                text = "Randomize Color",
+                style = MaterialTheme.typography.titleLarge,
+            )
         }
-
-        BrightnessSlider(
-            modifier =
-                Modifier
-                    .fillMaxWidth(.95f)
-                    .height(35.dp),
-            controller = controller,
-            borderRadius = 32.dp,
-        )
-
-        HsvColorPicker(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(horizontal = 16.dp),
-            onColorChanged = { onColorChanged(it.color) },
-            controller = controller,
-            initialColor = state.color,
-        )
     }
 }
 
@@ -219,11 +226,11 @@ private fun CategoryFormPreview(state: CategoryFormState) {
 @PreviewLightDark
 private fun CategoryForm() {
     CategoryFormPreview(
-        state =
-            CategoryFormState(
-                mode = CategoryFormDestination.Mode.Create,
-                label = "",
-                color = Color(0xFF0F0FF0),
-            ),
+        state = CategoryFormState(
+            mode = CategoryFormDestination.Mode.Create,
+            label = "",
+            color = Color(0xFF0F0FF0),
+            isBusy = false,
+        ),
     )
 }
