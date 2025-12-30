@@ -29,13 +29,7 @@ data class LetterListState(
     val searchTerms: String = "",
     val urgentReminders: List<ReminderId> = emptyList(),
     val upcomingReminders: List<ReminderId> = emptyList(),
-) {
-    val listHash: String
-        get() =
-            letters.hashCode().toString() +
-                urgentReminders.hashCode().toString() +
-                upcomingReminders.hashCode().toString()
-}
+)
 
 class LetterListViewModel(
     private val reminderQueries: ReminderQueries,
@@ -67,11 +61,10 @@ class LetterListViewModel(
     ) {
         val categories = categoryQueries.allCategories().executeAsList()
 
-        val letters =
-            searchUseCase(
-                query = searchTerms,
-                category = categoryFilter,
-            )
+        val letters = searchUseCase(
+            query = searchTerms,
+            category = categoryFilter,
+        )
 
         val urgentReminders = if (searchTerms.isBlank() && categoryFilter == null) {
             reminderQueries.urgentReminders().executeAsList()
@@ -79,12 +72,11 @@ class LetterListViewModel(
             emptyList()
         }
 
-        val upcomingReminders =
-            if (searchTerms.isBlank() && categoryFilter == null) {
-                reminderQueries.upcomingReminders().executeAsList()
-            } else {
-                emptyList()
-            }
+        val upcomingReminders = if (searchTerms.isBlank() && categoryFilter == null) {
+            reminderQueries.upcomingReminders().executeAsList()
+        } else {
+            emptyList()
+        }
 
         update {
             copy(
@@ -103,12 +95,11 @@ class LetterListViewModel(
     }
 
     fun toggleCategory(category: CategoryId?) = viewModelScope.launch {
-        val toggleCategory =
-            if (category == state.selectedCategoryId) {
-                null
-            } else {
-                category
-            }
+        val toggleCategory = if (category == state.selectedCategoryId) {
+            null
+        } else {
+            category
+        }
 
         update { copy(selectedCategoryId = toggleCategory) }
         load(categoryFilter = toggleCategory, searchTerms = state.searchTerms)
