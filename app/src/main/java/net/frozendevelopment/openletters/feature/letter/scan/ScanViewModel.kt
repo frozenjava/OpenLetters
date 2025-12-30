@@ -31,6 +31,7 @@ import java.io.File
 
 @Immutable
 data class ScanState(
+    val letterId: LetterId = LetterId.random(),
     val isBusy: Boolean = false,
     val sender: String? = null,
     val recipient: String? = null,
@@ -44,19 +45,16 @@ data class ScanState(
     val existingDocuments: Map<DocumentId, Uri> = emptyMap(),
     val possibleSenders: List<String> = emptyList(),
     val possibleRecipients: List<String> = emptyList(),
+    val hasBeenSaved: Boolean = false,
 ) {
-    val canLeaveSafely: Boolean
-        get() = !isBusy && sender.isNullOrBlank() && recipient.isNullOrBlank() && documents.isEmpty()
-
-    val isSavable: Boolean
-        get() = documents.isNotEmpty()
-
-    val categoryMap: Map<Category, Boolean>
-        get() = categories.associateWith { category -> selectedCategories.contains(category) }
-
     // all documents for display in the UI
-    val documents: Map<DocumentId, Uri>
-        get() = existingDocuments + newDocuments
+    val documents: Map<DocumentId, Uri> = existingDocuments + newDocuments
+
+    val canLeaveSafely: Boolean = (!isBusy && (sender.isNullOrBlank() && recipient.isNullOrBlank() && documents.isEmpty())) || hasBeenSaved
+
+    val isSavable: Boolean = documents.isNotEmpty()
+
+    val categoryMap: Map<Category, Boolean> = categories.associateWith { category -> selectedCategories.contains(category) }
 }
 
 class ScanViewModel(
@@ -78,25 +76,24 @@ class ScanViewModel(
         if (letterToEdit?.value.isNullOrBlank()) {
             LetterId.random()
         } else {
-            letterToEdit!!
+            letterToEdit
         }
     }
 
     private val isEditing: Boolean = letterToEdit != null
 
     override fun load() {
-        var state = ScanState()
+        var state = ScanState(letterId = letterId)
 
         if (isEditing) {
             val details = letterWithDetails(letterId) ?: return
-            state =
-                state.copy(
-                    sender = details.letter.sender,
-                    recipient = details.letter.recipient,
-                    transcript = details.letter.body,
-                    existingDocuments = details.documents,
-                    selectedCategories = details.categories.toSet(),
-                )
+            state = state.copy(
+                sender = details.letter.sender,
+                recipient = details.letter.recipient,
+                transcript = details.letter.body,
+                existingDocuments = details.documents,
+                selectedCategories = details.categories.toSet(),
+            )
         }
 
         update { state }
@@ -263,7 +260,7 @@ class ScanViewModel(
             letterId = letterId,
         )
 
-        update { copy(isBusy = false) }
+        update { copy(isBusy = false, hasBeenSaved = true) }
         return true
     }
 
@@ -298,15 +295,13 @@ class ScanViewModel(
 
     private fun searchSendersAndRecipients(query: String): List<String> {
         try {
-            val recipients =
-                letterQueries
-                    .searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
-                    .executeAsList()
+            val recipients = letterQueries
+                .searchRecipients(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                .executeAsList()
 
-            val senders =
-                letterQueries
-                    .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
-                    .executeAsList()
+            val senders = letterQueries
+                .searchSenders(query = "${query.sanitizeForSearch()}*", { it ?: "" })
+                .executeAsList()
 
             return (recipients + senders)
                 .filter { it.isNotBlank() }

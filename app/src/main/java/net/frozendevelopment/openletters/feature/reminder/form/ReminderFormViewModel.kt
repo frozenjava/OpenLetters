@@ -132,7 +132,7 @@ class ReminderFormViewModel(
 ) : StatefulViewModel<ReminderFormState>(
         ReminderFormState(),
     ) {
-    private val reminderId: ReminderId by lazy {
+    val reminderId: ReminderId by lazy {
         reminderToEdit ?: ReminderId.random()
     }
 

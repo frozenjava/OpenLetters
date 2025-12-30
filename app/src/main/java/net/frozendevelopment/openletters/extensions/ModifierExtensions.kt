@@ -9,22 +9,29 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 
 @Composable
-fun Modifier.pulse() {
+fun Modifier.pulse(
+    initialScale: Float = 1f,
+    targetScale: Float = 0.95f,
+    durationMillis: Int = 600,
+): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "pulseInfiniteTransition")
     val scale by infiniteTransition.animateFloat(
         label = "pulseAnimation",
-        initialValue = 1f,
-        targetValue = 0.95f,
+        initialValue = initialScale,
+        targetValue = targetScale,
         animationSpec =
             infiniteRepeatable(
                 animation =
                     tween(
-                        durationMillis = 600,
+                        durationMillis = durationMillis,
                         easing = FastOutLinearInEasing,
                     ),
                 repeatMode = RepeatMode.Reverse,
             ),
     )
+
+    return this.scale(scale)
 }

@@ -9,7 +9,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +20,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,75 +52,73 @@ fun SearchBar(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            modifier
-                .background(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.medium,
-                ),
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.shapes.medium,
     ) {
-        IconButton(onClick = onNavDrawerClicked) {
-            Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
-        }
-
-        BasicTextField(
-            modifier =
-                Modifier
-                    .weight(1f, fill = true)
-                    .padding(horizontal = 4.dp, vertical = 16.dp),
-            singleLine = true,
-            value = searchTerms,
-            onValueChange = onSearchChanged,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.onPrimaryContainer),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
-            keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        ) { innerTextField ->
-            val placeHolderText =
-                listOf(
-                    "Tap to search for letters",
-                    "\"Electric bill\"",
-                    "\"123 Street Drive\"",
-                    "\"Happy Birthday\"",
-                    "\"Friday, October 31\"",
-                )
-            var currentIndex by remember { mutableIntStateOf(0) }
-            if (searchTerms.isEmpty()) {
-                AnimatedContent(
-                    label = "Animated Placeholder",
-                    targetState = placeHolderText[currentIndex],
-                    transitionSpec = {
-                        slideInVertically { height -> height } + fadeIn() togetherWith
-                            slideOutVertically { height -> -height } + fadeOut()
-                    },
-                ) { targetText ->
-                    Text(
-                        text = targetText,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .5f),
-                        style = TextStyle(fontSize = 16.sp),
-                    )
-                }
-
-                LaunchedEffect(Unit) {
-                    while (this.isActive) {
-                        delay(3000)
-                        currentIndex = (currentIndex + 1) % placeHolderText.size
-                    }
-                }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onNavDrawerClicked) {
+                Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
             }
 
-            innerTextField()
-        }
+            BasicTextField(
+                modifier =
+                    Modifier
+                        .weight(1f, fill = true)
+                        .padding(horizontal = 4.dp, vertical = 16.dp),
+                singleLine = true,
+                value = searchTerms,
+                onValueChange = onSearchChanged,
+                cursorBrush = SolidColor(LocalContentColor.current),
+                textStyle = TextStyle(color = LocalContentColor.current),
+                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            ) { innerTextField ->
+                val placeHolderText =
+                    listOf(
+                        "Tap to search for letters",
+                        "\"Electric bill\"",
+                        "\"123 Street Drive\"",
+                        "\"Happy Birthday\"",
+                        "\"Friday, October 31\"",
+                    )
+                var currentIndex by remember { mutableIntStateOf(0) }
+                if (searchTerms.isEmpty()) {
+                    AnimatedContent(
+                        label = "Animated Placeholder",
+                        targetState = placeHolderText[currentIndex],
+                        transitionSpec = {
+                            slideInVertically { height -> height } + fadeIn() togetherWith
+                                slideOutVertically { height -> -height } + fadeOut()
+                        },
+                    ) { targetText ->
+                        Text(
+                            text = targetText,
+                            color = LocalContentColor.current.copy(alpha = .5f),
+                            style = TextStyle(fontSize = 16.sp),
+                        )
+                    }
 
-        AnimatedVisibility(
-            searchTerms.isNotBlank(),
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut(),
-        ) {
-            IconButton(onClick = { onSearchChanged("") }) {
-                Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+                    LaunchedEffect(Unit) {
+                        while (this.isActive) {
+                            delay(3000)
+                            currentIndex = (currentIndex + 1) % placeHolderText.size
+                        }
+                    }
+                }
+
+                innerTextField()
+            }
+
+            AnimatedVisibility(
+                searchTerms.isNotBlank(),
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut(),
+            ) {
+                IconButton(onClick = { onSearchChanged("") }) {
+                    Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+                }
             }
         }
     }

@@ -2,6 +2,9 @@ package net.frozendevelopment.openletters.usecase
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.frozendevelopment.openletters.data.sqldelight.LetterQueries
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import java.time.LocalDateTime
@@ -19,19 +22,18 @@ data class LetterCellModel(
 
 class LetterCellUseCase(
     private val queries: LetterQueries,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
-    operator fun invoke(id: LetterId): LetterCellModel? {
-        val letterInfo =
-            queries
-                .letterInfo(id)
-                .executeAsOneOrNull() ?: return null
+    suspend operator fun invoke(id: LetterId): LetterCellModel? = withContext(ioDispatcher) {
+        val letterInfo = queries
+            .letterInfo(id)
+            .executeAsOneOrNull() ?: return@withContext null
 
-        val colors =
-            queries
-                .categoryColorsForLetter(letterInfo.id)
-                .executeAsList()
+        val colors = queries
+            .categoryColorsForLetter(letterInfo.id)
+            .executeAsList()
 
-        return LetterCellModel(
+        return@withContext LetterCellModel(
             id = letterInfo.id,
             sender = letterInfo.sender,
             recipient = letterInfo.recipient,

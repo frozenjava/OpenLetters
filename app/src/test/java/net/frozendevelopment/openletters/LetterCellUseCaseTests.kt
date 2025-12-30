@@ -3,6 +3,7 @@ package net.frozendevelopment.openletters
 import androidx.compose.ui.graphics.Color
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.test.runTest
 import net.frozendevelopment.openletters.data.sqldelight.models.CategoryId
 import net.frozendevelopment.openletters.data.sqldelight.models.LetterId
 import net.frozendevelopment.openletters.usecase.LetterCellModel
@@ -14,7 +15,7 @@ import java.time.ZoneOffset
 
 class LetterCellUseCaseTests {
     @Test
-    fun `should return null if the letter does not exist`() {
+    fun `should return null if the letter does not exist`() = runTest {
         val database = testDatabase()
         val useCase = LetterCellUseCase(database.letterQueries)
         val result = useCase.invoke(LetterId.random())
@@ -22,7 +23,7 @@ class LetterCellUseCaseTests {
     }
 
     @Test
-    fun `should return a LetterCellModel if the letter exists`() {
+    fun `should return a LetterCellModel if the letter exists`() = runTest {
         val categoryId = CategoryId.random()
         val categoryColor = Color.Cyan
 

@@ -31,7 +31,7 @@ fun FormAppBar(
 ) {
     var showLeaveConfirmation: Boolean by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = isSavable) {
+    BackHandler(enabled = isSavable && !showLeaveConfirmation) {
         showLeaveConfirmation = true
     }
 
@@ -41,7 +41,10 @@ fun FormAppBar(
             title = { Text(text = stringResource(R.string.leave_without_saving)) },
             text = { Text(stringResource(R.string.unsaved_changes_warning)) },
             confirmButton = {
-                Button(onClick = onBackClicked) {
+                Button(onClick = {
+                    onBackClicked()
+                    showLeaveConfirmation = false
+                }) {
                     Text(stringResource(R.string.leave))
                 }
             },

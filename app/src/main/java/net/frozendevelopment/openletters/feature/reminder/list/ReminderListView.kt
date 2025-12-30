@@ -231,7 +231,7 @@ fun ReminderListView(
             if (state.upcomingReminders.isNotEmpty()) {
                 item {
                     Text(
-                        text = "Up and Coming",
+                        text = stringResource(R.string.upcoming),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

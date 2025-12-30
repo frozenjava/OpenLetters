@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import net.frozendevelopment.openletters.R
 import net.frozendevelopment.openletters.data.sqldelight.models.ReminderId
 import net.frozendevelopment.openletters.ui.components.ReminderCell
 
@@ -18,7 +20,7 @@ import net.frozendevelopment.openletters.ui.components.ReminderCell
 fun ReminderColumn(
     modifier: Modifier = Modifier,
     urgentReminders: List<ReminderId>,
-    upComingReminders: List<ReminderId>,
+    upcomingReminders: List<ReminderId>,
     onReminderClicked: (id: ReminderId, edit: Boolean) -> Unit,
 ) {
     LazyColumn(
@@ -32,7 +34,7 @@ fun ReminderColumn(
                 if (urgentReminders.isNotEmpty()) {
                     Text(
                         modifier = Modifier.fillMaxWidth(.95f),
-                        text = "Urgent Reminders",
+                        text = stringResource(R.string.reminders),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
@@ -47,18 +49,18 @@ fun ReminderColumn(
             }
         }
 
-        if (upComingReminders.isNotEmpty()) {
+        if (upcomingReminders.isNotEmpty()) {
             item {
-                if (upComingReminders.isNotEmpty()) {
+                if (upcomingReminders.isNotEmpty()) {
                     Text(
                         modifier = Modifier.fillMaxWidth(.95f),
-                        text = "Up and Coming Reminders",
+                        text = stringResource(R.string.upcoming),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
 
-            items(items = upComingReminders, key = { it.value }) {
+            items(items = upcomingReminders, key = { it.value }) {
                 ReminderCell(
                     modifier = Modifier.fillMaxWidth(.95f),
                     id = it,

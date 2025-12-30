@@ -13,6 +13,11 @@ interface NavigatorType {
 
     fun navigate(route: NavKey)
 
+    fun replace(
+        target: NavKey,
+        destination: NavKey,
+    )
+
     fun pop()
 
     fun onBackPressed()
@@ -42,6 +47,15 @@ class Navigator(
         block(state.backStacks[state.topLevelRoute] ?: error("No back stack for current route"))
     }
 
+    override fun replace(
+        target: NavKey,
+        destination: NavKey,
+    ) {
+        val currentStack = state.backStacks[state.topLevelRoute] ?: error("No back stack for current route")
+        val index = currentStack.indexOfFirst { it == target }
+        currentStack[index] = destination
+    }
+
     override fun pop() {
         val currentStack = state.backStacks[state.topLevelRoute] ?: error("No back stack for current route")
         val currentRoute = currentStack.last()
@@ -64,6 +78,11 @@ class PreviewNavigator : NavigatorType {
     override fun navigate(block: (NavBackStack<NavKey>) -> Unit) {}
 
     override fun navigate(route: NavKey) {}
+
+    override fun replace(
+        target: NavKey,
+        destination: NavKey,
+    ) {}
 
     override fun pop() {}
 
